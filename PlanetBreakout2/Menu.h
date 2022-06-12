@@ -1,0 +1,40 @@
+#pragma once
+#include <Windows.h>
+#include <iostream>
+#include "Constants.h"
+
+struct Menu
+{
+  virtual void Initialize(HINSTANCE) = 0;
+  virtual void PostInitialize() {}
+  HWND hWnd;
+  RECT WindowRect;
+  DWORD grfStyle, grfExStyle;
+};
+
+struct ClientMenu : Menu
+{
+  void Initialize(HINSTANCE) override;
+  void PostInitialize() override;
+};
+
+struct EditorMenu : Menu
+{
+  void Initialize(HINSTANCE) override;
+};
+
+enum MenuType { MENU_CLIENT, MENU_EDITOR };
+namespace 
+{
+  Menu* Menus[MENU_COUNT];
+  void InitializeMenus(HINSTANCE hInstance)
+  {
+    Menus[MenuType::MENU_CLIENT] = new ClientMenu();
+    //Menus[MenuType::EDITOR] = new EditorMenu();
+    for (int i = 0; i < MENU_COUNT; ++i)
+    {
+      printf("Initializing Menu: %d\n", i);
+      Menus[i]->Initialize(hInstance);
+    }
+  }
+};

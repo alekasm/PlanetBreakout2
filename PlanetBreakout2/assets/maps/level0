@@ -1,0 +1,5 @@
+#brick:type,x,y,sprite
+background:bg1
+brick:0,brick1,0,0
+brick:0,brick1,1,1
+brick:0,brick2,5,0

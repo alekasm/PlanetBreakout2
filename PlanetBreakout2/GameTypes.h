@@ -1,0 +1,63 @@
+#pragma once
+#include <exception>
+#include <d2d1helper.h>
+#include "Constants.h"
+#include "Drawable.h"
+
+typedef int EntityId;
+enum EntityType { BAT, BALL, BRICK, POWERUP, TILE };
+enum BallType { NORMAL_BALL, FAST_BALL, SLOW_BALL };
+enum PowerUpType { FAST_BALL_PU, SLOW_BALL_PU, LONG_BAT_PU, SHORT_BAT_PU, LASER_BAT_PU };
+enum BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
+enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK };
+enum TileType { NONE_TILE };
+
+#define ISVALID_ENTITYTYPE(v) (v >= BAT && v <= TILE)
+#define ISVALID_BALLTYPE(v) (v >= NORMAL_BALL && v <= SLOW_BALL)
+#define ISVALID_POWERUPTYPE(v) (v >= FAST_BALL_PU && v <= LASER_BAT_PU)
+#define ISVALID_BATTYPE(v) (v >= SHORT_BAT && v <= LASER_BAT)
+#define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
+#define ISVALID_TILETYPE(v) (v == NONE_TILE)
+
+struct Entity
+{
+  EntityType type;
+  std::wstring sprite;
+  Entity(EntityType type, std::wstring sprite) :
+    type(type), sprite(sprite)
+  {
+  }
+};
+
+struct Bat : Entity
+{
+  BatType subtype;
+  Bat(std::wstring sprite, BatType subtype) :
+    Entity(EntityType::BAT, sprite), subtype(subtype)
+  {
+
+  }
+  void UpdateType(BatType subtype)
+  {
+
+  }
+};
+
+struct Brick : Entity, Drawable
+{
+  unsigned col, row;
+  BrickType subtype;
+  Brick() = default;
+  Brick(BrickType subtype, std::wstring sprite, uint32_t x, uint32_t y) :
+    Entity(EntityType::BRICK, sprite),
+    Drawable(x * BRICK_WIDTH, y * BRICK_HEIGHT, BRICK_WIDTH, BRICK_HEIGHT),
+    subtype(subtype), col(x), row(y)
+  {
+  }
+  Brick(const Brick& other, uint32_t x, uint32_t y) :
+    Entity(EntityType::BRICK, other.sprite),
+    Drawable(x* BRICK_WIDTH, y* BRICK_HEIGHT, BRICK_WIDTH, BRICK_HEIGHT),
+    subtype(other.subtype), col(x), row(y)
+  {
+  }
+};
