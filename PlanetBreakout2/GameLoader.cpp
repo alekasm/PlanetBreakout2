@@ -154,7 +154,7 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
     return false;
   if (backgrounds.empty())
   {
-    level.background = DEFAULT_BACKGROUND;
+    //level.background = DEFAULT_BACKGROUND;
   }
   else
   {

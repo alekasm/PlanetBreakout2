@@ -13,12 +13,10 @@ brick:0,brick2,12,14
 brick:0,brick2,13,14
 brick:0,brick2,13,13
 brick:0,brick2,11,14
-brick:0,brick2,11,13
 brick:0,brick2,13,11
 brick:0,brick2,11,12
 brick:0,brick2,13,12
 brick:0,brick2,11,10
-brick:0,brick2,11,11
 brick:0,brick2,13,10
 brick:0,green3,13,9
 brick:0,green3,11,9
@@ -32,3 +30,10 @@ brick:0,green1,11,6
 brick:0,green1,10,6
 brick:0,green1,9,6
 brick:0,green1,8,6
+brick:0,brick2,9,11
+brick:0,brick2,10,12
+brick:0,brick1,11,11
+brick:0,brick1,10,11
+brick:0,brick1,10,12
+brick:0,brick1,11,13
+brick:0,brick1,10,13

@@ -95,26 +95,48 @@ inline void DrawEditor(ClientMenu* menu)
 
   if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
   {
-
-    std::wstring text = L"Selection";
+    std::wstring text_select = L"Selection:";
     if (levelEditor.currentBrick != nullptr)
     {
-      text.append(levelEditor.currentBrick->subtype == BrickType::NORMAL_BRICK ? L"\nBreakable" : L"\nInvincible");
-      levelEditor.selectionButton->text.Update(text);
+      text_select.append(levelEditor.currentBrick->subtype == BrickType::NORMAL_BRICK ? L"\nBreakable" : L"\nInvincible");
+      //levelEditor.selectionButton->text.Update(text);
       D2D1_RECT_F selectRect = D2D1::RectF(
         GAME_WIDTH + (PANEL_WIDTH / 2) - (BRICK_WIDTH / 2),
-        125 + 35,
+        150,
         GAME_WIDTH + (PANEL_WIDTH / 2) + (BRICK_WIDTH / 2),
-        125 + 35 + BRICK_HEIGHT);
+        150 + BRICK_HEIGHT);
       target->DrawBitmap(ResourceLoader::GetSpriteMap().at(levelEditor.currentBrick->sprite), selectRect, 1.0f);
     }
-    levelEditor.selectionButton->text.Update(text);
-    DrawButton(target, levelEditor.selectionButton);
-    for (int i = levelEditor.BrickIndexStart();
-      i < levelEditor.BrickIndexEnd(); ++i)
-    {
+    target->DrawText(text_select.c_str(), text_select.length(), format,
+      D2D1::RectF(GAME_WIDTH + 4, 150, CLIENT_WIDTH - 4, 170), brushes);
+    unsigned start = levelEditor.BrickIndexStart();
+    unsigned end = levelEditor.BrickIndexEnd();
+    for (unsigned i = start; i < end; ++i)
+    { 
       DrawButton(target, levelEditor.brickButtons.at(i));
     }
+    std::wstring text_page = L"Page ";
+    text_page.append(std::to_wstring(levelEditor.currentBrickPage + 1));
+    text_page.append(L" / ");
+    text_page.append(std::to_wstring(levelEditor.brickPages + 1));
+    //GAME_WIDTH + 10, 720, 100, 14
+    target->DrawText(text_page.c_str(), text_page.length(), format,
+      D2D1::RectF(GAME_WIDTH + 8, CLIENT_HEIGHT - 20, CLIENT_WIDTH - 4, CLIENT_HEIGHT - 1), brushes);
+  }
+  else if (levelEditor.editorMode == EditorMode::BG_SELECT)
+  {
+    for (int i = levelEditor.BackgroundIndexStart();
+      i < levelEditor.BackgroundIndexEnd(); ++i)
+    {
+      DrawButton(target, levelEditor.bgButtons.at(i));
+      std::wstring text_page = L"Page ";
+      text_page.append(std::to_wstring(levelEditor.currentBgPage + 1));
+      text_page.append(L" / ");
+      text_page.append(std::to_wstring(levelEditor.bgPages + 1));
+      target->DrawText(text_page.c_str(), text_page.length(), format,
+        D2D1::RectF(GAME_WIDTH + 8, CLIENT_HEIGHT - 20, CLIENT_WIDTH - 4, CLIENT_HEIGHT - 1), brushes);
+    }
+
   }
 
   if (levelEditor.showGrid)
@@ -174,6 +196,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
       if (clicked = button->Click())
         break;
     if (clicked) break;
+
     if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
     {
       for (int i = levelEditor.BrickIndexStart();
@@ -182,18 +205,28 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         if (clicked = levelEditor.brickButtons.at(i)->Click())
           break;
       }
-    }
-    if (clicked) break;
-    Brick* currentBrick = levelEditor.currentBrick;
-    if (currentBrick != nullptr)
-    {
-      POINT p = GameController::GetInstance()->mousePos;
-      unsigned x = p.x / BRICK_WIDTH;
-      unsigned y = p.y / BRICK_HEIGHT;
-      if (x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS)
+
+      if (clicked) break;
+      Brick* currentBrick = levelEditor.currentBrick;
+      if (currentBrick != nullptr)
       {
-        Brick newBrick(*currentBrick, x, y);
-        levelEditor.editorLevel.bricks.push_back(newBrick);
+        POINT p = GameController::GetInstance()->mousePos;
+        unsigned x = p.x / BRICK_WIDTH;
+        unsigned y = p.y / BRICK_HEIGHT;
+        if (x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS)
+        {
+          Brick newBrick(*currentBrick, x, y);
+          levelEditor.editorLevel.bricks.push_back(newBrick);
+        }
+      }
+    }
+    else if (levelEditor.editorMode == EditorMode::BG_SELECT)
+    {
+      for (int i = levelEditor.BackgroundIndexStart();
+        i < levelEditor.BackgroundIndexEnd(); ++i)
+      {
+        if (clicked = levelEditor.bgButtons.at(i)->Click())
+          break;
       }
     }
   }
@@ -232,6 +265,14 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         i < levelEditor.BrickIndexEnd(); ++i)
       {
         levelEditor.brickButtons.at(i)->Update();
+      }
+    }
+    else if (levelEditor.editorMode == EditorMode::BG_SELECT)
+    {
+      for (int i = levelEditor.BackgroundIndexStart();
+        i < levelEditor.BackgroundIndexEnd(); ++i)
+      {
+        levelEditor.bgButtons.at(i)->Update();
       }
     }
   }

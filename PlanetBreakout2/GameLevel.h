@@ -14,4 +14,17 @@ struct GameLevel
     background.clear();
     map_name.clear();
   }
+  void validate()
+  {
+    std::vector<Brick>::iterator it;
+    for (it = bricks.begin(); it != bricks.end(); ++it)
+    {
+      std::vector<Brick>::iterator prev_it = std::prev(it);
+      if (it->col == 0)
+      {
+        bricks.erase(it);
+        it = prev_it;
+      }
+    }
+  }
 };
