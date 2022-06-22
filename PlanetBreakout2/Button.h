@@ -1,6 +1,7 @@
 #pragma once
 #include "Drawable.h"
 #include "ResourceLoader.h"
+#include "GameController.h"
 #include <functional>
 
 struct Text
@@ -64,9 +65,6 @@ struct Icon
   }
 };
 
-void DefaultAction()
-{
-}
 
 //typedef void (*Action)(void);
 //typedef void (Drawable::* Action2)(void);

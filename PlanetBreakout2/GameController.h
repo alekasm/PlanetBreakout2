@@ -4,12 +4,9 @@
 enum GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR};
 struct GameController
 {
-  static GameController* GetInstance()
-  {
-    if (instance == nullptr)
-      instance = new GameController();
-    return instance;
-  }  
+  static GameController* GetInstance();
+  static void RemoveIllegalBricks(GameLevel&);
+  static void AddGameBricks(GameLevel&);
   GameType type;
   std::wstring map_filename;
   GameLevel current_level;
