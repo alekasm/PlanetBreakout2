@@ -197,14 +197,16 @@ void LevelEditor::initialize()
     button1->SetText(button1Text);
 
     Icon button1icon(D2D1::RectF(
-      button1->x, button1->y,
-      button1->x + BRICK_WIDTH, button1->y + BRICK_HEIGHT),
+      (FLOAT)button1->x,
+      (FLOAT)button1->y,
+      (FLOAT)button1->x + BRICK_WIDTH,
+      (FLOAT)button1->y + BRICK_HEIGHT),
       brick.sprite);
     button1icon.CenterX(button1->d2d1Rect);
     button1icon.AlignIcon(0.f, 1.0f);
     button1->SetIcon(button1icon);
     button1->action = [this](void) {
-      for (int i = 0; i < brickButtons.size(); ++i)
+      for (size_t i = 0; i < brickButtons.size(); ++i)
       {
         if (brickButtons.at(i)->selected)
         {
@@ -234,14 +236,16 @@ void LevelEditor::initialize()
     //offset because im inserting a button in the beginning
     Button* button1 = CreateButton(i + 1);
     Icon button1icon(D2D1::RectF(
-      button1->x, button1->y,
-      button1->x + TILE_WIDTH, button1->y + TILE_HEIGHT),
+      (FLOAT)button1->x,
+      (FLOAT)button1->y,
+      (FLOAT)button1->x + TILE_WIDTH,
+      (FLOAT)button1->y + TILE_HEIGHT),
       bg);
     button1icon.CenterX(button1->d2d1Rect);
     button1icon.AlignIcon(0.f, 1.0f);
     button1->SetIcon(button1icon);
     button1->action = [this](void) {
-      for (int i = 0; i < bgButtons.size(); ++i)
+      for (size_t i = 0; i < bgButtons.size(); ++i)
       {
         if (bgButtons.at(i)->selected)
         {
