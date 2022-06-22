@@ -151,6 +151,7 @@
     <ClCompile Include="ClientMenu.cpp" />
     <ClCompile Include="EditorMenu.cpp" />
     <ClCompile Include="GameController.cpp" />
+    <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameLoader.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="main.cpp" />

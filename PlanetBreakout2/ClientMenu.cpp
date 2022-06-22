@@ -216,7 +216,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         if (x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS)
         {
           Brick newBrick(*currentBrick, x, y);
-          levelEditor.editorLevel.bricks.push_back(newBrick);
+          levelEditor.editorLevel.AddBrick(newBrick);
         }
       }
     }

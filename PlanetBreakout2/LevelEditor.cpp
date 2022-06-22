@@ -7,7 +7,7 @@ Button* CreateButton(size_t index)
 {
   unsigned buttonOnPage = index % EDITOR_BUTTONS_PER_PAGE;
   unsigned x = GAME_WIDTH + 10;
-  unsigned y = 200 + (buttonOnPage * (EDITOR_BUTTON_HEIGHT + 15));
+  unsigned y = 225 + (buttonOnPage * (EDITOR_BUTTON_HEIGHT + 15));
   if (buttonOnPage > (EDITOR_BUTTONS_PER_PAGE / 2) - 1)
   {
     x += 125;
@@ -77,7 +77,6 @@ void LevelEditor::initialize()
   }
 
   {
-    //Drawable button0draw(GAME_WIDTH + 110 + 20, 50, 100, 14);
     Drawable button0draw(GAME_WIDTH + 20, 50 + (14 + 10) * 2, 100, 14);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Select Brick");
@@ -104,7 +103,7 @@ void LevelEditor::initialize()
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
-      GameController::GetInstance()->RemoveIllegalBricks(editorLevel);
+      editorLevel.validate();
       GameLoader::SaveMap(editorLevel);
     };
     primaryButtons.push_back(button0);
@@ -121,7 +120,7 @@ void LevelEditor::initialize()
       if (ResourceLoader::GetFile(loadmap))
       {
         GameLoader::LoadMap(loadmap, editorLevel);
-        //editorLevel.validate();
+        editorLevel.validate();
       }
     };
     primaryButtons.push_back(button0);
@@ -249,7 +248,8 @@ void LevelEditor::initialize()
       {
         if (bgButtons.at(i)->selected)
         {
-          editorLevel.background = GameLoader::GetAssetBackgrounds().at(i);
+          //Offset because of the first None button
+          editorLevel.background = GameLoader::GetAssetBackgrounds().at(i - 1);
           break;
         }
       }
