@@ -2,9 +2,15 @@
 
 void GameLevel::clear()
 {
-  bricks.clear();
+  //bricks.clear();
+  brickMap.clear();
   background.clear();
   map_name.clear();
+}
+
+inline uint32_t GameLevel::GetIndex(uint32_t col, uint32_t row)
+{
+  return col + GRID_COLUMNS * row;
 }
 
 bool IsReservedBrick(const Brick& brick)
@@ -15,20 +21,24 @@ bool IsReservedBrick(const Brick& brick)
 
 void GameLevel::validate()
 {
-  std::vector<Brick>::iterator it;
-  for (it = bricks.begin(); it != bricks.end();)
+  BrickMap::iterator map_it;
+  for (map_it = brickMap.begin(); map_it != brickMap.end(); ++map_it)
   {
-    if(IsReservedBrick(*it))
+    std::vector<Brick>::iterator it;
+    for (it = map_it->second.begin(); it != map_it->second.end();)
     {
-      it = bricks.erase(it);
-      continue;
+      if (IsReservedBrick(*it))
+      {
+        it = map_it->second.erase(it);
+        continue;
+      }
+      ++it;
     }
-    ++it;
   }
 }
 
 void GameLevel::AddBrick(Brick brick)
 {
   if (!IsReservedBrick(brick))
-    bricks.push_back(brick);
+    brickMap[GetIndex(brick.col, brick.row)].push_back(brick);
 }

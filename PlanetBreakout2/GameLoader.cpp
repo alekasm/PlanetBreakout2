@@ -150,8 +150,10 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
 {
   GameLevel level;
   std::vector<std::wstring> backgrounds;
-  if (!LoadFile(filename, FileType::MAP, level.bricks, backgrounds))
+  std::vector<Brick> bricks;
+  if (!LoadFile(filename, FileType::MAP, bricks, backgrounds))
     return false;
+
   if (backgrounds.empty())
   {
     //level.background = DEFAULT_BACKGROUND;
@@ -171,6 +173,11 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   {
     printf("Error: %s\n", e.what());
     return false;
+  }
+  for (Brick& brick : bricks)
+  {
+    uint32_t index = GameLevel::GetIndex(brick.col, brick.row);
+    level.brickMap[index].push_back(brick);
   }
 }
 
@@ -212,13 +219,17 @@ bool GameLoader::SaveMap(GameLevel& level)
   {
     output << L"background:" << level.background << L"\n";
   }
-  for (const Brick& brick : level.bricks)
+  BrickMap::iterator map_it = level.brickMap.begin();
+  for (; map_it != level.brickMap.end(); ++map_it)
   {
-    output << L"brick:";
-    output << std::to_wstring(brick.subtype) + L",";
-    output << brick.sprite + L",";
-    output << std::to_wstring(brick.col) + L",";
-    output << std::to_wstring(brick.row) << L"\n";
+    for (const Brick& brick : map_it->second)
+    {
+      output << L"brick:";
+      output << std::to_wstring(brick.subtype) + L",";
+      output << brick.sprite + L",";
+      output << std::to_wstring(brick.col) + L",";
+      output << std::to_wstring(brick.row) << L"\n";
+    }
   }
   output.close();
   printf("Saved map: %ls\n", savename.c_str());

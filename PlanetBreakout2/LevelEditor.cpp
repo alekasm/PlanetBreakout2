@@ -181,7 +181,8 @@ void LevelEditor::initialize()
   }
 
   unsigned brickCount = GameLoader::GetAssetBricks().size();
-  brickPages = (brickCount - 1) / EDITOR_BUTTONS_PER_PAGE;
+  if(brickCount > 0)
+    brickPages = (brickCount - 1) / EDITOR_BUTTONS_PER_PAGE;
   for (size_t i = 0; i < brickCount; ++i)
   {
     Brick brick = GameLoader::GetAssetBricks().at(i);

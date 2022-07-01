@@ -80,12 +80,16 @@ inline void DrawEditor(ClientMenu* menu)
           D2D1::RectF(x, y, x + TILE_WIDTH, y + TILE_HEIGHT), 1.0f);
       }
   }
-  for (Brick brick : level.bricks)
+  BrickMap::iterator map_it = level.brickMap.begin();
+  for (; map_it != level.brickMap.end(); ++map_it)
   {
-    D2D1_RECT_F rect1 = brick.d2d1Rect;
-    rect1.right += 50;
-    rect1.bottom += 50;
-    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.sprite), brick.d2d1Rect, 1.0f);
+    for (Brick brick : map_it->second)
+    {
+      D2D1_RECT_F rect1 = brick.d2d1Rect;
+      rect1.right += 50;
+      rect1.bottom += 50;
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.sprite), brick.d2d1Rect, 1.0f);
+    }
   }
 
   for (Button* button : levelEditor.primaryButtons)
@@ -238,13 +242,14 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     unsigned y = p.y / BRICK_HEIGHT;
     if (x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS)
     {
-      std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.bricks.rbegin();
-      for (; it != levelEditor.editorLevel.bricks.rend(); ++it)
+      uint32_t index = GameLevel::GetIndex(x, y);
+      std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.brickMap[index].rbegin();
+      for (; it != levelEditor.editorLevel.brickMap[index].rend(); ++it)
       {
         Brick brick = (*it);
         if (brick.col == x && brick.row == y)
         {
-          levelEditor.editorLevel.bricks.erase(std::next(it).base());
+          levelEditor.editorLevel.brickMap[index].erase(std::next(it).base());
           break;
         }
       }
