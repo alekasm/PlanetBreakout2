@@ -153,6 +153,10 @@ void ResourceLoader::InitializeClient(HWND hWnd)
     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
     10.0f, L"en-us", &formats[TextFormat::LEFT_10F]);
 
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    8.0f, L"en-us", &formats[TextFormat::LEFT_8F]);
+
   D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &factory);
   factory->CreateHwndRenderTarget(
     D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_HARDWARE),

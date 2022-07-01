@@ -57,6 +57,7 @@ inline void DrawEditor(ClientMenu* menu)
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
   ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
+  ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
@@ -83,6 +84,7 @@ inline void DrawEditor(ClientMenu* menu)
   BrickMap::iterator map_it = level.brickMap.begin();
   for (; map_it != level.brickMap.end(); ++map_it)
   {
+    if (map_it->second.empty()) continue;
     for (Brick brick : map_it->second)
     {
       D2D1_RECT_F rect1 = brick.d2d1Rect;
@@ -90,7 +92,12 @@ inline void DrawEditor(ClientMenu* menu)
       rect1.bottom += 50;
       target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.sprite), brick.d2d1Rect, 1.0f);
     }
+    std::wstring count = std::to_wstring(map_it->second.size());
+    target->DrawTextA(count.c_str(), count.length(),
+      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+      map_it->second.at(0).d2d1Rect, greenBrush);
   }
+
 
   for (Button* button : levelEditor.primaryButtons)
   {

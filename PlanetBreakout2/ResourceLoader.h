@@ -18,7 +18,7 @@
 
 
 enum ColorBrush { GRAY, GREEN };
-enum TextFormat { LEFT_12F, CENTER_12F, LEFT_10F };
+enum TextFormat { LEFT_12F, CENTER_12F, LEFT_10F, LEFT_8F };
 typedef std::unordered_map<std::wstring, ID2D1Bitmap*> SpriteMap;
 struct ResourceLoader
 {

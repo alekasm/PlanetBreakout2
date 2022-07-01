@@ -162,10 +162,16 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   {
     level.background = backgrounds.at(0);
   }
+
   try {
     std::wstring key = std::filesystem::path(filename).filename().wstring();
     level.map_name = key;
     level_map[key] = level;
+    for (Brick& brick : bricks)
+    {
+      uint32_t index = GameLevel::GetIndex(brick.col, brick.row);
+      level.brickMap[index].push_back(brick);
+    }
     out = level;
     return true;
   }
@@ -173,11 +179,6 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   {
     printf("Error: %s\n", e.what());
     return false;
-  }
-  for (Brick& brick : bricks)
-  {
-    uint32_t index = GameLevel::GetIndex(brick.col, brick.row);
-    level.brickMap[index].push_back(brick);
   }
 }
 
