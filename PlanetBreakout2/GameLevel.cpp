@@ -1,6 +1,7 @@
 #include "GameLevel.h"
 #include "LogicHelper.h"
 
+
 void GameLevel::clear()
 {
   //bricks.clear();

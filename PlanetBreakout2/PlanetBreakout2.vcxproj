@@ -149,7 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ClientMenu.cpp" />
-    <ClCompile Include="EditorMenu.cpp" />
+    <ClCompile Include="EditorSaveMenu.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameLoader.cpp" />

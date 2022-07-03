@@ -5,7 +5,7 @@
 
 LRESULT CALLBACK EditorWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  EditorMenu* pWnd = (EditorMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
+  EditorSaveMenu* pWnd = (EditorSaveMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
   switch (message)
   {
   case WM_NCCREATE:
@@ -17,7 +17,7 @@ LRESULT CALLBACK EditorWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-void EditorMenu::Initialize(HINSTANCE hInstance)
+void EditorSaveMenu::Initialize(HINSTANCE hInstance)
 {
   grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   grfExStyle = WS_EX_STATICEDGE;
@@ -42,11 +42,11 @@ void EditorMenu::Initialize(HINSTANCE hInstance)
   hWnd = CreateWindowEx(
     grfExStyle,
     EditorClass.lpszClassName,
-    std::string("Planet Breakout 2 - Map Editor").c_str(),
+    std::string("Planet Breakout 2 - Map Editor Save").c_str(),
     grfStyle,
     0, 0,
     WindowRect.right - WindowRect.left,
     WindowRect.bottom - WindowRect.top, NULL, NULL, hInstance, this);
 
-  //ShowWindow(hWnd, FALSE);
+  ShowWindow(hWnd, TRUE);
 }

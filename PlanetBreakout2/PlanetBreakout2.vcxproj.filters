@@ -27,7 +27,7 @@
     <ClCompile Include="ClientMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditorMenu.cpp">
+    <ClCompile Include="EditorSaveMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameController.cpp">

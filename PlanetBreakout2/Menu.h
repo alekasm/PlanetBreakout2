@@ -18,19 +18,18 @@ struct ClientMenu : Menu
   void PostInitialize() override;
 };
 
-struct EditorMenu : Menu
+struct EditorSaveMenu : Menu
 {
   void Initialize(HINSTANCE) override;
 };
 
-enum MenuType { MENU_CLIENT, MENU_EDITOR };
+enum MenuType { MENU_CLIENT, MENU_EDITORSAVE };
 namespace 
 {
   Menu* Menus[MENU_COUNT];
   void InitializeMenus(HINSTANCE hInstance)
   {
     Menus[MenuType::MENU_CLIENT] = new ClientMenu();
-    //Menus[MenuType::EDITOR] = new EditorMenu();
     for (int i = 0; i < MENU_COUNT; ++i)
     {
       printf("Initializing Menu: %d\n", i);

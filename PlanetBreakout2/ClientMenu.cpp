@@ -94,31 +94,37 @@ inline void DrawEditor(ClientMenu* menu)
       rect1.bottom += 50;
       target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.sprite), brick.d2d1Rect, 1.0f);
     }
-    std::wstring count = std::to_wstring(map_it->second.size());
-    target->DrawTextA(count.c_str(), count.length(),
-      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-      map_it->second.at(0).d2d1Rect, blackBrush);
-    target->DrawTextA(count.c_str(), count.length(),
-      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-      AdjustRect(map_it->second.at(0).d2d1Rect, 1.f, 1.f), greenBrush);
+    if (levelEditor.showGrid)
+    {
+      std::wstring count = std::to_wstring(map_it->second.size());
+      target->DrawTextA(count.c_str(), count.length(),
+        ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+        map_it->second.at(0).d2d1Rect, blackBrush);
+      target->DrawTextA(count.c_str(), count.length(),
+        ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+        AdjustRect(map_it->second.at(0).d2d1Rect, 1.f, 1.f), greenBrush);
+    }
   }
 
-  Brick* currentBrick = levelEditor.currentBrick;
-  if (currentBrick != nullptr)
+  if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
   {
-    POINT p = GameController::GetInstance()->mousePos;
-    unsigned x = p.x / BRICK_WIDTH;
-    unsigned y = p.y / BRICK_HEIGHT;
-    if (IsInGameSceen(x, y))
+    Brick* currentBrick = levelEditor.currentBrick;
+    if (currentBrick != nullptr)
     {
-      if (IsReservedBrick(x, y))
+      POINT p = GameController::GetInstance()->mousePos;
+      unsigned x = p.x / BRICK_WIDTH;
+      unsigned y = p.y / BRICK_HEIGHT;
+      if (IsInGameSceen(x, y))
       {
-        target->FillRectangle(GetBrickRect(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
-      }
-      else
-      {
-        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
-          GetBrickRect(x, y), 0.5f);
+        if (IsReservedBrick(x, y))
+        {
+          target->FillRectangle(GetBrickRect(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
+        }
+        else
+        {
+          target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
+            GetBrickRect(x, y), 0.5f);
+        }
       }
     }
   }

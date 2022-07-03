@@ -16,8 +16,9 @@ D2D1_RECT_F GetBrickRect(uint32_t col, uint32_t row)
 
 bool IsReservedBrick(uint32_t col, uint32_t row)
 {
-  return (row == 0 || row >= GRID_ROWS - 4 ||
-    col == 0 || col == GRID_COLUMNS - 1);
+  return row >= GRID_ROWS - 6;
+  //return (row == 0 || row >= GRID_ROWS - 4 ||
+  //  col == 0 || col == GRID_COLUMNS - 1);
 }
 
 bool IsReservedBrick(const Brick& brick)
@@ -27,7 +28,7 @@ bool IsReservedBrick(const Brick& brick)
 
 bool IsInGameSceen(uint32_t x, uint32_t y)
 {
-  return x >= 0 && x < GRID_COLUMNS&& y >= 0 && y < GRID_ROWS;
+  return x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS;
 }
 
 D2D1_RECT_F AdjustRect(const D2D1_RECT_F& rect, float offsetX, float offsetY)
