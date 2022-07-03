@@ -1,6 +1,7 @@
 #pragma once
 #include <exception>
 #include <d2d1helper.h>
+#include <string>
 #include "Constants.h"
 #include "Drawable.h"
 

@@ -8,13 +8,14 @@ struct GameController
   GameType type;
   std::wstring map_filename;
   GameLevel current_level;
-  uint64_t points;
-  uint64_t lives;
+  uint64_t points = 0;
+  uint64_t lives = 0;
   POINT mousePos;
 private:
   static GameController* instance;
   GameController()
   {
     type = GAME_EDITOR;
+    mousePos = POINT();
   }
 };

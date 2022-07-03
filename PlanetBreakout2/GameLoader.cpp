@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "ResourceLoader.h"
 #include "Menu.h"
+#include "LogicHelper.h"
 
 LevelMap GameLoader::level_map;
 std::vector<Brick> GameLoader::assetBricks;
@@ -169,7 +170,7 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
     level_map[key] = level;
     for (Brick& brick : bricks)
     {
-      uint32_t index = GameLevel::GetIndex(brick.col, brick.row);
+      uint32_t index = GetBrickIndex(brick.col, brick.row);
       level.brickMap[index].push_back(brick);
     }
     out = level;

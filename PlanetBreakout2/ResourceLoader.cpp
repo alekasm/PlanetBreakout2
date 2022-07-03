@@ -169,6 +169,7 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   target->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
   target->CreateSolidColorBrush(D2D1::ColorF(0x9A9FA8, 1.0f), &brushes[ColorBrush::GRAY]);
   target->CreateSolidColorBrush(D2D1::ColorF(0x98DF50, 1.0f), &brushes[ColorBrush::GREEN]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xFF0000, 0.5f), &brushes[ColorBrush::RED_HALF]);
 
   IWICImagingFactory* pIWICFactory = 0;
   CoCreateInstance(CLSID_WICImagingFactory, NULL,

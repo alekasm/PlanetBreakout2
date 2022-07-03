@@ -10,6 +10,7 @@
 #include "Button.h"
 #include "Windowsx.h"
 #include "LevelEditor.h"
+#include "LogicHelper.h"
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "Dwmapi")
@@ -96,6 +97,26 @@ inline void DrawEditor(ClientMenu* menu)
     target->DrawTextA(count.c_str(), count.length(),
       ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
       map_it->second.at(0).d2d1Rect, greenBrush);
+  }
+
+  Brick* currentBrick = levelEditor.currentBrick;
+  if (currentBrick != nullptr)
+  {
+    POINT p = GameController::GetInstance()->mousePos;
+    unsigned x = p.x / BRICK_WIDTH;
+    unsigned y = p.y / BRICK_HEIGHT;
+    if (IsInGameSceen(x, y))
+    {
+      if (IsReservedBrick(x, y))
+      {
+        target->FillRectangle(GetBrickRect(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
+      }
+      else
+      {
+        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
+          GetBrickRect(x, y), 0.5f);
+      }
+    }
   }
 
 
@@ -224,7 +245,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         POINT p = GameController::GetInstance()->mousePos;
         unsigned x = p.x / BRICK_WIDTH;
         unsigned y = p.y / BRICK_HEIGHT;
-        if (x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS)
+        if (IsInGameSceen(x, y))
         {
           Brick newBrick(*currentBrick, x, y);
           levelEditor.editorLevel.AddBrick(newBrick);
@@ -247,9 +268,9 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     POINT p = GameController::GetInstance()->mousePos;
     unsigned x = p.x / BRICK_WIDTH;
     unsigned y = p.y / BRICK_HEIGHT;
-    if (x >= 0 && x < GRID_COLUMNS && y >= 0 && y < GRID_ROWS)
+    if (IsInGameSceen(x, y))
     {
-      uint32_t index = GameLevel::GetIndex(x, y);
+      uint32_t index = GetBrickIndex(x, y);
       std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.brickMap[index].rbegin();
       for (; it != levelEditor.editorLevel.brickMap[index].rend(); ++it)
       {
