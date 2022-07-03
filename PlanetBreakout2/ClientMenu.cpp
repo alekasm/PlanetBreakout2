@@ -59,6 +59,7 @@ inline void DrawEditor(ClientMenu* menu)
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
   ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
   ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  ID2D1SolidColorBrush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
@@ -96,7 +97,10 @@ inline void DrawEditor(ClientMenu* menu)
     std::wstring count = std::to_wstring(map_it->second.size());
     target->DrawTextA(count.c_str(), count.length(),
       ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-      map_it->second.at(0).d2d1Rect, greenBrush);
+      map_it->second.at(0).d2d1Rect, blackBrush);
+    target->DrawTextA(count.c_str(), count.length(),
+      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+      AdjustRect(map_it->second.at(0).d2d1Rect, 1.f, 1.f), greenBrush);
   }
 
   Brick* currentBrick = levelEditor.currentBrick;

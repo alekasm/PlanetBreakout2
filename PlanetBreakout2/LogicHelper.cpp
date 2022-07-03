@@ -29,3 +29,13 @@ bool IsInGameSceen(uint32_t x, uint32_t y)
 {
   return x >= 0 && x < GRID_COLUMNS&& y >= 0 && y < GRID_ROWS;
 }
+
+D2D1_RECT_F AdjustRect(const D2D1_RECT_F& rect, float offsetX, float offsetY)
+{
+  D2D1_RECT_F copy(rect);
+  copy.left += offsetX;
+  copy.right += offsetX;
+  copy.top += offsetY;
+  copy.bottom += offsetY;
+  return copy;
+}
