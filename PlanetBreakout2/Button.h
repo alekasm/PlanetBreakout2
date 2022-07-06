@@ -29,6 +29,7 @@ struct Text
     if(!text.empty())
       text.erase(text.size() - 1);
   }
+  
 
   Text() = default;
 
@@ -48,6 +49,7 @@ struct Text
   {
     this->text = text;
   }
+
 };
 
 struct Icon
@@ -88,7 +90,7 @@ struct Button : Drawable
   bool highlighted = false;
   bool selected = false;
   ButtonType type;
-
+  int32_t id = -1;
   Icon icon;
   Text text;
 

@@ -41,13 +41,22 @@ inline void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
 
     if (button->hasText)
     {
+      std::wstring text = button->text.text;
+      if (text.empty())
+      {
+        if (button->id == LevelEditorButton::AUTHOR_NAME)
+          text = L"Author Name";
+        else if (button->id == LevelEditorButton::MAP_NAME)
+          text = L"Map Name";
+      }
       target->DrawText(
-        button->text.text.c_str(),
-        button->text.text.length(),
+        text.c_str(),
+        text.length(),
         button->text.textFormat,
         button->text.textRect,
         button->text.textBrush);
     }
+
     if (button->hasIcon)
       target->DrawBitmap(button->icon.iconBitmap, button->icon.iconRect, 1.0f);
   }
@@ -65,13 +74,6 @@ inline void DrawEditor(ClientMenu* menu)
   target->Clear();
   std::wstring text = L"Planet Breakout 2 - Map Editor";
   target->DrawText(text.c_str(), text.length(), format, D2D1::RectF(800, 10, 800 + 300, 25 + 20), brushes);
-  std::wstring textmap = L"Current Map: ";
-  if (levelEditor.editorLevel.map_name.empty())
-    textmap.append(L"<New Map>");
-  else
-    textmap.append(levelEditor.editorLevel.map_name);
-  target->DrawTextA(textmap.c_str(), textmap.length(), ResourceLoader::GetTextFormat(TextFormat::LEFT_10F),
-    D2D1::RectF(GAME_WIDTH + 5, 30, CLIENT_WIDTH, 25 + 30 + 15), brushes);
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
   BrickMap::iterator map_it = level.brickMap.begin();
@@ -261,8 +263,6 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
       break;
     if (wParam == VK_BACK)
       levelEditor.buttonTextSelect->text.DeleteChar();
-    else if (wParam == VK_SPACE)
-      levelEditor.buttonTextSelect->text.AddChar(L' ');
     else if (wParam == VK_RETURN)
       levelEditor.ClearSelected();
   }

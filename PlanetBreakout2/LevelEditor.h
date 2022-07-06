@@ -4,6 +4,7 @@
 #include "GameLevel.h"
 #include "ResourceLoader.h"
 
+enum LevelEditorButton { MAP_NAME, AUTHOR_NAME };
 struct LevelEditor
 {
   void initialize();
@@ -20,7 +21,7 @@ struct LevelEditor
   Button* buttonTextSelect = nullptr;
   unsigned currentBrickPage = 0;
   unsigned brickPages = 0;
-//private:
-//  Button* buttonMapName;
-//  Button* buttonAuthorName;
+private:
+  Button* buttonMapName;
+  Button* buttonAuthorName;
 };

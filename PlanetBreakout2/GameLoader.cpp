@@ -175,7 +175,7 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   }
 }
 
-bool GameLoader::SaveMap(GameLevel& level)
+bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
 {
   std::wstring savename(level.map_name);
   std::filesystem::path map_path = ResourceLoader::GetMapPath();
@@ -227,6 +227,7 @@ bool GameLoader::SaveMap(GameLevel& level)
   }
   output.close();
   printf("Saved map: %ls\n", savename.c_str());
+  save_out = savename;
   return true;
 }
 

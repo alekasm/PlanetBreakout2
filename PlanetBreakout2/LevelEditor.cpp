@@ -43,6 +43,8 @@ void LevelEditor::ClearSelected()
     buttonTextSelect->selected = false;
     buttonTextSelect = nullptr;
   }
+  editorLevel.author = buttonAuthorName->text.text;
+  editorLevel.map_name = buttonMapName->text.text;
 }
 
 const unsigned LevelEditor::BrickIndexEnd()
@@ -76,7 +78,12 @@ void LevelEditor::initialize()
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
       editorLevel.validate();
-      GameLoader::SaveMap(editorLevel);
+      ClearSelected();
+      std::wstring mapname;
+      if (GameLoader::SaveMap(editorLevel, mapname))
+      {
+        buttonMapName->text.text = mapname;
+      }
     };
     primaryButtons.push_back(button0);
   }
@@ -91,8 +98,12 @@ void LevelEditor::initialize()
       std::wstring loadmap;
       if (ResourceLoader::GetFile(loadmap))
       {
-        GameLoader::LoadMap(loadmap, editorLevel);
-        editorLevel.validate();
+        if (GameLoader::LoadMap(loadmap, editorLevel))
+        {
+          editorLevel.validate();
+          buttonMapName->text.text = editorLevel.map_name;
+          buttonAuthorName->text.text = editorLevel.author;
+        }
       }
     };
     primaryButtons.push_back(button0);
@@ -111,10 +122,12 @@ void LevelEditor::initialize()
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 50 + (14 + 20) * 3, 210, 20);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 210, 22);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Map Name");
+    Text button0Text(button0draw.d2d1Rect, L"");
+    button0->id = MAP_NAME;
     button0->SetText(button0Text);
+    buttonMapName = button0;
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this, button0]() {
       if (buttonTextSelect == button0)
@@ -134,10 +147,12 @@ void LevelEditor::initialize()
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 50 + (14 + 20) * 4, 210, 20);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 4, 210, 22);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Author Name");
+    Text button0Text(button0draw.d2d1Rect, L"");
+    button0->id = AUTHOR_NAME;
     button0->SetText(button0Text);
+    buttonAuthorName = button0;
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this, button0]() {
       if (buttonTextSelect == button0)
