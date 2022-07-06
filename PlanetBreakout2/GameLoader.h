@@ -17,9 +17,7 @@ struct GameLoader
   static bool GetLevel(const std::wstring& key, GameLevel& level);
   static bool SaveMap(GameLevel& level, std::wstring& save_out);
   static std::vector<Brick>& GetAssetBricks();
-  static std::vector<std::wstring>& GetAssetBackgrounds();
 private:
   static LevelMap level_map;
   static std::vector<Brick> assetBricks;
-  static std::vector<std::wstring> assetBackgrounds;
 };

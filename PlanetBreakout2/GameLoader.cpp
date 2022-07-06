@@ -10,15 +10,10 @@
 
 LevelMap GameLoader::level_map;
 std::vector<Brick> GameLoader::assetBricks;
-std::vector<std::wstring> GameLoader::assetBackgrounds;
 
 std::vector<Brick>& GameLoader::GetAssetBricks()
 {
   return assetBricks;
-}
-std::vector<std::wstring>& GameLoader::GetAssetBackgrounds()
-{
-  return assetBackgrounds;
 }
 
 //Used for parsing bricks from map files and for asset maps
