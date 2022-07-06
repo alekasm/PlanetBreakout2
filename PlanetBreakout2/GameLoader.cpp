@@ -155,14 +155,6 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   if (!LoadFile(filename, FileType::MAP, bricks, backgrounds))
     return false;
 
-  if (backgrounds.empty())
-  {
-    //level.background = DEFAULT_BACKGROUND;
-  }
-  else
-  {
-    level.background = backgrounds.at(0);
-  }
 
   try {
     std::wstring key = std::filesystem::path(filename).filename().wstring();
@@ -217,9 +209,9 @@ bool GameLoader::SaveMap(GameLevel& level)
   }
   level.map_name = savename;
 
-  if (!level.background.empty())
+  if (!level.author.empty())
   {
-    output << L"background:" << level.background << L"\n";
+    output << L"author:" << level.author << L"\n";
   }
   BrickMap::iterator map_it = level.brickMap.begin();
   for (; map_it != level.brickMap.end(); ++map_it)

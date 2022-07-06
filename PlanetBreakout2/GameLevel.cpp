@@ -4,9 +4,8 @@
 
 void GameLevel::clear()
 {
-  //bricks.clear();
   brickMap.clear();
-  background.clear();
+  author.clear();
   map_name.clear();
 }
 

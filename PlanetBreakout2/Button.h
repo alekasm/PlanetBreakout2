@@ -18,6 +18,18 @@ struct Text
     textBrush = ResourceLoader::GetBrush(ColorBrush::GRAY);
   }
 
+  void AddChar(wchar_t letter)
+  {
+    if(text.size() < 16)
+      text += letter;
+  }
+
+  void DeleteChar()
+  {
+    if(!text.empty())
+      text.erase(text.size() - 1);
+  }
+
   Text() = default;
 
   void FormatText(TextFormat format, ColorBrush brush)
@@ -73,6 +85,7 @@ struct Button : Drawable
 {
   bool hasIcon = false;
   bool hasText = false;
+  bool highlighted = false;
   bool selected = false;
   ButtonType type;
 
@@ -120,13 +133,13 @@ struct Button : Drawable
   {
     if (primitiveFill)
     {
-      selected = PtInRect(&win32Rect, GameController::GetInstance()->mousePos);
+      highlighted = PtInRect(&win32Rect, GameController::GetInstance()->mousePos);
     }
   }
 
   bool Click()
   {
-    if (selected)
+    if (highlighted)
     {
       action();
       return true;

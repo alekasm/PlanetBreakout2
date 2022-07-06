@@ -32,11 +32,13 @@ inline void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
 {
   if (button->type == ButtonType::PRIMITIVE)
   {
-    if (button->selected)
-    {
+    if (button->highlighted)
       target->FillRectangle(button->d2d1Rect, button->primitiveFill);
-    }
-    target->DrawRectangle(button->d2d1Rect, button->primitiveOutline, button->primitiveStroke);
+    if (button->selected)
+      target->DrawRectangle(button->d2d1Rect, button->primitiveFill, button->primitiveStroke);
+    else
+      target->DrawRectangle(button->d2d1Rect, button->primitiveOutline, button->primitiveStroke);
+
     if (button->hasText)
     {
       target->DrawText(
@@ -47,9 +49,7 @@ inline void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
         button->text.textBrush);
     }
     if (button->hasIcon)
-    {
       target->DrawBitmap(button->icon.iconBitmap, button->icon.iconRect, 1.0f);
-    }
   }
 }
 
@@ -74,15 +74,6 @@ inline void DrawEditor(ClientMenu* menu)
     D2D1::RectF(GAME_WIDTH + 5, 30, CLIENT_WIDTH, 25 + 30 + 15), brushes);
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
-  if (!level.background.empty())
-  {
-    for (unsigned y = 0; y < GAME_HEIGHT; y += TILE_HEIGHT)
-      for (unsigned x = 0; x < GAME_WIDTH; x += TILE_WIDTH)
-      {
-        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(level.background),
-          D2D1::RectF(x, y, x + TILE_WIDTH, y + TILE_HEIGHT), 1.0f);
-      }
-  }
   BrickMap::iterator map_it = level.brickMap.begin();
   for (; map_it != level.brickMap.end(); ++map_it)
   {
@@ -106,80 +97,47 @@ inline void DrawEditor(ClientMenu* menu)
     }
   }
 
-  if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
+
+  Brick* currentBrick = levelEditor.currentBrick;
+  if (currentBrick != nullptr)
   {
-    Brick* currentBrick = levelEditor.currentBrick;
-    if (currentBrick != nullptr)
+    POINT p = GameController::GetInstance()->mousePos;
+    unsigned x = p.x / BRICK_WIDTH;
+    unsigned y = p.y / BRICK_HEIGHT;
+    if (IsInGameSceen(x, y))
     {
-      POINT p = GameController::GetInstance()->mousePos;
-      unsigned x = p.x / BRICK_WIDTH;
-      unsigned y = p.y / BRICK_HEIGHT;
-      if (IsInGameSceen(x, y))
+      if (IsReservedBrick(x, y))
       {
-        if (IsReservedBrick(x, y))
-        {
-          target->FillRectangle(GetBrickRect(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
-        }
-        else
-        {
-          target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
-            GetBrickRect(x, y), 0.5f);
-        }
+        target->FillRectangle(GetBrickRect(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
+      }
+      else
+      {
+        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
+          GetBrickRect(x, y), 0.5f);
       }
     }
   }
-
 
   for (Button* button : levelEditor.primaryButtons)
   {
     DrawButton(target, button);
   }
 
-  if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
-  {
-    std::wstring text_select = L"Selection:";
-    if (levelEditor.currentBrick != nullptr)
-    {
-      text_select.append(levelEditor.currentBrick->subtype == BrickType::NORMAL_BRICK ? L"\nBreakable" : L"\nInvincible");
-      //levelEditor.selectionButton->text.Update(text);
-      D2D1_RECT_F selectRect = D2D1::RectF(
-        GAME_WIDTH + (PANEL_WIDTH / 2) - (BRICK_WIDTH / 2),
-        150,
-        GAME_WIDTH + (PANEL_WIDTH / 2) + (BRICK_WIDTH / 2),
-        150 + BRICK_HEIGHT);
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(levelEditor.currentBrick->sprite), selectRect, 1.0f);
-    }
-    target->DrawText(text_select.c_str(), text_select.length(), format,
-      D2D1::RectF(GAME_WIDTH + 4, 150, CLIENT_WIDTH - 4, 170), brushes);
-    unsigned start = levelEditor.BrickIndexStart();
-    unsigned end = levelEditor.BrickIndexEnd();
-    for (unsigned i = start; i < end; ++i)
-    { 
-      DrawButton(target, levelEditor.brickButtons.at(i));
-    }
-    std::wstring text_page = L"Page ";
-    text_page.append(std::to_wstring(levelEditor.currentBrickPage + 1));
-    text_page.append(L" / ");
-    text_page.append(std::to_wstring(levelEditor.brickPages + 1));
-    //GAME_WIDTH + 10, 720, 100, 14
-    target->DrawText(text_page.c_str(), text_page.length(), format,
-      D2D1::RectF(GAME_WIDTH + 8, CLIENT_HEIGHT - 20, CLIENT_WIDTH - 4, CLIENT_HEIGHT - 1), brushes);
-  }
-  else if (levelEditor.editorMode == EditorMode::BG_SELECT)
-  {
-    for (int i = levelEditor.BackgroundIndexStart();
-      i < levelEditor.BackgroundIndexEnd(); ++i)
-    {
-      DrawButton(target, levelEditor.bgButtons.at(i));
-      std::wstring text_page = L"Page ";
-      text_page.append(std::to_wstring(levelEditor.currentBgPage + 1));
-      text_page.append(L" / ");
-      text_page.append(std::to_wstring(levelEditor.bgPages + 1));
-      target->DrawText(text_page.c_str(), text_page.length(), format,
-        D2D1::RectF(GAME_WIDTH + 8, CLIENT_HEIGHT - 20, CLIENT_WIDTH - 4, CLIENT_HEIGHT - 1), brushes);
-    }
 
+  unsigned start = levelEditor.BrickIndexStart();
+  unsigned end = levelEditor.BrickIndexEnd();
+  for (unsigned i = start; i < end; ++i)
+  {
+    DrawButton(target, levelEditor.brickButtons.at(i));
   }
+  std::wstring text_page = L"Page ";
+  text_page.append(std::to_wstring(levelEditor.currentBrickPage + 1));
+  text_page.append(L" / ");
+  text_page.append(std::to_wstring(levelEditor.brickPages + 1));
+  //GAME_WIDTH + 10, 720, 100, 14
+  target->DrawText(text_page.c_str(), text_page.length(), format,
+    D2D1::RectF(GAME_WIDTH + 8, CLIENT_HEIGHT - 20, CLIENT_WIDTH - 4, CLIENT_HEIGHT - 1), brushes);
+
 
   if (levelEditor.showGrid)
   {
@@ -239,36 +197,24 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         break;
     if (clicked) break;
 
-    if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
+    for (int i = levelEditor.BrickIndexStart();
+      i < levelEditor.BrickIndexEnd(); ++i)
     {
-      for (int i = levelEditor.BrickIndexStart();
-        i < levelEditor.BrickIndexEnd(); ++i)
-      {
-        if (clicked = levelEditor.brickButtons.at(i)->Click())
-          break;
-      }
-
-      if (clicked) break;
-      Brick* currentBrick = levelEditor.currentBrick;
-      if (currentBrick != nullptr)
-      {
-        POINT p = GameController::GetInstance()->mousePos;
-        unsigned x = p.x / BRICK_WIDTH;
-        unsigned y = p.y / BRICK_HEIGHT;
-        if (IsInGameSceen(x, y))
-        {
-          Brick newBrick(*currentBrick, x, y);
-          levelEditor.editorLevel.AddBrick(newBrick);
-        }
-      }
+      if (clicked = levelEditor.brickButtons.at(i)->Click())
+        break;
     }
-    else if (levelEditor.editorMode == EditorMode::BG_SELECT)
+
+    if (clicked) break;
+    Brick* currentBrick = levelEditor.currentBrick;
+    if (currentBrick != nullptr)
     {
-      for (int i = levelEditor.BackgroundIndexStart();
-        i < levelEditor.BackgroundIndexEnd(); ++i)
+      POINT p = GameController::GetInstance()->mousePos;
+      unsigned x = p.x / BRICK_WIDTH;
+      unsigned y = p.y / BRICK_HEIGHT;
+      if (IsInGameSceen(x, y))
       {
-        if (clicked = levelEditor.bgButtons.at(i)->Click())
-          break;
+        Brick newBrick(*currentBrick, x, y);
+        levelEditor.editorLevel.AddBrick(newBrick);
       }
     }
   }
@@ -302,22 +248,31 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     GameController::GetInstance()->mousePos = p;
     for (Button* button : levelEditor.primaryButtons)
       button->Update();
-    if (levelEditor.editorMode == EditorMode::BRICK_SELECT)
+    for (int i = levelEditor.BrickIndexStart();
+      i < levelEditor.BrickIndexEnd(); ++i)
     {
-      for (int i = levelEditor.BrickIndexStart();
-        i < levelEditor.BrickIndexEnd(); ++i)
-      {
-        levelEditor.brickButtons.at(i)->Update();
-      }
+      levelEditor.brickButtons.at(i)->Update();
     }
-    else if (levelEditor.editorMode == EditorMode::BG_SELECT)
-    {
-      for (int i = levelEditor.BackgroundIndexStart();
-        i < levelEditor.BackgroundIndexEnd(); ++i)
-      {
-        levelEditor.bgButtons.at(i)->Update();
-      }
-    }
+  }
+  break;
+  case WM_KEYDOWN:
+  {
+    if (levelEditor.buttonTextSelect == nullptr)
+      break;
+    if (wParam == VK_BACK)
+      levelEditor.buttonTextSelect->text.DeleteChar();
+    else if (wParam == VK_SPACE)
+      levelEditor.buttonTextSelect->text.AddChar(L' ');
+    else if (wParam == VK_RETURN)
+      levelEditor.ClearSelected();
+  }
+  break;
+  case WM_CHAR:
+  {
+    if (levelEditor.buttonTextSelect == nullptr)
+      break;
+    if (IsCharAlphaNumeric(wParam))
+      levelEditor.buttonTextSelect->text.AddChar(wParam);
   }
   break;
   case WM_DESTROY:

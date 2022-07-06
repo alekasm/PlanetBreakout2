@@ -4,24 +4,23 @@
 #include "GameLevel.h"
 #include "ResourceLoader.h"
 
-enum class EditorMode { BRICK_SELECT, BG_SELECT };
 struct LevelEditor
 {
   void initialize();
   ~LevelEditor();
   const unsigned BrickIndexStart();
   const unsigned BrickIndexEnd();
-  const unsigned BackgroundIndexStart();
-  const unsigned BackgroundIndexEnd();
+  void ClearSelected();
   std::vector<Button*> brickButtons;
   std::vector<Button*> bgButtons;
   std::vector<Button*> primaryButtons;
   bool showGrid = false;
-  EditorMode editorMode = EditorMode::BRICK_SELECT;
   GameLevel editorLevel;
-  Brick* currentBrick;
+  Brick* currentBrick = nullptr;
+  Button* buttonTextSelect = nullptr;
   unsigned currentBrickPage = 0;
   unsigned brickPages = 0;
-  unsigned currentBgPage = 0;
-  unsigned bgPages = 0;
+//private:
+//  Button* buttonMapName;
+//  Button* buttonAuthorName;
 };
