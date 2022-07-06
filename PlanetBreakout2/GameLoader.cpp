@@ -92,11 +92,14 @@ bool ParseBrick(std::wstring& line, bool hasPosition, std::vector<Brick>& out)
 
 enum class FileType { MAP, ASSET };
 
-static bool LoadFile(
-  const std::wstring& filename,
-  FileType fileType,
-  std::vector<Brick>& bricks,
-  std::vector<std::wstring>& backgrounds)
+struct FileInfo
+{
+  FileType type;
+  std::vector<Brick> bricks;
+  std::wstring author;
+};
+
+static bool LoadFile(const std::wstring& filename, FileInfo& info)
 {
   std::wifstream file_stream(filename.c_str());
   if (!file_stream.good())
@@ -104,7 +107,7 @@ static bool LoadFile(
     printf("Invalid File: %ls\n", filename.c_str());
     return false;
   }
-  const bool parseBrick = fileType == FileType::MAP;
+  const bool parseBrick = info.type == FileType::MAP;
   std::wstring line;
   while (std::getline(file_stream, line))
   {
@@ -120,21 +123,15 @@ static bool LoadFile(
 
     if (token == L"brick")
     {
-      if (!ParseBrick(line, parseBrick, bricks))
+      if (!ParseBrick(line, parseBrick, info.bricks))
       {
         file_stream.close();
         return false;
       }
     }
-    else if (token == L"background")
+    else if (token == L"author")
     {
-      if (!ResourceLoader::ContainsSprite(line))
-      {
-        printf("Invalid background sprite: %ls\n", line.c_str());
-        file_stream.close();
-        return false;
-      }
-      backgrounds.push_back(line);
+      info.author = line;
     }
   }
   file_stream.close();
@@ -144,23 +141,27 @@ static bool LoadFile(
 //Used only for level editing
 bool GameLoader::LoadAssets(const std::wstring& filename)
 {
-  return LoadFile(filename, FileType::ASSET, assetBricks, assetBackgrounds);
+  FileInfo info;
+  info.type = FileType::ASSET;
+  bool success = LoadFile(filename, info);
+  assetBricks = info.bricks;
+  return success;
 }
 
 bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
 {
   GameLevel level;
-  std::vector<std::wstring> backgrounds;
-  std::vector<Brick> bricks;
-  if (!LoadFile(filename, FileType::MAP, bricks, backgrounds))
+  FileInfo info;
+  info.type = FileType::MAP;
+  if (!LoadFile(filename, info))
     return false;
-
 
   try {
     std::wstring key = std::filesystem::path(filename).filename().wstring();
     level.map_name = key;
     level_map[key] = level;
-    for (Brick& brick : bricks)
+    level.author = info.author;
+    for (Brick& brick : info.bricks)
     {
       uint32_t index = GetBrickIndex(brick.col, brick.row);
       level.brickMap[index].push_back(brick);
