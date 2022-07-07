@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="ClientMenu.cpp" />
     <ClCompile Include="EditorSaveMenu.cpp" />
     <ClCompile Include="GameController.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="GameDraw.h" />
     <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="GameController.h" />
