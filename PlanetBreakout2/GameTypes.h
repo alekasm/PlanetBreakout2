@@ -20,45 +20,74 @@ enum TileType { NONE_TILE };
 #define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
 #define ISVALID_TILETYPE(v) (v == NONE_TILE)
 
-struct Entity
+struct Entity :  Drawable
 {
   EntityType type;
   std::wstring sprite;
-  Entity(EntityType type, std::wstring sprite) :
+  Entity(EntityType type, std::wstring sprite, unsigned width, unsigned height) :
+    Drawable(width, height),
     type(type), sprite(sprite)
   {
+  }
+  void MoveCenterX(unsigned cx)
+  {
+    Update(cx - (width / 2), y);
+  }
+
+  void MoveCenterY(unsigned cy)
+  {
+    Update(x, cy - (height / 2));
+  }
+
+  void MoveCenter(unsigned cx, unsigned cy)
+  {
+    Update(cx - (width / 2), cy - (height / 2));
   }
 };
 
 struct Bat : Entity
 {
   BatType subtype;
-  Bat(std::wstring sprite, BatType subtype) :
-    Entity(EntityType::BAT, sprite), subtype(subtype)
+  Bat(std::wstring sprite) :
+    Entity(EntityType::BAT, sprite, BAT_WIDTH, BAT_HEIGHT),
+    subtype(BatType::NORMAL_BAT)
   {
-
   }
   void UpdateType(BatType subtype)
   {
-
   }
 };
 
-struct Brick : Entity, Drawable
+struct Ball : Entity
+{
+  BallType subtype;
+  Ball(std::wstring sprite) :
+    Entity(EntityType::BALL, sprite, BALL_DIMENSION, BALL_DIMENSION),
+    subtype(BallType::NORMAL_BALL)
+  {
+  }
+  void UpdateType(BallType subtype)
+  {
+  }
+};
+
+
+struct Brick : Entity
 {
   unsigned col, row;
   BrickType subtype;
   Brick() = default;
   Brick(BrickType subtype, std::wstring sprite, uint32_t x, uint32_t y) :
-    Entity(EntityType::BRICK, sprite),
-    Drawable(x * BRICK_WIDTH, y * BRICK_HEIGHT, BRICK_WIDTH, BRICK_HEIGHT),
+    Entity(EntityType::BRICK, sprite, BRICK_WIDTH, BRICK_HEIGHT),
     subtype(subtype), col(x), row(y)
   {
+    Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
   }
+
   Brick(const Brick& other, uint32_t x, uint32_t y) :
-    Entity(EntityType::BRICK, other.sprite),
-    Drawable(x* BRICK_WIDTH, y* BRICK_HEIGHT, BRICK_WIDTH, BRICK_HEIGHT),
+    Entity(EntityType::BRICK, other.sprite, BRICK_WIDTH, BRICK_HEIGHT),
     subtype(other.subtype), col(x), row(y)
   {
+    Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
   }
 };

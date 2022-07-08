@@ -13,6 +13,12 @@ struct Drawable
     RecalculateBounds();
   }
 
+  Drawable(unsigned width, unsigned height) :
+    x(0), y(0), width(width), height(height)
+  {
+    RecalculateBounds();
+  }
+
   Drawable(const Drawable& other) :
     x(other.x), y(other.y), width(other.width), height(other.height)
   {

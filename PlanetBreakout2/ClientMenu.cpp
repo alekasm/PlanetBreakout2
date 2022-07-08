@@ -60,7 +60,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         break;
     if (clicked) break;
 
-    for (int i = levelEditor.BrickIndexStart();
+    for (unsigned int i = levelEditor.BrickIndexStart();
       i < levelEditor.BrickIndexEnd(); ++i)
     {
       if (clicked = levelEditor.brickButtons.at(i)->Click())
@@ -111,7 +111,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     GameController::GetInstance()->mousePos = p;
     for (Button* button : levelEditor.primaryButtons)
       button->Update();
-    for (int i = levelEditor.BrickIndexStart();
+    for (unsigned int i = levelEditor.BrickIndexStart();
       i < levelEditor.BrickIndexEnd(); ++i)
     {
       levelEditor.brickButtons.at(i)->Update();
@@ -120,6 +120,19 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   break;
   case WM_KEYDOWN:
   {
+    if (wParam == VK_F5)
+    {
+      if (GameController::GetInstance()->type == GAME_EDITOR)
+      {
+        Campaign campaign;
+        campaign.levels.push_back(levelEditor.editorLevel);
+        GameController::GetInstance()->CreateGame(campaign);
+      }
+      else
+      {
+        GameController::GetInstance()->EndGame();
+      }
+    }
     if (levelEditor.buttonTextSelect == nullptr)
       break;
     if (wParam == VK_BACK)

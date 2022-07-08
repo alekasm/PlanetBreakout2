@@ -17,8 +17,6 @@ D2D1_RECT_F GetBrickRect(uint32_t col, uint32_t row)
 bool IsReservedBrick(uint32_t col, uint32_t row)
 {
   return row >= GRID_ROWS - 6;
-  //return (row == 0 || row >= GRID_ROWS - 4 ||
-  //  col == 0 || col == GRID_COLUMNS - 1);
 }
 
 bool IsReservedBrick(const Brick& brick)

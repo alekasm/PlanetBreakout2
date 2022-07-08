@@ -129,14 +129,14 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
     for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
     {
       target->DrawLine(
-        D2D1::Point2F(x, 0.f), D2D1::Point2F(x, GAME_HEIGHT),
+        D2D1::Point2F((FLOAT)x, 0.f), D2D1::Point2F((FLOAT)x, GAME_HEIGHT),
         brushes);
     }
 
     for (unsigned y = 0; y < GAME_HEIGHT; y += BRICK_HEIGHT)
     {
       target->DrawLine(
-        D2D1::Point2F(0.f, y), D2D1::Point2F(GAME_WIDTH, y),
+        D2D1::Point2F(0.f, (FLOAT)y), D2D1::Point2F(GAME_WIDTH, (FLOAT)y),
         brushes);
     }
   }
@@ -145,7 +145,7 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
 
 void DrawGame(ClientMenu* menu)
 {
-  GameLevel level = GameController::GetInstance()->current_level;
+  GameLevel level = GameController::GetInstance()->campaign.levels.at(0);
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
   ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
@@ -164,5 +164,23 @@ void DrawGame(ClientMenu* menu)
         brick.d2d1Rect, 1.0f);
     }
   }
+  target->DrawBitmap(
+    ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
+    GameController::GetInstance()->bat->d2d1Rect, 1.0f);
+
+  for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
+  {
+    target->DrawLine(
+      D2D1::Point2F((FLOAT)x, 0.f), D2D1::Point2F((FLOAT)x, GAME_HEIGHT),
+      brushes);
+  }
+
+  for (unsigned y = 0; y < GAME_HEIGHT; y += BRICK_HEIGHT)
+  {
+    target->DrawLine(
+      D2D1::Point2F(0.f, (FLOAT)y), D2D1::Point2F(GAME_WIDTH, (FLOAT)y),
+      brushes);
+  }
+  target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->EndDraw();
 }
