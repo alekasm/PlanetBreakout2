@@ -168,6 +168,10 @@ void DrawGame(ClientMenu* menu)
     ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
     GameController::GetInstance()->bat->d2d1Rect, 1.0f);
 
+  target->DrawBitmap(
+    ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->ball->sprite),
+    GameController::GetInstance()->ball->d2d1Rect, 1.0f);
+  /*
   for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
   {
     target->DrawLine(
@@ -181,6 +185,7 @@ void DrawGame(ClientMenu* menu)
       D2D1::Point2F(0.f, (FLOAT)y), D2D1::Point2F(GAME_WIDTH, (FLOAT)y),
       brushes);
   }
+  */
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->EndDraw();
 }
