@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="ClientMenu.cpp" />
     <ClCompile Include="EditorSaveMenu.cpp" />

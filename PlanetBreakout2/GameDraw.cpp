@@ -145,6 +145,8 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
 
 void DrawGame(ClientMenu* menu)
 {
+  //menu->UpdateMousePosition();
+  GameController::GetInstance()->GameUpdate();
   GameLevel level = GameController::GetInstance()->campaign.levels.at(0);
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
@@ -168,9 +170,11 @@ void DrawGame(ClientMenu* menu)
     ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
     GameController::GetInstance()->bat->d2d1Rect, 1.0f);
 
-  target->DrawBitmap(
-    ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->ball->sprite),
-    GameController::GetInstance()->ball->d2d1Rect, 1.0f);
+  for (Ball ball : GameController::GetInstance()->balls)
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(ball.sprite), ball.d2d1Rect, 1.0f);
+  }
   /*
   for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
   {

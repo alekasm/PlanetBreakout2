@@ -21,15 +21,54 @@ namespace
 {
   LevelEditor levelEditor;
   bool initialized = false;
+  HCURSOR cursor;
+  POINT window_center;
+  POINT mouse_pos;
+  const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
+  RECT GameClipRect;
+  
+  bool focused = false;
+  //float window_cx = 0.f, window_cy = 0.f;
 }
 
 void ClientMenu::PostInitialize()
 {
   levelEditor.initialize();
   initialized = true;
+  cursor = LoadCursor(NULL, IDC_ARROW);
+  UpdateClientWindow();
+  window_center = POINT();
 }
 
+void ClientMenu::UpdateClientWindow()
+{
+  GameClipRect = GameWindowRect;
+  ClientToScreen(hWnd, (LPPOINT)&GameClipRect.left);
+  ClientToScreen(hWnd, (LPPOINT)&GameClipRect.right);
+}
 
+void ClientMenu::UpdateMousePosition()
+{
+  if (focused)
+  {
+    //SetCursorPos(window_center.x, window_center.y);
+  }
+}
+
+void SetClientFocus(bool value)
+{
+  focused = value;
+  //SetCursor(focused ? NULL : cursor);
+  if (focused)
+  {
+    //GameController::GetInstance()->MouseUpdate(mouse_pos, true);
+    ClipCursor(&GameClipRect);
+  }
+  else
+  {
+    ClipCursor(NULL);
+  }
+}
 
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -37,9 +76,17 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
   switch (message)
   {
+  case WM_WINDOWPOSCHANGED:
+    pWnd->UpdateClientWindow();
+    //GameController::GetInstance()->MouseUpdate(mouse_pos, true);
+  break;
   case WM_NCCREATE:
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lParam)->lpCreateParams);
     break;
+  case WM_SETCURSOR: //Patches an unsolved edge case with ShowCursor(FALSE)
+    SetClientFocus(focused);
+    break;
+
   case WM_PAINT:
   {
     switch (GameController::GetInstance()->type)
@@ -105,10 +152,10 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   break;
   case WM_MOUSEMOVE:
   {
-    POINT p;
-    p.x = GET_X_LPARAM(lParam);
-    p.y = GET_Y_LPARAM(lParam);
-    GameController::GetInstance()->mousePos = p;
+    mouse_pos.x = GET_X_LPARAM(lParam);
+    mouse_pos.y = GET_Y_LPARAM(lParam);
+    GameController::GetInstance()->MouseUpdate(mouse_pos);
+    pWnd->UpdateMousePosition();
     for (Button* button : levelEditor.primaryButtons)
       button->Update();
     for (unsigned int i = levelEditor.BrickIndexStart();
@@ -127,10 +174,12 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         Campaign campaign;
         campaign.levels.push_back(levelEditor.editorLevel);
         GameController::GetInstance()->CreateGame(campaign);
+        SetClientFocus(true);
       }
       else
       {
         GameController::GetInstance()->EndGame();
+        SetClientFocus(false);
       }
     }
     if (levelEditor.buttonTextSelect == nullptr)

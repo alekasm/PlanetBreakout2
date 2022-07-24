@@ -16,6 +16,8 @@ struct ClientMenu : Menu
 {
   void Initialize(HINSTANCE) override;
   void PostInitialize() override;
+  void UpdateClientWindow();
+  void UpdateMousePosition();
 };
 
 struct EditorSaveMenu : Menu

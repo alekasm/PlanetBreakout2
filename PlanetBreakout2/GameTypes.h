@@ -66,9 +66,14 @@ struct Ball : Entity
     subtype(BallType::NORMAL_BALL)
   {
   }
-  void UpdateType(BallType subtype)
-  {
-  }
+  void UpdateFrame(float frames);
+  void Start();
+  void UpdateType(BallType subtype);
+private:
+  float speed = 1.0f;
+  float direction = 0.f;
+  float real_x = 0.f;
+  float real_y = 0.f;
 };
 
 

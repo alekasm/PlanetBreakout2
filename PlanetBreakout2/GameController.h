@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <chrono>
 #include "GameLevel.h"
 enum GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR};
 
@@ -19,15 +20,23 @@ struct GameController
   uint64_t lives = 0;
   POINT mousePos;
   Bat* bat = nullptr;
-  Ball* ball = nullptr;
+  std::vector<Ball> balls;
   Campaign campaign;
   void CreateGame(Campaign&);
   void EndGame();
+  void MouseUpdate(const POINT& mouse);
+  void GameUpdate();
+
 private:
+  void UpdateBalls();
+  float game_speed = 5.f;
+  std::chrono::milliseconds timer;
   static GameController* instance;
+  POINT mousePosPrev;
   GameController()
   {
     type = GAME_EDITOR;
     mousePos = POINT();
+    mousePosPrev = POINT();
   }
 };
