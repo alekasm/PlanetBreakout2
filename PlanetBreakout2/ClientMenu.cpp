@@ -58,7 +58,7 @@ void ClientMenu::UpdateMousePosition()
 void SetClientFocus(bool value)
 {
   focused = value;
-  //SetCursor(focused ? NULL : cursor);
+  SetCursor(focused ? NULL : cursor);
   if (focused)
   {
     //GameController::GetInstance()->MouseUpdate(mouse_pos, true);

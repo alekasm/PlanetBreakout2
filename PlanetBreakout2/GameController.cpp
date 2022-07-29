@@ -26,12 +26,12 @@ void GameController::GameUpdate()
   std::chrono::milliseconds delta = now - timer;
   timer = now;
 
-  float target_fps = (1000.f / 60.f);
+  float target_fps = (1000.f / TARGET_FPS);
   float elapsed_frames = delta.count() / target_fps;
 
   for (Ball& ball : balls)
   {
-    ball.UpdateFrame(elapsed_frames);
+    ball.UpdateFrame(elapsed_frames, now.count());
   } 
 
   int halfWidth = bat->width / 2;
