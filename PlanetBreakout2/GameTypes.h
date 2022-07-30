@@ -70,6 +70,7 @@ struct Ball : Entity
   void Start();
   void UpdateType(BallType subtype);
 private:
+  void Collision();
   float speed = 1.0f;
   float direction = 0.f;
   float real_x = 0.f;
