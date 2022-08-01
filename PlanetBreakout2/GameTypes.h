@@ -69,9 +69,13 @@ struct Ball : Entity
   void UpdateFrame(float elapsed, size_t current_ms);
   void Start();
   void UpdateType(BallType subtype);
+  bool IsActive();
 private:
   enum CollisionType {HORIZONTAL, VERTICAL};
   void Collision(CollisionType);
+  void RandomDirection(float min, float max);
+  bool active = true;
+  float random = 1.2f;
   float speed = 1.0f;
   float direction = 0.f;
   float real_x = 0.f;

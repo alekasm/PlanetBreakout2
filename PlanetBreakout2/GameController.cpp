@@ -31,7 +31,8 @@ void GameController::GameUpdate()
 
   for (Ball& ball : balls)
   {
-    ball.UpdateFrame(elapsed_frames, now.count());
+    if(ball.IsActive())
+      ball.UpdateFrame(elapsed_frames, now.count());
   } 
 
   int halfWidth = bat->width / 2;
@@ -55,7 +56,7 @@ void GameController::CreateGame(Campaign& campaign)
   starter_ball.Start();
   balls.push_back(starter_ball);
   //ball->MoveCenterX(GAME_WIDTH / 2);
-  bat->Update(0, (GRID_ROWS - 2) * BRICK_HEIGHT);
+  bat->Update(0, BAT_Y);
   bat->MoveCenterX(GAME_WIDTH / 2);
   type = GAME_NORMAL;
 }

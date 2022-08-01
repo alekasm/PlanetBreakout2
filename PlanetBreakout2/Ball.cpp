@@ -1,19 +1,32 @@
 #include "GameTypes.h"
+#include "GameController.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <random>
 
-inline float RandomDirection(float min, float max, size_t current_ms)
+
+void Ball::RandomDirection(float min, float max)
 {
-  std::mt19937 generator(current_ms);
+  start_x = real_x;
+  start_y = real_y;
+  std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
   //Allows me to use real math where y pos is up
   std::uniform_real_distribution<float> distribution(-max, -min);
+  direction = distribution(generator);
+}
+
+inline float Random(float a, float b)
+{
+  float min = min(a, b);
+  float max = max(a, b);
+  std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
+  std::uniform_real_distribution<float> distribution(min, max);
   return distribution(generator);
 }
 
+
 void Ball::Collision(CollisionType type)
 {
-
   float x1 = start_x;
   float y1 = start_y;
   float x2 = real_x;
@@ -44,13 +57,15 @@ void Ball::Collision(CollisionType type)
   {
     x5 = x4;
     dir = -atan2(y1 - y3, x1 - x3);
-    y5 = y2 + sin(dir) * dist;
+    float miny5 =  y2 + sin(dir) * dist;
+    y5 = Random(miny5, miny5 * random);
   }
   else
   {
     y5 = y4;
     dir = -atan2(y3 - y1, x3 - x1);
-    x5 = x2 + cos(dir) * dist;
+    float minx5 = x2 + cos(dir) * dist;
+    x5 = Random(minx5, minx5 * random);
   }
 
   float dir2 = atan2(y5 - y2, x5 - x2);
@@ -59,15 +74,25 @@ void Ball::Collision(CollisionType type)
   start_y = real_y;
 }
 
+bool Ball::IsActive()
+{
+  return active;
+}
+
 void Ball::UpdateFrame(float elapsed, size_t current_ms)
 {
+  if (!active) return;
   float capped_frames = elapsed;
   if (capped_frames > TARGET_FPS / 10.f)
     capped_frames = TARGET_FPS / 10.f;
   float distance = capped_frames * speed;
+  float old_x = real_x;
+  float old_y = real_y;
+
   //cap the distance or x/y?
   real_x = real_x + cos(direction) * distance;
   real_y = real_y + sin(direction) * distance;
+
 
   if (real_x < 0.f)
   {
@@ -79,6 +104,7 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
     real_x = GAME_WIDTH - BALL_DIMENSION;
     Collision(CollisionType::VERTICAL);
   }
+  
   if (real_y < 0.f) 
   {
     real_y = 0.f;
@@ -92,17 +118,41 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
   }
   else if (real_y + BALL_DIMENSION > GAME_HEIGHT)
   {
-    real_y = GAME_HEIGHT - BALL_DIMENSION;
-    Collision(CollisionType::HORIZONTAL);
-    //float min = (M_PI / 6.f);
-    //float max = (5.f * M_PI / 6.f);
-    //direction = RandomDirection(min, max, current_ms);
-    //start_x = real_x;
-    //start_y = real_y;
-    //Collision();
+    active = false;
   }
-
-
+  //Todo old_Y < BAT_Y - BAT_HEIGHT?
+  else if ((real_y + BALL_DIMENSION >= BAT_Y) && old_y < BAT_Y)
+  {
+    float x = GameController::GetInstance()->bat->x;
+    float x1 = x - BALL_DIMENSION;
+    float x2 = x + BAT_WIDTH;
+    if (old_y < BAT_Y)
+    {
+      if (real_x >= x1 && real_x <= x2)
+      {
+        real_y = BAT_Y - BALL_DIMENSION - 1;
+        //use log?
+        float portion = (x2 - real_x) / BAT_WIDTH;
+        float min, max;
+        if (portion > 0.75f)
+        {
+           min = ((3.f * M_PI) / 4.f);
+           max = ((5.f * M_PI) / 6.f);
+        }
+        else if (portion < 0.25f)
+        {
+          min = (M_PI / 6.f);
+          max = (M_PI / 4.f);
+        }
+        else
+        {
+          min = (M_PI / 4.f);
+          max = ((3.f * M_PI) / 4.f);
+        }
+       RandomDirection(min, max);
+      }
+    }
+  }
 
  
   Update(real_x, real_y);
@@ -115,10 +165,10 @@ void Ball::Start()
   //real_y = GAME_HEIGHT /2;
   real_x = x;
   real_y = y;
-  start_x = real_x;
-  start_y = real_y;
+  //start_x = real_x;
+  //start_y = real_y;
   float min = (M_PI / 4.f);
   float max = ((3.f * M_PI) / 4.f);
   //direction = -(M_PI / 6);
-  direction = RandomDirection(min, max, rand() % (std::numeric_limits<uint64_t>::max)());
+  RandomDirection(min, max);
 } 

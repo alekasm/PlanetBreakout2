@@ -172,8 +172,11 @@ void DrawGame(ClientMenu* menu)
 
   for (Ball ball : GameController::GetInstance()->balls)
   {
-    target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(ball.sprite), ball.d2d1Rect, 1.0f);
+    if (ball.IsActive())
+    {
+      target->DrawBitmap(
+        ResourceLoader::GetSpriteMap().at(ball.sprite), ball.d2d1Rect, 1.0f);
+    }
   }
   /*
   for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
