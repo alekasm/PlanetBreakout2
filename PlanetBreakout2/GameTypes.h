@@ -75,13 +75,10 @@ private:
   void Collision(CollisionType);
   void RandomDirection(float min, float max);
   bool active = true;
-  float random = 1.2f;
   float speed = 1.0f;
   float direction = 0.f;
   float real_x = 0.f;
   float real_y = 0.f;
-  float start_x = 0.f;
-  float start_y = 0.f;
 };
 
 

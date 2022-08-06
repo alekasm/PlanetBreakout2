@@ -12,8 +12,6 @@ inline float normalize(float angle)
 
 void Ball::RandomDirection(float min, float max)
 {
-  start_x = real_x;
-  start_y = real_y;
   std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
   //Allows me to use real math where y pos is up
   std::uniform_real_distribution<float> distribution(-max, -min);
@@ -39,9 +37,6 @@ void Ball::Collision(CollisionType type)
   {
     direction = -(atan2(sin(direction), cos(direction)) + (2.f * M_PI));
   }
-
-  start_x = real_x;
-  start_y = real_y;
 }
 
 
@@ -65,6 +60,11 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
   real_x = real_x + cos(direction) * distance;
   real_y = real_y + sin(direction) * distance;
 
+  float y_new_bottom = real_y + BALL_DIMENSION;
+  float y_old_bottom = old_y + BALL_DIMENSION;
+  bool old_above = y_old_bottom <= BAT_Y;
+  bool new_below = y_new_bottom >= BAT_Y;
+
   if (real_x < 0.f)
   {
     real_x = 0.f;
@@ -85,54 +85,24 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
   {
     active = false;
   }
-  //Todo old_Y < BAT_Y - BAT_HEIGHT?
-  else if ((real_y + BALL_DIMENSION >= BAT_Y) && old_y < BAT_Y)
+  else if (old_above && new_below)
   {
-    float x = GameController::GetInstance()->bat->x;
-    float x1 = x - BALL_DIMENSION;
-    float x2 = x + BAT_WIDTH;
-    if (old_y < BAT_Y)
+    float bat_x = GameController::GetInstance()->bat->x;
+    //Add a little forgiveness to the bat dimension
+    float x1 = bat_x - BALL_DIMENSION - 1.f;
+    float x2 = bat_x + BAT_WIDTH + 1.f;
+    if (real_x >= x1 && real_x <= x2)
     {
-      if (real_x >= x1 && real_x <= x2)
-      {
-        real_y = BAT_Y - BALL_DIMENSION - 1;
-        float portion = std::clamp((x2 - real_x) / (BAT_WIDTH + BALL_DIMENSION), 0.0f, 1.0f);
-
-        
-        float cdist = std::clamp(0.5 - fabs(portion - 0.5), 0.15, 0.5);
-        float dir = -(log10f(cdist * 20.f) * M_PI / 2.f);
-        if (portion > 0.5f)
-          dir = -dir - M_PI;
-
-       // printf("portion: %f, cdist = %f, dir=%f\n", portion, cdist, dir * (180 / M_PI));
-
-        direction = dir;
-        start_x = real_x;
-        start_y = real_y;
-        
-        
-        /*
-        float min, max;
-        if (portion > 0.75f)
-        {
-           min = ((3.f * M_PI) / 4.f);
-           max = ((5.f * M_PI) / 6.f);
-        }
-        else if (portion < 0.25f)
-        {
-          min = (M_PI / 6.f);
-          max = (M_PI / 4.f);
-        }
-        else
-        {
-          min = (M_PI / 4.f);
-          max = ((3.f * M_PI) / 4.f);
-        }
-       RandomDirection(min, max);
-       */
-       
-      }
+      //Prevent an immediate retrigger of collision
+      real_y = BAT_Y - BALL_DIMENSION - 0.5f;
+      float portion = std::clamp((x2 - real_x) / (BAT_WIDTH + BALL_DIMENSION), 0.0f, 1.0f);
+      //float dir = M_PI / 6.f + ((4.f * portion) * M_PI / 6.f); //pi/7  - 5pi/6
+      //float dir = M_PI / 8.f + ((6.f * portion) * M_PI / 8.f); //pi/8  - 7pi/8
+      float dir = M_PI / 10.f + ((8.f * portion) * M_PI / 10.f); //pi/10 - 9pi/10
+      direction = -dir;
+      speed += 0.1f;
     }
+
   }
 
  
@@ -142,12 +112,8 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
 void Ball::Start()
 {
   speed = 5.f;
-  //real_x = GAME_WIDTH / 2;
-  //real_y = GAME_HEIGHT /2;
   real_x = x;
   real_y = y;
-  //start_x = real_x;
-  //start_y = real_y;
   float min = (M_PI / 4.f);
   float max = ((3.f * M_PI) / 4.f);
   //direction = -(M_PI / 6);
