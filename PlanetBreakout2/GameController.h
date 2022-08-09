@@ -21,22 +21,26 @@ struct GameController
   POINT mousePos;
   Bat* bat = nullptr;
   std::vector<Ball> balls;
+  
   Campaign campaign;
   void CreateGame(Campaign&);
   void EndGame();
   void MouseUpdate(const POINT& mouse);
   void GameUpdate();
-
+  BrickMap& GetBrickMap();
 private:
+  void Respawn();
   void UpdateBalls();
   float game_speed = 5.f;
   std::chrono::milliseconds timer;
   static GameController* instance;
   POINT mousePosPrev;
+  BrickMap bricks;
   GameController()
   {
     type = GAME_EDITOR;
     mousePos = POINT();
     mousePosPrev = POINT();
+    timer = std::chrono::milliseconds(0);
   }
 };

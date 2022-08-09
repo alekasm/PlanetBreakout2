@@ -94,12 +94,12 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
     {
       if (IsReservedBrick(x, y))
       {
-        target->FillRectangle(GetBrickRect(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
+        target->FillRectangle(GetBrickRectF(x, y), ResourceLoader::GetBrush(ColorBrush::RED_HALF));
       }
       else
       {
         target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
-          GetBrickRect(x, y), 0.5f);
+          GetBrickRectF(x, y), 0.5f);
       }
     }
   }
@@ -147,7 +147,6 @@ void DrawGame(ClientMenu* menu)
 {
   //menu->UpdateMousePosition();
   GameController::GetInstance()->GameUpdate();
-  GameLevel level = GameController::GetInstance()->campaign.levels.at(0);
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
   ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
@@ -156,8 +155,10 @@ void DrawGame(ClientMenu* menu)
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
-  BrickMap::iterator map_it = level.brickMap.begin();
-  for (; map_it != level.brickMap.end(); ++map_it)
+
+  const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
+  BrickMap::const_iterator map_it = brickMap.begin();
+  for (; map_it != brickMap.end(); ++map_it)
   {
     if (map_it->second.empty()) continue;
     for (Brick brick : map_it->second)

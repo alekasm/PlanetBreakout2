@@ -1,13 +1,17 @@
 #include "GameTypes.h"
 #include "GameController.h"
+#include "LogicHelper.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <random>
+#include <set>
 
 
 inline float normalize(float angle)
 {
-  return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
+  //if (angle < 0)
+  //  return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
+ return atan2(sin(angle), cos(angle)) + M_PI;
 }
 
 void Ball::RandomDirection(float min, float max)
@@ -39,8 +43,6 @@ void Ball::Collision(CollisionType type)
   }
 }
 
-
-
 bool Ball::IsActive()
 {
   return active;
@@ -60,6 +62,7 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
   real_x = real_x + cos(direction) * distance;
   real_y = real_y + sin(direction) * distance;
 
+
   float y_new_bottom = real_y + BALL_DIMENSION;
   float y_old_bottom = old_y + BALL_DIMENSION;
   bool old_above = y_old_bottom <= BAT_Y;
@@ -76,7 +79,7 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
     Collision(CollisionType::VERTICAL);
   }
   
-  if (real_y < 0.f) 
+  if (real_y < 0.f)
   {
     real_y = 0.f;
     Collision(CollisionType::HORIZONTAL);
@@ -102,16 +105,54 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
       direction = -dir;
       speed += 0.1f;
     }
-
   }
-
+  else
+  { 
+    //Check brick collisions
+    
  
+    float right = real_x + BALL_DIMENSION;
+    float bottom = real_y + BALL_DIMENSION;
+    long px1 = real_x / BRICK_WIDTH;
+    long py1 = real_y / BRICK_HEIGHT;
+    long px2 = right / BRICK_WIDTH;
+    long py2 = bottom / BRICK_HEIGHT;
+
+    std::vector<POINT> index_check = {
+      POINT { px1, py1 },
+      POINT { px1, py2 },
+      POINT { px2, py1 },
+      POINT { px2, py2 }
+    };
+
+    BrickMap& map = GameController::GetInstance()->GetBrickMap();
+    for (const POINT&  p : index_check)
+    {
+      BrickMap::iterator it = map.find(GetBrickIndex(p.x, p.y));
+      if (it != map.end() && !it->second.empty())
+      {
+        RECT brickRect = GetBrickRect(p.x, p.y);
+        if (old_y > brickRect.bottom || (old_y + BALL_DIMENSION) < brickRect.top)
+          Collision(CollisionType::HORIZONTAL);
+        else
+          Collision(CollisionType::VERTICAL);
+        size_t index = it->second.size() - 1;
+        if (it->second.at(index).subtype == BrickType::NORMAL_BRICK)
+        {
+          it->second.erase(it->second.begin() + index);
+        }
+        real_x = real_x + cos(direction);
+        real_y = real_y + sin(direction);
+        break;
+      }
+    }
+  } 
   Update(real_x, real_y);
 }
 
 void Ball::Start()
 {
-  speed = 5.f;
+  speed = 8.f;
   real_x = x;
   real_y = y;
   float min = (M_PI / 4.f);

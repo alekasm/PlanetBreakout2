@@ -47,13 +47,6 @@ void ClientMenu::UpdateClientWindow()
   ClientToScreen(hWnd, (LPPOINT)&GameClipRect.right);
 }
 
-void ClientMenu::UpdateMousePosition()
-{
-  if (focused)
-  {
-    //SetCursorPos(window_center.x, window_center.y);
-  }
-}
 
 void SetClientFocus(bool value)
 {
@@ -155,7 +148,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     mouse_pos.x = GET_X_LPARAM(lParam);
     mouse_pos.y = GET_Y_LPARAM(lParam);
     GameController::GetInstance()->MouseUpdate(mouse_pos);
-    pWnd->UpdateMousePosition();
+    //pWnd->UpdateMousePosition();
     for (Button* button : levelEditor.primaryButtons)
       button->Update();
     for (unsigned int i = levelEditor.BrickIndexStart();
