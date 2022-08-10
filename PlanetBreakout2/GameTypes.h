@@ -66,7 +66,7 @@ struct Ball : Entity
     subtype(BallType::NORMAL_BALL)
   {
   }
-  void UpdateFrame(float elapsed, size_t current_ms);
+  void UpdateFrame(int64_t elapsed);
   void Start();
   void UpdateType(BallType subtype);
   bool IsActive();

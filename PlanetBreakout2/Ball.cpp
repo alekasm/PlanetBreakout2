@@ -41,6 +41,7 @@ void Ball::Collision(CollisionType type)
   {
     direction = -(atan2(sin(direction), cos(direction)) + (2.f * M_PI));
   }
+  speed = std::clamp(speed + 0.1f, 1.0f, 8.0f);
 }
 
 bool Ball::IsActive()
@@ -48,20 +49,23 @@ bool Ball::IsActive()
   return active;
 }
 
-void Ball::UpdateFrame(float elapsed, size_t current_ms)
+
+void Ball::UpdateFrame(int64_t elapsed)
 {
+
   if (!active) return;
-  float capped_frames = elapsed;
-  if (capped_frames > TARGET_FPS / 10.f)
-    capped_frames = TARGET_FPS / 10.f;
-  float distance = capped_frames * speed;
+
+  float frame_modifier = 1.0f;
+  if (elapsed < TARGET_FRAMES) //slow down
+    frame_modifier = elapsed / TARGET_FRAMES;
+  float distance = frame_modifier * speed;
   float old_x = real_x;
   float old_y = real_y;
 
   //cap the distance or x/y?
+  //TODO calculate worst case scenario for bricks
   real_x = real_x + cos(direction) * distance;
   real_y = real_y + sin(direction) * distance;
-
 
   float y_new_bottom = real_y + BALL_DIMENSION;
   float y_old_bottom = old_y + BALL_DIMENSION;
@@ -103,7 +107,6 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
       //float dir = M_PI / 8.f + ((6.f * portion) * M_PI / 8.f); //pi/8  - 7pi/8
       float dir = M_PI / 10.f + ((8.f * portion) * M_PI / 10.f); //pi/10 - 9pi/10
       direction = -dir;
-      speed += 0.1f;
     }
   }
   else
@@ -141,6 +144,7 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
         {
           it->second.erase(it->second.begin() + index);
         }
+        //Seems fine for now, instead of manually setting ball position
         real_x = real_x + cos(direction);
         real_y = real_y + sin(direction);
         break;
@@ -152,7 +156,7 @@ void Ball::UpdateFrame(float elapsed, size_t current_ms)
 
 void Ball::Start()
 {
-  speed = 8.f;
+  speed = 3.f;
   real_x = x;
   real_y = y;
   float min = (M_PI / 4.f);

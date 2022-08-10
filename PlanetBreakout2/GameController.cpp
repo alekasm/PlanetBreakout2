@@ -47,8 +47,8 @@ void GameController::GameUpdate()
   std::chrono::milliseconds delta = now - timer;
   timer = now;
 
-  float target_fps = (1000.f / TARGET_FPS);
-  float elapsed_frames = delta.count() / target_fps;
+  //float target_fps = (1000.f / TARGET_FPS);
+  //float elapsed_frames = delta.count() / target_fps;
 
   bool any_ball_active = false;
   for (Ball& ball : balls)
@@ -56,7 +56,7 @@ void GameController::GameUpdate()
     if (ball.IsActive())
     {
       any_ball_active = true;
-      ball.UpdateFrame(elapsed_frames, now.count());
+      ball.UpdateFrame(delta.count());
     }
   }
 
