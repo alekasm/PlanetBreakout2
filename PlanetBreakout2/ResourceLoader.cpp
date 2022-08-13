@@ -198,6 +198,8 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   target->CreateSolidColorBrush(D2D1::ColorF(0xdfa650, 1.0f), &brushes[ColorBrush::ORANGE]);
   target->CreateSolidColorBrush(D2D1::ColorF(0xFF0000, 0.5f), &brushes[ColorBrush::RED_HALF]);
   target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 1.0f), &brushes[ColorBrush::BLACK]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.5f), &brushes[ColorBrush::BLACK_HALF]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF, 1.0f), &brushes[ColorBrush::WHITE]);
 
   IWICImagingFactory* pIWICFactory = 0;
   CoCreateInstance(CLSID_WICImagingFactory, NULL,

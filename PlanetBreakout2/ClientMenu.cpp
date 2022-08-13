@@ -121,6 +121,9 @@ void LeftClickLevel()
     case LevelState::START:
       GameController::GetInstance()->Play();
     break;
+    case LevelState::PAUSED:
+      SetClientFocus(true);
+      break;
   }
 }
 
@@ -130,9 +133,11 @@ void RightClickLevel()
   {
   case LevelState::ACTIVE:
     GameController::GetInstance()->Pause();
+    SetClientFocus(false);
     break;
   case LevelState::PAUSED:
     GameController::GetInstance()->Play();
+    SetClientFocus(true);
     break;
   }
 }

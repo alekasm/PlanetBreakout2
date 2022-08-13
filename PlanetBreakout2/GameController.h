@@ -22,11 +22,11 @@ struct GameController
   Bat* bat = nullptr;
   std::vector<Ball> balls;
   uint16_t GetScore();
-  void AddScore(uint16_t amount);
+  void AddScore(uint16_t);
   Campaign campaign;
   void CreateGame(Campaign&);
   void EndGame();
-  void MouseUpdate(const POINT& mouse);
+  void MouseUpdate(const POINT&);
   void GameUpdate();
   void Play();
   void Pause();

@@ -237,11 +237,38 @@ void DrawGame(ClientMenu* menu)
     }
   }
 
-  /*
-  target->DrawBitmap(
-    ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
-   D2D1::RectF(GAME_WIDTH + ), 1.0f);
-  */
+  if (GameController::GetInstance()->GetLevelState() == LevelState::PAUSED)
+  {
+    target->FillRectangle(D2D1::RectF(0.f, 0.f, GAME_WIDTH, GAME_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+    std::wstring text = L"Game Paused";
+    target->DrawText(text.c_str(), text.length(), formatBig,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
+
+    std::wstring text2 = L"Right-Click to Resume";
+    target->DrawText(text2.c_str(), text2.length(), formatMedium2,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) + 26.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 46.f),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
+  }
+  else if (GameController::GetInstance()->GetLevelState() == LevelState::GAME_OVER)
+  {
+    target->FillRectangle(D2D1::RectF(0.f, 0.f, GAME_WIDTH, GAME_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+    std::wstring text = L"Game Over";
+    target->DrawText(text.c_str(), text.length(), formatBig,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+  }
+  else if (GameController::GetInstance()->GetLevelState() == LevelState::START)
+  {
+    std::wstring text = L"Left-Click to Launch!";
+    target->DrawText(text.c_str(), text.length(), format,
+      D2D1::RectF(4.f, 4.f, GAME_WIDTH - 4.f, 16.f),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+  }
 
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->EndDraw();
