@@ -54,14 +54,15 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
 {
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
+  IDWriteTextFormat* format2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_12F);
   ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
   ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   ID2D1SolidColorBrush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
-  std::wstring text = L"Planet Breakout 2 - Map Editor";
-  target->DrawText(text.c_str(), text.length(), format, D2D1::RectF(800, 10, 800 + 300, 25 + 20), brushes);
+  std::wstring text = L"Planet Breakout 2 - Level Editor";
+  target->DrawText(text.c_str(), text.length(), format2, D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
   BrickMap::iterator map_it = level.brickMap.begin();
@@ -143,18 +144,74 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   target->EndDraw();
 }
 
+void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstring value, float y)
+{
+  ID2D1SolidColorBrush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
+  IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
+  IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
+  ID2D1SolidColorBrush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
+  ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+
+  target->DrawText(header.c_str(), header.length(), formatMedium,
+    D2D1::RectF(GAME_WIDTH + 1, y, CLIENT_WIDTH - 1, y + 16.f), darkGrayBrush);
+  target->DrawText(header.c_str(), header.length(), formatMedium,
+    D2D1::RectF(GAME_WIDTH + 3, y + 2, CLIENT_WIDTH - 1, 2 + y + 16.f), greenBrush);
+
+  target->DrawText(value.c_str(), value.length(), formatMedium2,
+    D2D1::RectF(GAME_WIDTH + 1, y + 24.f, CLIENT_WIDTH - 1, (y + 24.f ) + 16.f), orangeBrush);
+}
+
 void DrawGame(ClientMenu* menu)
 {
   //menu->UpdateMousePosition();
   GameController::GetInstance()->GameUpdate();
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
+  IDWriteTextFormat* formatBig = ResourceLoader::GetTextFormat(TextFormat::CENTER_24F);
+  IDWriteTextFormat* formatleft16 = ResourceLoader::GetTextFormat(TextFormat::LEFT_16F);
+  IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
+  IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
   ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
   ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  ID2D1SolidColorBrush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
+  ID2D1SolidColorBrush* darkGreenBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GREEN);
   ID2D1SolidColorBrush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
+  ID2D1SolidColorBrush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
+
+  std::wstring text = L"Planet Breakout 2";
+  target->DrawText(text.c_str(), text.length(), formatBig,
+    D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), brushes);
+  target->DrawText(text.c_str(), text.length(), formatBig,
+    D2D1::RectF(GAME_WIDTH + 2, 1 + 10, CLIENT_WIDTH - 1, 1 + 10 + 24), greenBrush);
+
+
+  size_t current_level = GameController::GetInstance()->current_level;
+  const GameLevel& level = GameController::GetInstance()->campaign.levels.at(current_level);
+  std::wstring campaign_name = GameController::GetInstance()->campaign.name;
+  wchar_t buffer_score[64];
+  swprintf(buffer_score, sizeof(buffer_score), L"%016d",
+    GameController::GetInstance()->GetScore());
+
+  PrintGameInfo(target, L"Campaign", campaign_name, 60.f);
+  PrintGameInfo(target, L"Current Level", level.map_name, 120.f);
+  PrintGameInfo(target, L"Level Author", level.author, 180.f);
+  PrintGameInfo(target, L"Score", std::wstring(buffer_score), 240.f);
+  PrintGameInfo(target, L"Lives", L"", 300.f);
+  for (uint32_t i = 0; i < GameController::GetInstance()->lives; ++i)
+  {
+    if (i > MAX_LIVES) break; //Should not be possible
+    float row = (i / 3) == 0 ? 0.0 : (BAT_HEIGHT * 2.f);
+    float y = 300.f + 36.f + row;
+    float col = (i % 3);
+    float x = 12.f + (col * 20.f) + (col * BAT_WIDTH);
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
+      D2D1::RectF(GAME_WIDTH + x, y, GAME_WIDTH + x + BAT_WIDTH, y + BAT_HEIGHT), 1.0f);
+  }
+
 
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
   BrickMap::const_iterator map_it = brickMap.begin();
@@ -179,21 +236,13 @@ void DrawGame(ClientMenu* menu)
         ResourceLoader::GetSpriteMap().at(ball.sprite), ball.d2d1Rect, 1.0f);
     }
   }
-  /*
-  for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
-  {
-    target->DrawLine(
-      D2D1::Point2F((FLOAT)x, 0.f), D2D1::Point2F((FLOAT)x, GAME_HEIGHT),
-      brushes);
-  }
 
-  for (unsigned y = 0; y < GAME_HEIGHT; y += BRICK_HEIGHT)
-  {
-    target->DrawLine(
-      D2D1::Point2F(0.f, (FLOAT)y), D2D1::Point2F(GAME_WIDTH, (FLOAT)y),
-      brushes);
-  }
+  /*
+  target->DrawBitmap(
+    ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
+   D2D1::RectF(GAME_WIDTH + ), 1.0f);
   */
+
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->EndDraw();
 }

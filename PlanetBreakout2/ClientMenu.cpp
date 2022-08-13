@@ -63,6 +63,82 @@ void SetClientFocus(bool value)
   }
 }
 
+void LeftClickLevelEditor()
+{
+  bool clicked = false;
+  for (Button* button : levelEditor.primaryButtons)
+    if (clicked = button->Click())
+      break;
+  if (clicked) return;
+
+  for (unsigned int i = levelEditor.BrickIndexStart();
+    i < levelEditor.BrickIndexEnd(); ++i)
+  {
+    if (clicked = levelEditor.brickButtons.at(i)->Click())
+      break;
+  }
+
+  if (clicked) return;
+  Brick* currentBrick = levelEditor.currentBrick;
+  if (currentBrick != nullptr)
+  {
+    POINT p = GameController::GetInstance()->mousePos;
+    unsigned x = p.x / BRICK_WIDTH;
+    unsigned y = p.y / BRICK_HEIGHT;
+    if (IsInGameSceen(x, y))
+    {
+      Brick newBrick(*currentBrick, x, y);
+      levelEditor.editorLevel.AddBrick(newBrick);
+    }
+  }
+}
+
+void RightClickLevelEditor()
+{
+  POINT p = GameController::GetInstance()->mousePos;
+  unsigned x = p.x / BRICK_WIDTH;
+  unsigned y = p.y / BRICK_HEIGHT;
+  if (IsInGameSceen(x, y))
+  {
+    uint32_t index = GetBrickIndex(x, y);
+    std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.brickMap[index].rbegin();
+    for (; it != levelEditor.editorLevel.brickMap[index].rend(); ++it)
+    {
+      Brick brick = (*it);
+      if (brick.col == x && brick.row == y)
+      {
+        levelEditor.editorLevel.brickMap[index].erase(std::next(it).base());
+        break;
+      }
+    }
+  }
+}
+
+void LeftClickLevel()
+{
+  switch (GameController::GetInstance()->GetLevelState())
+  {
+    case LevelState::START:
+      GameController::GetInstance()->Play();
+    break;
+  }
+}
+
+void RightClickLevel()
+{
+  switch (GameController::GetInstance()->GetLevelState())
+  {
+  case LevelState::ACTIVE:
+    GameController::GetInstance()->Pause();
+    break;
+  case LevelState::PAUSED:
+    GameController::GetInstance()->Play();
+    break;
+  }
+}
+
+
+
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
@@ -82,9 +158,9 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
   case WM_PAINT:
   {
-    switch (GameController::GetInstance()->type)
+    switch (GameController::GetInstance()->GetGameType())
     {
-    case GAME_EDITOR:
+    case GameType::GAME_EDITOR:
       DrawEditor(pWnd, levelEditor);
       break;
     default:
@@ -94,52 +170,27 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   break;
   case WM_LBUTTONDOWN:
   {
-    bool clicked = false;
-    for (Button* button : levelEditor.primaryButtons)
-      if (clicked = button->Click())
-        break;
-    if (clicked) break;
-
-    for (unsigned int i = levelEditor.BrickIndexStart();
-      i < levelEditor.BrickIndexEnd(); ++i)
+    switch (GameController::GetInstance()->GetGameType())
     {
-      if (clicked = levelEditor.brickButtons.at(i)->Click())
-        break;
-    }
-
-    if (clicked) break;
-    Brick* currentBrick = levelEditor.currentBrick;
-    if (currentBrick != nullptr)
-    {
-      POINT p = GameController::GetInstance()->mousePos;
-      unsigned x = p.x / BRICK_WIDTH;
-      unsigned y = p.y / BRICK_HEIGHT;
-      if (IsInGameSceen(x, y))
-      {
-        Brick newBrick(*currentBrick, x, y);
-        levelEditor.editorLevel.AddBrick(newBrick);
-      }
+    case GameType::GAME_EDITOR:
+      LeftClickLevelEditor();
+      break;
+    case GameType::GAME_NORMAL:
+      LeftClickLevel();
+      break;
     }
   }
   break;
   case WM_RBUTTONDOWN:
   {
-    POINT p = GameController::GetInstance()->mousePos;
-    unsigned x = p.x / BRICK_WIDTH;
-    unsigned y = p.y / BRICK_HEIGHT;
-    if (IsInGameSceen(x, y))
+    switch (GameController::GetInstance()->GetGameType())
     {
-      uint32_t index = GetBrickIndex(x, y);
-      std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.brickMap[index].rbegin();
-      for (; it != levelEditor.editorLevel.brickMap[index].rend(); ++it)
-      {
-        Brick brick = (*it);
-        if (brick.col == x && brick.row == y)
-        {
-          levelEditor.editorLevel.brickMap[index].erase(std::next(it).base());
-          break;
-        }
-      }
+    case GameType::GAME_EDITOR:
+      RightClickLevelEditor();
+      break;
+    case GameType::GAME_NORMAL:
+      RightClickLevel();
+      break;
     }
   }
   break;
@@ -162,10 +213,15 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   {
     if (wParam == VK_F5)
     {
-      if (GameController::GetInstance()->type == GAME_EDITOR)
+      if (GameController::GetInstance()->GetGameType() == GameType::GAME_EDITOR)
       {
         Campaign campaign;
-        campaign.levels.push_back(levelEditor.editorLevel);
+        GameLevel level = levelEditor.editorLevel;
+        if(level.author.empty())
+          level.author = L"Unknown";
+        if (level.map_name.empty())
+          level.map_name = L"Unknown";
+        campaign.levels.push_back(level);
         GameController::GetInstance()->CreateGame(campaign);
         SetClientFocus(true);
       }

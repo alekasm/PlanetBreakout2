@@ -149,6 +149,26 @@ void ResourceLoader::InitializeClient(HWND hWnd)
     12.0f, L"en-us", &formats[TextFormat::CENTER_12F]);
   formats[TextFormat::CENTER_12F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    24.0f, L"en-us", &formats[TextFormat::CENTER_24F]);
+  formats[TextFormat::CENTER_24F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    18.0f, L"en-us", &formats[TextFormat::CENTER_18F]);
+  formats[TextFormat::CENTER_18F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    14.0f, L"en-us", &formats[TextFormat::CENTER_14F]);
+  formats[TextFormat::CENTER_14F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    10.0f, L"en-us", &formats[TextFormat::CENTER_10F]);
+  formats[TextFormat::CENTER_10F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
   wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_NORMAL,
     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
     10.0f, L"en-us", &formats[TextFormat::LEFT_10F]);
@@ -156,6 +176,10 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
     8.0f, L"en-us", &formats[TextFormat::LEFT_8F]);
+
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    16.0f, L"en-us", &formats[TextFormat::LEFT_16F]);
 
   D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &factory);
   factory->CreateHwndRenderTarget(
@@ -169,6 +193,9 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   target->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
   target->CreateSolidColorBrush(D2D1::ColorF(0x9A9FA8, 1.0f), &brushes[ColorBrush::GRAY]);
   target->CreateSolidColorBrush(D2D1::ColorF(0x98DF50, 1.0f), &brushes[ColorBrush::GREEN]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x679e2f, 1.0f), &brushes[ColorBrush::DARK_GREEN]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x121212, 1.0f), &brushes[ColorBrush::DARK_GRAY]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xdfa650, 1.0f), &brushes[ColorBrush::ORANGE]);
   target->CreateSolidColorBrush(D2D1::ColorF(0xFF0000, 0.5f), &brushes[ColorBrush::RED_HALF]);
   target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 1.0f), &brushes[ColorBrush::BLACK]);
 

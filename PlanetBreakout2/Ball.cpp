@@ -9,8 +9,8 @@
 
 inline float normalize(float angle)
 {
-  //if (angle < 0)
-  //  return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
+  if (angle < 0)
+    return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
  return atan2(sin(angle), cos(angle)) + M_PI;
 }
 
@@ -41,7 +41,7 @@ void Ball::Collision(CollisionType type)
   {
     direction = -(atan2(sin(direction), cos(direction)) + (2.f * M_PI));
   }
-  speed = std::clamp(speed + 0.1f, 1.0f, 8.0f);
+  speed = std::clamp(speed + 0.05f, 1.0f, 8.0f);
 }
 
 bool Ball::IsActive()
@@ -49,10 +49,8 @@ bool Ball::IsActive()
   return active;
 }
 
-
 void Ball::UpdateFrame(int64_t elapsed)
 {
-
   if (!active) return;
 
   float frame_modifier = 1.0f;
@@ -96,8 +94,8 @@ void Ball::UpdateFrame(int64_t elapsed)
   {
     float bat_x = GameController::GetInstance()->bat->x;
     //Add a little forgiveness to the bat dimension
-    float x1 = bat_x - BALL_DIMENSION - 1.f;
-    float x2 = bat_x + BAT_WIDTH + 1.f;
+    float x1 = bat_x - BALL_DIMENSION - 2.5f;
+    float x2 = bat_x + BAT_WIDTH + 2.5f;
     if (real_x >= x1 && real_x <= x2)
     {
       //Prevent an immediate retrigger of collision
@@ -111,9 +109,7 @@ void Ball::UpdateFrame(int64_t elapsed)
   }
   else
   { 
-    //Check brick collisions
-    
- 
+    //Check brick collisions 
     float right = real_x + BALL_DIMENSION;
     float bottom = real_y + BALL_DIMENSION;
     long px1 = real_x / BRICK_WIDTH;
@@ -143,6 +139,7 @@ void Ball::UpdateFrame(int64_t elapsed)
         if (it->second.at(index).subtype == BrickType::NORMAL_BRICK)
         {
           it->second.erase(it->second.begin() + index);
+          GameController::GetInstance()->AddScore((uint16_t)(speed * 10));
         }
         //Seems fine for now, instead of manually setting ball position
         real_x = real_x + cos(direction);
@@ -161,6 +158,7 @@ void Ball::Start()
   real_y = y;
   float min = (M_PI / 4.f);
   float max = ((3.f * M_PI) / 4.f);
-  //direction = -(M_PI / 6);
   RandomDirection(min, max);
+  //direction = -(3*M_PI / 4);
+  
 } 
