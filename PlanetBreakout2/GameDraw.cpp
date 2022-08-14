@@ -65,8 +65,8 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   target->DrawText(text.c_str(), text.length(), format2, D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
-  BrickMap::iterator map_it = level.brickMap.begin();
-  for (; map_it != level.brickMap.end(); ++map_it)
+  BrickMap::const_iterator map_it = level.GetBrickMap().begin();
+  for (; map_it != level.GetBrickMap().end(); ++map_it)
   {
     if (map_it->second.empty()) continue;
     for (Brick brick : map_it->second)
@@ -181,9 +181,34 @@ void DrawGame(ClientMenu* menu)
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
 
+  for(int y = 0; y < CLIENT_WIDTH; y += 64)
+    for (int x = GAME_WIDTH; x < CLIENT_WIDTH; x += 64)
+    {
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"bg1"),
+        D2D1::RectF(x, y, x + 64, y + 64), 1.0f);
+    }
+
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 5.f, CLIENT_WIDTH - 5.f, CLIENT_HEIGHT - 5.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 5.f, CLIENT_WIDTH - 5.f, 40.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 5.f, CLIENT_WIDTH - 5.f, 40.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 60.f, CLIENT_WIDTH - 5.f, 230.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 60.f, CLIENT_WIDTH - 5.f, 230.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 300.f, CLIENT_WIDTH - 5.f, 460.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 300.f, CLIENT_WIDTH - 5.f, 460.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+  
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatBig,
-    D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), brushes);
+    D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), darkGrayBrush);
   target->DrawText(text.c_str(), text.length(), formatBig,
     D2D1::RectF(GAME_WIDTH + 2, 1 + 10, CLIENT_WIDTH - 1, 1 + 10 + 24), greenBrush);
 
@@ -198,13 +223,13 @@ void DrawGame(ClientMenu* menu)
   PrintGameInfo(target, L"Campaign", campaign_name, 60.f);
   PrintGameInfo(target, L"Current Level", level.map_name, 120.f);
   PrintGameInfo(target, L"Level Author", level.author, 180.f);
-  PrintGameInfo(target, L"Score", std::wstring(buffer_score), 240.f);
-  PrintGameInfo(target, L"Lives", L"", 300.f);
+  PrintGameInfo(target, L"Score", std::wstring(buffer_score), 300.f);
+  PrintGameInfo(target, L"Lives", L"", 360.f);
   for (uint32_t i = 0; i < GameController::GetInstance()->lives; ++i)
   {
     if (i > MAX_LIVES) break; //Should not be possible
     float row = (i / 3) == 0 ? 0.0 : (BAT_HEIGHT * 2.f);
-    float y = 300.f + 36.f + row;
+    float y = 360.f + 36.f + row;
     float col = (i % 3);
     float x = 12.f + (col * 20.f) + (col * BAT_WIDTH);
     target->DrawBitmap(
@@ -267,6 +292,16 @@ void DrawGame(ClientMenu* menu)
     std::wstring text = L"Left-Click to Launch!";
     target->DrawText(text.c_str(), text.length(), format,
       D2D1::RectF(4.f, 4.f, GAME_WIDTH - 4.f, 16.f),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+  }
+  else if (GameController::GetInstance()->GetLevelState() == LevelState::END)
+  {
+    target->FillRectangle(D2D1::RectF(0.f, 0.f, GAME_WIDTH, GAME_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+    std::wstring text = L"Level Complete!";
+    target->DrawText(text.c_str(), text.length(), formatBig,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
   }
 

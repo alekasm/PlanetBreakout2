@@ -135,12 +135,12 @@ void Ball::UpdateFrame(int64_t elapsed)
           Collision(CollisionType::HORIZONTAL);
         else
           Collision(CollisionType::VERTICAL);
-        size_t index = it->second.size() - 1;
-        if (it->second.at(index).subtype == BrickType::NORMAL_BRICK)
+
+        if (map.Erase(it->first))
         {
-          it->second.erase(it->second.begin() + index);
           GameController::GetInstance()->AddScore((uint16_t)(speed * 10));
         }
+
         //Seems fine for now, instead of manually setting ball position
         real_x = real_x + cos(direction);
         real_y = real_y + sin(direction);

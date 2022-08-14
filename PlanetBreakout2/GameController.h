@@ -34,6 +34,7 @@ struct GameController
   LevelState GetLevelState();
   GameType GetGameType();
   void SetGameType(GameType);
+  Bat* GetBat();
 private:
   LevelState level_state;
   GameType game_type;

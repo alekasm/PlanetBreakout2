@@ -101,6 +101,9 @@ void RightClickLevelEditor()
   if (IsInGameSceen(x, y))
   {
     uint32_t index = GetBrickIndex(x, y);
+    levelEditor.editorLevel.GetBrickMap().Erase(index, true);
+    //auto it = levelEditor.editorLevel.brickMap.count(index);
+    /*
     std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.brickMap[index].rbegin();
     for (; it != levelEditor.editorLevel.brickMap[index].rend(); ++it)
     {
@@ -111,6 +114,7 @@ void RightClickLevelEditor()
         break;
       }
     }
+    */
   }
 }
 
@@ -136,8 +140,17 @@ void RightClickLevel()
     SetClientFocus(false);
     break;
   case LevelState::PAUSED:
-    GameController::GetInstance()->Play();
+    //TODO if attempting to resume and mouse gets adjusted due to clip
+    //the bat jumps
     SetClientFocus(true);
+    Bat* bat = GameController::GetInstance()->GetBat();
+    int x = bat->x + (BAT_WIDTH / 2);
+    int y = bat->y;
+    mouse_pos.x = GameClipRect.left + x;
+    mouse_pos.y = GameClipRect.top + y;
+    GameController::GetInstance()->MouseUpdate(mouse_pos);
+    SetCursorPos(mouse_pos.x, mouse_pos.y);
+    GameController::GetInstance()->Play();
     break;
   }
 }

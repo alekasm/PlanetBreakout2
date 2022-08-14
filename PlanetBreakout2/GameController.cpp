@@ -60,6 +60,11 @@ void GameController::Respawn()
   }
 }
 
+Bat* GameController::GetBat()
+{
+  return bat;
+}
+
 void GameController::Play()
 {
   if (level_state == LevelState::START ||
@@ -82,8 +87,14 @@ void GameController::GameUpdate()
 
   if (level_state == LevelState::PAUSED)
     return;
-  else if (level_state == LevelState::GAME_OVER)
+  if (level_state == LevelState::GAME_OVER)
     return;
+  if (level_state == LevelState::END)
+    return;
+  if (bricks.Empty())
+  {
+    level_state = LevelState::END;
+  }
 
   int halfWidth = bat->width / 2;
   int dx = mousePos.x - halfWidth;
@@ -153,7 +164,7 @@ void GameController::CreateGame(Campaign& campaign)
   lives = 6;
   current_level = 0;
   score = 0;
-  bricks = campaign.levels.at(current_level).brickMap;
+  bricks = campaign.levels.at(current_level).GetBrickMap();
   Respawn();
 }
 

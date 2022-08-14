@@ -77,7 +77,6 @@ void LevelEditor::initialize()
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
-      editorLevel.validate();
       ClearSelected();
       std::wstring mapname;
       if (GameLoader::SaveMap(editorLevel, mapname))
@@ -100,7 +99,6 @@ void LevelEditor::initialize()
       {
         if (GameLoader::LoadMap(loadmap, editorLevel))
         {
-          editorLevel.validate();
           buttonMapName->text.text = editorLevel.map_name;
           buttonAuthorName->text.text = editorLevel.author;
         }
@@ -117,6 +115,8 @@ void LevelEditor::initialize()
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
       editorLevel.clear();
+      buttonMapName->text.text.clear();
+      buttonAuthorName->text.text.clear();
     };
     primaryButtons.push_back(button0);
   }

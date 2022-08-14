@@ -159,7 +159,8 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
     for (Brick& brick : info.bricks)
     {
       uint32_t index = GetBrickIndex(brick.col, brick.row);
-      level.brickMap[index].push_back(brick);
+      level.GetBrickMap().Add(index, brick);
+      //level.brickMap[index].push_back(brick);
     }
     out = level;
     return true;
@@ -209,8 +210,8 @@ bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
   {
     output << L"author:" << level.author << L"\n";
   }
-  BrickMap::iterator map_it = level.brickMap.begin();
-  for (; map_it != level.brickMap.end(); ++map_it)
+  BrickMap::const_iterator map_it = level.GetBrickMap().begin();
+  for (; map_it != level.GetBrickMap().end(); ++map_it)
   {
     for (const Brick& brick : map_it->second)
     {
