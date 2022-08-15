@@ -20,4 +20,5 @@ struct GameLoader
 private:
   static LevelMap level_map;
   static std::vector<Brick> assetBricks;
+  static HCURSOR cursor;
 };

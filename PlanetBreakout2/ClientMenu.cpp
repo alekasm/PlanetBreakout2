@@ -12,6 +12,7 @@
 #include "Windowsx.h"
 #include "LevelEditor.h"
 #include "LogicHelper.h"
+#include "MainMenu.h"
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "Dwmapi")
@@ -20,19 +21,25 @@
 namespace
 {
   LevelEditor levelEditor;
+  MainMenu mainMenu;
   bool initialized = false;
   HCURSOR cursor;
   POINT window_center;
   POINT mouse_pos;
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
   RECT GameClipRect;
-  
   bool focused = false;
   //float window_cx = 0.f, window_cy = 0.f;
 }
 
+bool ClientMenu::IsFocused()
+{
+  return focused;
+}
+
 void ClientMenu::PostInitialize()
 {
+  mainMenu.initialize();
   levelEditor.initialize();
   initialized = true;
   cursor = LoadCursor(NULL, IDC_ARROW);
@@ -51,6 +58,7 @@ void ClientMenu::UpdateClientWindow()
 void SetClientFocus(bool value)
 {
   focused = value;
+  //SetCursor(NULL);
   SetCursor(focused ? NULL : cursor);
   if (focused)
   {
@@ -61,6 +69,13 @@ void SetClientFocus(bool value)
   {
     ClipCursor(NULL);
   }
+}
+
+void LeftClickMainMenu()
+{
+  for (Button* button : mainMenu.GetButtons())
+    if(button->Click())
+      break;
 }
 
 void LeftClickLevelEditor()
@@ -102,19 +117,6 @@ void RightClickLevelEditor()
   {
     uint32_t index = GetBrickIndex(x, y);
     levelEditor.editorLevel.GetBrickMap().Erase(index, true);
-    //auto it = levelEditor.editorLevel.brickMap.count(index);
-    /*
-    std::vector<Brick>::reverse_iterator it = levelEditor.editorLevel.brickMap[index].rbegin();
-    for (; it != levelEditor.editorLevel.brickMap[index].rend(); ++it)
-    {
-      Brick brick = (*it);
-      if (brick.col == x && brick.row == y)
-      {
-        levelEditor.editorLevel.brickMap[index].erase(std::next(it).base());
-        break;
-      }
-    }
-    */
   }
 }
 
@@ -155,8 +157,6 @@ void RightClickLevel()
   }
 }
 
-
-
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
@@ -181,6 +181,9 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     case GameType::GAME_EDITOR:
       DrawEditor(pWnd, levelEditor);
       break;
+    case GameType::MAIN_MENU:
+      DrawMainMenu(pWnd, mainMenu);
+      break;
     default:
       DrawGame(pWnd);
     }
@@ -195,6 +198,9 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
       break;
     case GameType::GAME_NORMAL:
       LeftClickLevel();
+      break;
+    case GameType::MAIN_MENU:
+      LeftClickMainMenu();
       break;
     }
   }
@@ -218,12 +224,21 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     mouse_pos.y = GET_Y_LPARAM(lParam);
     GameController::GetInstance()->MouseUpdate(mouse_pos);
     //pWnd->UpdateMousePosition();
-    for (Button* button : levelEditor.primaryButtons)
-      button->Update();
-    for (unsigned int i = levelEditor.BrickIndexStart();
-      i < levelEditor.BrickIndexEnd(); ++i)
+    switch(GameController::GetInstance()->GetGameType())
     {
-      levelEditor.brickButtons.at(i)->Update();
+    case GameType::GAME_EDITOR:
+      for (Button* button : levelEditor.primaryButtons)
+        button->Update();
+      for (unsigned int i = levelEditor.BrickIndexStart();
+        i < levelEditor.BrickIndexEnd(); ++i)
+      {
+        levelEditor.brickButtons.at(i)->Update();
+      }
+      break;
+    case GameType::MAIN_MENU:
+      for (Button* button : mainMenu.GetButtons())
+        button->Update();
+      break;
     }
   }
   break;

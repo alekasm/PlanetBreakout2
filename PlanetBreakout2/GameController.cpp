@@ -4,7 +4,8 @@ GameController* GameController::instance = nullptr;
 
 GameController::GameController()
 {
-  game_type = GameType::GAME_EDITOR;
+  //game_type = GameType::GAME_EDITOR;
+  game_type = GameType::MAIN_MENU;
   mousePos = POINT();
   mousePosPrev = POINT();
   timer = std::chrono::milliseconds(0);

@@ -10,6 +10,7 @@
 
 LevelMap GameLoader::level_map;
 std::vector<Brick> GameLoader::assetBricks;
+HCURSOR GameLoader::cursor;
 
 std::vector<Brick>& GameLoader::GetAssetBricks()
 {
@@ -132,6 +133,8 @@ static bool LoadFile(const std::wstring& filename, FileInfo& info)
   file_stream.close();
   return true;
 }
+
+
 
 //Used only for level editing
 bool GameLoader::LoadAssets(const std::wstring& filename)

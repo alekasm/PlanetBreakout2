@@ -158,6 +158,7 @@
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="LogicHelper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +171,7 @@
     <ClInclude Include="GameLoader.h" />
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="LogicHelper.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="ResourceLoader.h" />

@@ -18,6 +18,7 @@ struct ClientMenu : Menu
   void PostInitialize() override;
   void UpdateClientWindow();
   void UpdateMousePosition();
+  bool IsFocused();
 };
 
 struct EditorSaveMenu : Menu

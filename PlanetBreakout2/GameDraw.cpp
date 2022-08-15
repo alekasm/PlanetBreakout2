@@ -11,6 +11,7 @@
 #include "Windowsx.h"
 #include "LevelEditor.h"
 #include "LogicHelper.h"
+#include "MainMenu.h"
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "Dwmapi")
@@ -55,9 +56,9 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
   IDWriteTextFormat* format2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_12F);
-  ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
-  ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
-  ID2D1SolidColorBrush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
+  ID2D1Brush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
+  ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  ID2D1Brush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
@@ -141,24 +142,59 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
         brushes);
     }
   }
+
+  //POINT p = GameController::GetInstance()->mousePos;
+  //target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"cursor"),
+  //  D2D1::RectF(p.x, p.y, p.x + 24, p.y + 24), 1.0f);
+
   target->EndDraw();
 }
 
 void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstring value, float y)
 {
-  ID2D1SolidColorBrush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
+  ID2D1Brush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
   IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
   IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
-  ID2D1SolidColorBrush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
-  ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
+  ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  ID2D1LinearGradientBrush* gradientBrush = (ID2D1LinearGradientBrush*)ResourceLoader::GetBrush(ColorBrush::GRADIENT_1);
+
 
   target->DrawText(header.c_str(), header.length(), formatMedium,
     D2D1::RectF(GAME_WIDTH + 1, y, CLIENT_WIDTH - 1, y + 16.f), darkGrayBrush);
   target->DrawText(header.c_str(), header.length(), formatMedium,
     D2D1::RectF(GAME_WIDTH + 3, y + 2, CLIENT_WIDTH - 1, 2 + y + 16.f), greenBrush);
 
+  gradientBrush->SetStartPoint(D2D1::Point2F(GAME_WIDTH + 1, y + 24.f));
+  gradientBrush->SetEndPoint(D2D1::Point2F(CLIENT_WIDTH - 1, (y + 24.f) + 16.f));
+
   target->DrawText(value.c_str(), value.length(), formatMedium2,
-    D2D1::RectF(GAME_WIDTH + 1, y + 24.f, CLIENT_WIDTH - 1, (y + 24.f ) + 16.f), orangeBrush);
+    D2D1::RectF(GAME_WIDTH + 1, y + 24.f, CLIENT_WIDTH - 1, (y + 24.f) + 16.f), gradientBrush);
+}
+
+void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
+{
+  ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
+  ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  IDWriteTextFormat* formatBig = ResourceLoader::GetTextFormat(TextFormat::CENTER_24F);
+  IDWriteTextFormat* formatHuge = ResourceLoader::GetTextFormat(TextFormat::CENTER_72F);
+  ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
+
+  target->BeginDraw();
+  target->SetTransform(D2D1::Matrix3x2F::Identity());
+  target->Clear();
+  std::wstring text = L"Planet Breakout 2";
+  target->DrawText(text.c_str(), text.length(), formatHuge,
+    D2D1::RectF(0.f, 100.f, CLIENT_WIDTH - 1, 200.f),
+    ResourceLoader::GetBrush(ColorBrush::DARK_GREEN));
+  target->DrawText(text.c_str(), text.length(), formatHuge,
+    D2D1::RectF(4.f, 104.f, CLIENT_WIDTH - 1, 200.f), greenBrush);
+
+  for (Button* button : mainMenu.GetButtons())
+  {
+    DrawButton(target, button);
+  }
+  target->EndDraw();
 }
 
 void DrawGame(ClientMenu* menu)
@@ -171,12 +207,12 @@ void DrawGame(ClientMenu* menu)
   IDWriteTextFormat* formatleft16 = ResourceLoader::GetTextFormat(TextFormat::LEFT_16F);
   IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
   IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
-  ID2D1SolidColorBrush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
-  ID2D1SolidColorBrush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
-  ID2D1SolidColorBrush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
-  ID2D1SolidColorBrush* darkGreenBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GREEN);
-  ID2D1SolidColorBrush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
-  ID2D1SolidColorBrush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
+  ID2D1Brush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
+  ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
+  ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
+  ID2D1Brush* darkGreenBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GREEN);
+  ID2D1Brush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
+  ID2D1Brush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();

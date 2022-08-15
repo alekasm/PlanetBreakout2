@@ -15,7 +15,7 @@ SpriteMap ResourceLoader::sprite_map;
 ID2D1HwndRenderTarget*  ResourceLoader::target;
 ID2D1Factory* ResourceLoader::factory;
 IDWriteFactory* ResourceLoader::wfactory;
-ID2D1SolidColorBrush* ResourceLoader::brushes[16];
+ID2D1Brush* ResourceLoader::brushes[16];
 IDWriteTextFormat* ResourceLoader::formats[16];
 std::filesystem::path ResourceLoader::runpath;
 
@@ -125,7 +125,7 @@ ID2D1HwndRenderTarget* ResourceLoader::GetHwndRenderTarget()
 }
 
 
-ID2D1SolidColorBrush* ResourceLoader::GetBrush(ColorBrush brush)
+ID2D1Brush* ResourceLoader::GetBrush(ColorBrush brush)
 {
   return brushes[brush];
 }
@@ -166,6 +166,11 @@ void ResourceLoader::InitializeClient(HWND hWnd)
 
   wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    72.0f, L"en-us", &formats[TextFormat::CENTER_72F]);
+  formats[TextFormat::CENTER_72F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
     10.0f, L"en-us", &formats[TextFormat::CENTER_10F]);
   formats[TextFormat::CENTER_10F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
@@ -191,15 +196,28 @@ void ResourceLoader::InitializeClient(HWND hWnd)
 
   target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
   target->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
-  target->CreateSolidColorBrush(D2D1::ColorF(0x9A9FA8, 1.0f), &brushes[ColorBrush::GRAY]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0x98DF50, 1.0f), &brushes[ColorBrush::GREEN]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0x679e2f, 1.0f), &brushes[ColorBrush::DARK_GREEN]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0x121212, 1.0f), &brushes[ColorBrush::DARK_GRAY]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0xdfa650, 1.0f), &brushes[ColorBrush::ORANGE]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0xFF0000, 0.5f), &brushes[ColorBrush::RED_HALF]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 1.0f), &brushes[ColorBrush::BLACK]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.5f), &brushes[ColorBrush::BLACK_HALF]);
-  target->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF, 1.0f), &brushes[ColorBrush::WHITE]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x9A9FA8, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GRAY]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x98DF50, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GREEN]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x679e2f, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::DARK_GREEN]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x121212, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::DARK_GRAY]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xdfa650, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::ORANGE]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xFF0000, 0.5f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::RED_HALF]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::BLACK]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.5f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::BLACK_HALF]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::WHITE]);
+
+  D2D1_GRADIENT_STOP stops[] =
+  {
+      { 0.0f, D2D1::ColorF(D2D1::ColorF::Cyan) },
+      { 1.0f, D2D1::ColorF(D2D1::ColorF::DarkBlue) }
+  };
+
+  ID2D1GradientStopCollection* collection;
+  target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+  D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+  target->CreateLinearGradientBrush(props, collection,
+    (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_1]);
+
 
   IWICImagingFactory* pIWICFactory = 0;
   CoCreateInstance(CLSID_WICImagingFactory, NULL,

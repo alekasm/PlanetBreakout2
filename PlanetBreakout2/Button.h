@@ -8,7 +8,7 @@ struct Text
 {
   std::wstring text;
   IDWriteTextFormat* textFormat;
-  ID2D1SolidColorBrush* textBrush;
+  ID2D1Brush* textBrush;
   D2D1_RECT_F textRect;
 
   Text(const D2D1_RECT_F& drawable, const std::wstring& text) :
@@ -95,8 +95,8 @@ struct Button : Drawable
   Text text;
 
   float primitiveStroke;
-  ID2D1SolidColorBrush* primitiveOutline = nullptr;
-  ID2D1SolidColorBrush* primitiveFill = nullptr;
+  ID2D1Brush* primitiveOutline = nullptr;
+  ID2D1Brush* primitiveFill = nullptr;
   std::function<void()> action = [](){};
 
   Button(const Drawable& drawable) : Drawable(drawable),
