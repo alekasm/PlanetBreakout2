@@ -135,7 +135,6 @@ static bool LoadFile(const std::wstring& filename, FileInfo& info)
 }
 
 
-
 //Used only for level editing
 bool GameLoader::LoadAssets(const std::wstring& filename)
 {

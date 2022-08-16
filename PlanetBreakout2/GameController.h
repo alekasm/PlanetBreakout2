@@ -3,7 +3,7 @@
 #include <chrono>
 #include "GameLevel.h"
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
-enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER};
+enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
 
 //Campaigns dictate the default bat/ball sprites
 struct Campaign
@@ -30,6 +30,7 @@ struct GameController
   void GameUpdate();
   void Play();
   void Pause();
+  void NextLevel();
   BrickMap& GetBrickMap();
   LevelState GetLevelState();
   GameType GetGameType();

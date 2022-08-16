@@ -83,9 +83,20 @@ void GameController::Pause()
     level_state = LevelState::PAUSED;
 }
 
+void GameController::NextLevel()
+{
+  if (level_state != LevelState::END)
+    return;
+  if (current_level + 1 >= campaign.levels.size())
+    return;
+  ++current_level;
+  bricks = campaign.levels.at(current_level).GetBrickMap();
+  Respawn();
+  level_state = LevelState::START;
+}
+
 void GameController::GameUpdate()
 {
-
   if (level_state == LevelState::PAUSED)
     return;
   if (level_state == LevelState::GAME_OVER)
@@ -94,7 +105,11 @@ void GameController::GameUpdate()
     return;
   if (bricks.Empty())
   {
-    level_state = LevelState::END;
+    if (current_level + 1 >= campaign.levels.size())
+      level_state = LevelState::HIGHSCORE;
+    else
+      level_state = LevelState::END;
+    return;
   }
 
   int halfWidth = bat->width / 2;

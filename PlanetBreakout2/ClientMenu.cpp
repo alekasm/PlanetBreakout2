@@ -130,6 +130,9 @@ void LeftClickLevel()
     case LevelState::PAUSED:
       SetClientFocus(true);
       break;
+    case LevelState::END:
+      GameController::GetInstance()->NextLevel();
+      break;
   }
 }
 

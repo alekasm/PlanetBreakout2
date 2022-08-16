@@ -339,6 +339,21 @@ void DrawGame(ClientMenu* menu)
     target->DrawText(text.c_str(), text.length(), formatBig,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+
+    std::wstring text2 = L"Left-Click to Continue";
+    target->DrawText(text2.c_str(), text2.length(), formatMedium2,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) + 26.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 46.f),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+  }
+  else if (GameController::GetInstance()->GetLevelState() == LevelState::HIGHSCORE)
+  {
+    target->FillRectangle(D2D1::RectF(0.f, 0.f, GAME_WIDTH, GAME_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+    std::wstring text = L"Game Complete!";
+    target->DrawText(text.c_str(), text.length(), formatBig,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
   }
 
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
