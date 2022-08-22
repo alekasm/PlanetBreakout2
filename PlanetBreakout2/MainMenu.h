@@ -3,11 +3,12 @@
 #include "Constants.h"
 #include "Button.h"
 #include "ResourceLoader.h"
+#include "Menu.h"
 
 enum class MainMenuState {MAIN, INFO, HIGHSCORE, CAMPAIGN_SELECT};
 struct MainMenu
 {
-  void initialize();
+  void initialize(ClientMenu*);
   //std::vector<Button*>& GetButtons(MainMenuState);
   std::vector<Button*>& GetButtons();
   MainMenuState GetState();

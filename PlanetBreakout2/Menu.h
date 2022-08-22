@@ -19,6 +19,9 @@ struct ClientMenu : Menu
   void UpdateClientWindow();
   void UpdateMousePosition();
   bool IsFocused();
+  void SetClientFocus(bool);
+  void RightClickLevel();
+  void LeftClickLevel();
 };
 
 struct EditorSaveMenu : Menu

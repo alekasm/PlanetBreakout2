@@ -39,8 +39,8 @@ bool ClientMenu::IsFocused()
 
 void ClientMenu::PostInitialize()
 {
-  mainMenu.initialize();
-  levelEditor.initialize();
+  mainMenu.initialize(this);
+  levelEditor.initialize(this);
   initialized = true;
   cursor = LoadCursor(NULL, IDC_ARROW);
   UpdateClientWindow();
@@ -55,7 +55,7 @@ void ClientMenu::UpdateClientWindow()
 }
 
 
-void SetClientFocus(bool value)
+void ClientMenu::SetClientFocus(bool value)
 {
   focused = value;
   //SetCursor(NULL);
@@ -120,7 +120,7 @@ void RightClickLevelEditor()
   }
 }
 
-void LeftClickLevel()
+void ClientMenu::LeftClickLevel()
 {
   switch (GameController::GetInstance()->GetLevelState())
   {
@@ -136,7 +136,7 @@ void LeftClickLevel()
   }
 }
 
-void RightClickLevel()
+void ClientMenu::RightClickLevel()
 {
   switch (GameController::GetInstance()->GetLevelState())
   {
@@ -174,7 +174,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lParam)->lpCreateParams);
     break;
   case WM_SETCURSOR: //Patches an unsolved edge case with ShowCursor(FALSE)
-    SetClientFocus(focused);
+    pWnd->SetClientFocus(focused);
     break;
 
   case WM_PAINT:
@@ -200,7 +200,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
       LeftClickLevelEditor();
       break;
     case GameType::GAME_NORMAL:
-      LeftClickLevel();
+      pWnd->LeftClickLevel();
       break;
     case GameType::MAIN_MENU:
       LeftClickMainMenu();
@@ -216,7 +216,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
       RightClickLevelEditor();
       break;
     case GameType::GAME_NORMAL:
-      RightClickLevel();
+      pWnd->RightClickLevel();
       break;
     }
   }
@@ -247,25 +247,10 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   break;
   case WM_KEYDOWN:
   {
-    if (wParam == VK_F5)
+    if (wParam == VK_ESCAPE)
     {
-      if (GameController::GetInstance()->GetGameType() == GameType::GAME_EDITOR)
-      {
-        Campaign campaign;
-        GameLevel level = levelEditor.editorLevel;
-        if(level.author.empty())
-          level.author = L"Unknown";
-        if (level.map_name.empty())
-          level.map_name = L"Unknown";
-        campaign.levels.push_back(level);
-        GameController::GetInstance()->CreateGame(campaign);
-        SetClientFocus(true);
-      }
-      else
-      {
         GameController::GetInstance()->EndGame();
-        SetClientFocus(false);
-      }
+        pWnd->SetClientFocus(false);
     }
     if (levelEditor.buttonTextSelect == nullptr)
       break;

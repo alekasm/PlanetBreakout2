@@ -58,7 +58,7 @@ const unsigned LevelEditor::BrickIndexEnd()
   return end;
 }
 
-void LevelEditor::initialize()
+void LevelEditor::initialize(ClientMenu* client)
 {
 
   {
@@ -143,7 +143,16 @@ void LevelEditor::initialize()
     button0->SetText(button0Text);
     buttonMapName = button0;
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
-    button0->action = [this, button0]() {
+    button0->action = [this, button0, client]() {
+      Campaign campaign;
+      GameLevel level = editorLevel;
+      if (level.author.empty())
+        level.author = L"Unknown";
+      if (level.map_name.empty())
+        level.map_name = L"Unknown";
+      campaign.levels.push_back(level);
+      GameController::GetInstance()->CreateGame(campaign);
+      client->SetClientFocus(true);
     };
     primaryButtons.push_back(button0);
   }

@@ -41,5 +41,6 @@ private:
   static GameController* instance;
   POINT mousePosPrev;
   BrickMap bricks;
+  GameType old_type = GameType::MAIN_MENU;
   GameController();
 };

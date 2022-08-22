@@ -17,7 +17,7 @@ uint32_t MainMenu::GetCampaignPage()
   return campaign_page;
 }
 
-void MainMenu::initialize()
+void MainMenu::initialize(ClientMenu* client)
 {
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 150, 300, 30);
@@ -82,12 +82,15 @@ void MainMenu::initialize()
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
-    button0->action = [this]() {
+    button0->action = [this, client]() {
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
+        client->SetClientFocus(true);
         GameController::GetInstance()->CreateGame(
           GameLoader::GetCampaigns().at(campaign_page)
         );
+        state = MainMenuState::MAIN;
+        campaign_page = 0;
       }
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button0);

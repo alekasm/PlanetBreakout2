@@ -6,6 +6,7 @@ GameController::GameController()
 {
   //game_type = GameType::GAME_EDITOR;
   game_type = GameType::MAIN_MENU;
+  old_type = game_type;
   mousePos = POINT();
   mousePosPrev = POINT();
   timer = std::chrono::milliseconds(0);
@@ -176,6 +177,7 @@ void GameController::CreateGame(Campaign& campaign)
 {
   this->campaign = campaign;
   bat = new Bat(campaign.bat_sprite);
+  old_type = game_type;
   game_type = GameType::GAME_NORMAL;
   lives = 6;
   current_level = 0;
@@ -186,6 +188,8 @@ void GameController::CreateGame(Campaign& campaign)
 
 void GameController::EndGame()
 {
+  if (game_type != GameType::GAME_NORMAL)
+    return;
   if (bat != nullptr)
   {
     delete bat;
@@ -193,5 +197,5 @@ void GameController::EndGame()
   }
   balls.clear();
   current_level = 0;
-  game_type = GameType::GAME_EDITOR;
+  game_type = old_type;
 }

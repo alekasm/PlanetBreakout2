@@ -3,11 +3,12 @@
 #include "Button.h"
 #include "GameLevel.h"
 #include "ResourceLoader.h"
+#include "Menu.h"
 
 enum LevelEditorButton { MAP_NAME, AUTHOR_NAME };
 struct LevelEditor
 {
-  void initialize();
+  void initialize(ClientMenu*);
   ~LevelEditor();
   const unsigned BrickIndexStart();
   const unsigned BrickIndexEnd();
