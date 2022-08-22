@@ -6,7 +6,7 @@ Button* CreateButton(size_t index)
 {
   unsigned buttonOnPage = index % EDITOR_BUTTONS_PER_PAGE;
   unsigned x = GAME_WIDTH + 10;
-  unsigned y = 225 + (buttonOnPage * (EDITOR_BUTTON_HEIGHT + 15));
+  unsigned y = 280 + (buttonOnPage * (EDITOR_BUTTON_HEIGHT + 15));
   if (buttonOnPage > (EDITOR_BUTTONS_PER_PAGE / 2) - 1)
   {
     x += 125;
@@ -60,18 +60,23 @@ const unsigned LevelEditor::BrickIndexEnd()
 
 void LevelEditor::initialize()
 {
+
   {
-    Drawable button0draw(GAME_WIDTH + 110 + 20, 50 + (14 + 10), 100, 14);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Toggle Grid");
+    Text button0Text(button0draw.d2d1Rect, L"New");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
-    button0->action = [this]() { showGrid ^= true; };
+    button0->action = [this]() {
+      editorLevel.clear();
+      buttonMapName->text.text.clear();
+      buttonAuthorName->text.text.clear();
+    };
     primaryButtons.push_back(button0);
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 110 + 20, 50, 100, 14);
+    Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 3, 100, 14);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Save");
     button0->SetText(button0Text);
@@ -88,7 +93,7 @@ void LevelEditor::initialize()
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 50 + (14 + 10), 100, 14);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 4, 100, 14);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Load");
     button0->SetText(button0Text);
@@ -108,21 +113,45 @@ void LevelEditor::initialize()
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 50, 100, 14);
+    Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 4, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"New");
+    Text button0Text(button0draw.d2d1Rect, L"Toggle Grid");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
-    button0->action = [this]() {
-      editorLevel.clear();
-      buttonMapName->text.text.clear();
-      buttonAuthorName->text.text.clear();
+    button0->action = [this]() { showGrid ^= true; };
+    primaryButtons.push_back(button0);
+  }
+
+
+  {
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 1, 210, 22);
+    Button* button0 = new Button(button0draw);
+    Text button0Text(button0draw.d2d1Rect, L"Main Menu");
+    button0->SetText(button0Text);
+    buttonMapName = button0;
+    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->action = [this, button0]() {
+      GameController::GetInstance()->SetGameType(GameType::MAIN_MENU);
     };
     primaryButtons.push_back(button0);
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 210, 22);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 2, 210, 22);
+    Button* button0 = new Button(button0draw);
+    Text button0Text(button0draw.d2d1Rect, L"Test Level");
+    button0->SetText(button0Text);
+    buttonMapName = button0;
+    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->action = [this, button0]() {
+    };
+    primaryButtons.push_back(button0);
+  }
+
+
+
+  {
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 5, 210, 22);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"");
     button0->id = MAP_NAME;
@@ -147,7 +176,7 @@ void LevelEditor::initialize()
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 4, 210, 22);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 6, 210, 22);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"");
     button0->id = AUTHOR_NAME;

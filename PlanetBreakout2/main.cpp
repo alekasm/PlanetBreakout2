@@ -28,7 +28,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
   ResourceLoader::Initialize();
   InitializeMenus(hInstance);
   ResourceLoader::InitializeClient(Menus[MenuType::MENU_CLIENT]->hWnd);
-  GameLoader::LoadAssets(L"assets/asset_map.cfg");
+  GameLoader::LoadAssets(L"assets/assets.cfg");
+  GameLoader::LoadCampaigns();
 
   Menus[MenuType::MENU_CLIENT]->PostInitialize();
 

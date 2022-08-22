@@ -10,7 +10,10 @@ struct MainMenu
   void initialize();
   //std::vector<Button*>& GetButtons(MainMenuState);
   std::vector<Button*>& GetButtons();
+  MainMenuState GetState();
+  uint32_t GetCampaignPage();
 private:
   std::unordered_map<MainMenuState, std::vector<Button*>> buttons;
-  MainMenuState state = state = MainMenuState::MAIN;
+  MainMenuState state = MainMenuState::MAIN;
+  uint32_t campaign_page = 0;
 };

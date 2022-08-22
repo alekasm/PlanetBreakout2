@@ -176,7 +176,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 {
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
-  IDWriteTextFormat* formatBig = ResourceLoader::GetTextFormat(TextFormat::CENTER_24F);
+  IDWriteTextFormat* formatBig = ResourceLoader::GetTextFormat(TextFormat::LEFT_24F);
   IDWriteTextFormat* formatHuge = ResourceLoader::GetTextFormat(TextFormat::CENTER_72F);
   ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
 
@@ -193,6 +193,49 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   for (Button* button : mainMenu.GetButtons())
   {
     DrawButton(target, button);
+  }
+
+  if (mainMenu.GetState() == MainMenuState::CAMPAIGN_SELECT)
+  {
+    Campaign& campaign = GameLoader::GetCampaigns().at(mainMenu.GetCampaignPage());
+    unsigned i = 1;
+    std::wstring name_string;
+    std::wstring score_string;
+    std::wstring date_string;
+    for (const Highscore& h : campaign.GetHighscores())
+    {
+      wchar_t buffer_score[64];
+      wchar_t buffer_name[64];
+      wchar_t buffer_date[64];
+      std::swprintf(buffer_name,
+        sizeof(buffer_name) / sizeof(wchar_t),
+        L"%d. %s\n", i, h.name.c_str());
+      name_string.append(buffer_name);
+
+      std::swprintf(buffer_score,
+        sizeof(buffer_score) / sizeof(wchar_t),
+        L"%016d\n", h.score);
+      score_string.append(buffer_score);
+
+      tm local;
+      localtime_s(&local, &h.date);
+      char buffer[256];
+      strftime(buffer, sizeof(buffer), "%d %B %Y\n", &local);
+      std::string a(buffer);
+      date_string.append(std::wstring(a.begin(), a.end()));
+      ++i;
+    }
+
+    float y = (CLIENT_HEIGHT / 2.f) - 64;
+    target->DrawText(name_string.c_str(), name_string.length(), formatBig,
+      D2D1::RectF(32.f, y, CLIENT_WIDTH - 32.f, y + 32.f), greenBrush);
+
+    target->DrawText(score_string.c_str(), score_string.length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_24F),
+      D2D1::RectF(0.f, y, CLIENT_WIDTH, y + 32.f), greenBrush);
+
+    target->DrawText(date_string.c_str(), date_string.length(), formatBig,
+      D2D1::RectF(CLIENT_WIDTH - 256.f, y, CLIENT_WIDTH - 32.f, y + 32.f), greenBrush);
   }
   target->EndDraw();
 }

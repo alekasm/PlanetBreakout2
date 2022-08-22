@@ -2,7 +2,6 @@
 #include <vector>
 #include <string>
 #include <set>
-
 #include <unordered_map>
 #include "GameTypes.h"
 
@@ -25,4 +24,30 @@ struct GameLevel
   BrickMap& GetBrickMap();
 private:
   BrickMap brickMap;
+};
+
+struct Highscore
+{
+  std::wstring name;
+  uint16_t score = 0;
+  time_t date;
+  bool pseudo = false;
+  bool operator<(const Highscore& other) const
+  {
+    return score > other.score;
+  }
+};
+
+struct Campaign
+{
+  std::wstring bat_sprite = L"bat";
+  std::wstring ball_sprite = L"ball";
+  std::wstring name = L"None";
+  std::vector<GameLevel> levels;
+  std::wstring path;
+  void AddHighscore(Highscore&);
+  std::vector<Highscore>& GetHighscores();
+  void SaveHighscores();
+private:
+  std::vector<Highscore> highscores;
 };

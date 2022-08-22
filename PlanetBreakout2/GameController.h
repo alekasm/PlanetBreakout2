@@ -6,13 +6,7 @@ enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
 
 //Campaigns dictate the default bat/ball sprites
-struct Campaign
-{
-  std::wstring bat_sprite = L"bat";
-  std::wstring ball_sprite = L"ball";
-  std::wstring name = L"None";
-  std::vector<GameLevel> levels;
-};
+
 struct GameController
 {
   static GameController* GetInstance();

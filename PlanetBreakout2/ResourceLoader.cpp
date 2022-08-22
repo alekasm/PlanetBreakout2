@@ -156,6 +156,10 @@ void ResourceLoader::InitializeClient(HWND hWnd)
 
   wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
     DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    24.0f, L"en-us", &formats[TextFormat::LEFT_24F]);
+
+  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
     18.0f, L"en-us", &formats[TextFormat::CENTER_18F]);
   formats[TextFormat::CENTER_18F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
@@ -274,7 +278,7 @@ void ResourceLoader::Initialize()
   runpath = std::filesystem::current_path();
 }
 
-std::filesystem::path ResourceLoader::GetMapPath()
+std::filesystem::path ResourceLoader::GetLevelPath()
 {
   std::filesystem::path map_path;
   map_path = std::filesystem::path(runpath);

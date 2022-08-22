@@ -8,13 +8,18 @@
 #include "Menu.h"
 #include "LogicHelper.h"
 
-LevelMap GameLoader::level_map;
 std::vector<Brick> GameLoader::assetBricks;
+std::vector<Campaign> GameLoader::campaigns;
 HCURSOR GameLoader::cursor;
 
 std::vector<Brick>& GameLoader::GetAssetBricks()
 {
   return assetBricks;
+}
+
+std::vector<Campaign>& GameLoader::GetCampaigns()
+{
+  return campaigns;
 }
 
 //Used for parsing bricks from map files and for asset maps
@@ -134,6 +139,140 @@ static bool LoadFile(const std::wstring& filename, FileInfo& info)
   return true;
 }
 
+struct Token
+{
+  std::wstring key;
+  std::vector<std::wstring> values;
+};
+
+bool Tokenize(std::wstring& line, Token& token)
+{
+  std::wstring::size_type it = line.find(':');
+  if (it == std::wstring::npos)
+    return false;
+
+  token.key = line.substr(0, it);
+  line.erase(0, it + 1);
+
+  while((it = line.find(',')) != std::wstring::npos)
+  {
+    token.values.push_back(line.substr(0, it));
+    line.erase(0, it + 1);
+  }
+  if (!line.empty())
+    token.values.push_back(line);
+
+  return true;
+
+}
+
+bool ReadFile(const std::wstring& filename, std::vector<std::wstring>& tokens)
+{
+  std::wifstream file_stream(filename.c_str());
+  if (!file_stream.good())
+  {
+    printf("Invalid File: %ls\n", filename.c_str());
+    return false;
+  }
+  std::wstring line;
+  while (std::getline(file_stream, line))
+  {
+    if (line.empty()) continue;
+    if (line.at(0) == L'#') continue;
+    tokens.push_back(line);
+  }
+  return true;
+}
+
+bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
+{
+  std::vector<std::wstring> tokens;
+  if (!ReadFile(filename, tokens))
+  {
+    wprintf(L"Failed to read config: %s\n", filename.c_str());
+    return false;
+  }
+  for (std::wstring string : tokens)
+  {
+    Token t;
+    if (!Tokenize(string, t)) continue;
+    if (t.values.empty()) continue;
+    std::wstring first_value = t.values.at(0);
+    if (t.key == L"ball")
+      campaign.ball_sprite = first_value;
+    else if (t.key == L"bat")
+      campaign.bat_sprite = first_value;
+    else if (t.key == L"name")
+      campaign.name = first_value;
+    else if (t.key == L"highscore")
+    {
+      if (t.values.size() != 3) continue;
+      Highscore highscore;
+      highscore.name = first_value;
+      highscore.score = (uint16_t)std::stoi(t.values.at(1).c_str());
+      highscore.date = std::stoll(t.values.at(2).c_str());
+      campaign.AddHighscore(highscore);
+    }
+  }
+  return true;
+}
+
+bool GameLoader::LoadCampaigns()
+{
+  campaigns.clear();
+  std::vector<std::filesystem::path> campaign_paths;
+  for (const std::filesystem::directory_entry& entry :
+    std::filesystem::directory_iterator(ResourceLoader::GetLevelPath()))
+  {
+    if (entry.is_directory())
+    {
+      campaign_paths.push_back(entry.path());
+    }
+  }
+
+  for (std::filesystem::path& campaign_path : campaign_paths)
+  {
+    Campaign campaign;
+    try
+    {
+      std::wstring name = campaign_path.filename().wstring();
+      campaign.name = name;
+      campaign.path = campaign_path.wstring();
+    }
+    catch (std::exception& e)
+    {
+      printf("Error setting campaign name: %s\n", e.what());
+      continue;
+    }
+    for (const std::filesystem::directory_entry& entry :
+      std::filesystem::directory_iterator(campaign_path))
+    {
+      if (entry.is_regular_file())
+      {
+        std::wstring filename = entry.path().filename().wstring();
+        if (filename == L"campaign.cfg")
+        {
+          ReadCampaignConfig(entry.path().wstring(), campaign);
+        }
+        else
+        {
+          GameLevel level;
+          if (!LoadMap(entry.path().wstring(), level))
+          {
+            wprintf(L"Failed to load level: %s\n", filename.c_str());
+            return false;
+          }
+          campaign.levels.push_back(level);
+        }
+      }
+    }
+    wprintf(L"Loaded %s with %d levels\n", campaign.name.c_str(), campaign.levels.size());
+    campaigns.push_back(campaign);
+    //is_regular_file
+  }  
+  return true;
+}
+
 
 //Used only for level editing
 bool GameLoader::LoadAssets(const std::wstring& filename)
@@ -156,7 +295,7 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   try {
     std::wstring key = std::filesystem::path(filename).filename().wstring();
     level.map_name = key;
-    level_map[key] = level;
+    //level_map[key] = level;
     level.author = info.author;
     for (Brick& brick : info.bricks)
     {
@@ -177,7 +316,7 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
 bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
 {
   std::wstring savename(level.map_name);
-  std::filesystem::path map_path = ResourceLoader::GetMapPath();
+  std::filesystem::path map_path = ResourceLoader::GetLevelPath();
   if (savename.empty())
   {
     unsigned next = 0;
@@ -230,6 +369,7 @@ bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
   return true;
 }
 
+/*
 bool GameLoader::GetLevel(const std::wstring& key, GameLevel& level)
 {
   auto it = level_map.find(key);
@@ -240,3 +380,4 @@ bool GameLoader::GetLevel(const std::wstring& key, GameLevel& level)
   }
   return false;
 }
+*/
