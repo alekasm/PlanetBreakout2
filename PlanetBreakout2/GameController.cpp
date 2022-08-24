@@ -4,15 +4,17 @@ GameController* GameController::instance = nullptr;
 
 GameController::GameController()
 {
-  //game_type = GameType::GAME_EDITOR;
   game_type = GameType::MAIN_MENU;
   old_type = game_type;
   mousePos = POINT();
   mousePosPrev = POINT();
   timer = std::chrono::milliseconds(0);
   level_state = LevelState::START;
- // Drawable button0draw(GAME_WIDTH - 4, CLIENT_WIDTH - GAME_WIDTH - 4, 100, 14);
-  //Button* button0 = new Button(button0draw);
+}
+
+PrimitiveText& GameController::GetHighscoreText()
+{
+  return highscore_text;
 }
 
 LevelState GameController::GetLevelState()
@@ -41,7 +43,7 @@ void GameController::SetGameType(GameType type)
   game_type = type;
 }
 
-void GameController::SetHighscoreName(std::wstring& name)
+void GameController::SetHighscoreName(std::wstring name)
 {
   if (level_state != LevelState::HIGHSCORE)
     return;
@@ -50,7 +52,9 @@ void GameController::SetHighscoreName(std::wstring& name)
   highscore.score = score;
   highscore.name = name;
   campaign.AddHighscore(highscore);
+  //Needs to write back to gameloader...
   level_state = LevelState::GAME_OVER;
+  game_type = GameType::MAIN_MENU;
 }
 
 void GameController::Respawn()
@@ -120,6 +124,8 @@ void GameController::GameUpdate()
   if (level_state == LevelState::GAME_OVER)
     return;
   if (level_state == LevelState::END)
+    return;
+  if (level_state == LevelState::HIGHSCORE)
     return;
   if (bricks.Empty())
   {

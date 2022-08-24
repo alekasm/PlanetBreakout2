@@ -163,19 +163,57 @@ void ClientMenu::RightClickLevel()
 
 void ClientMenu::ProcessWM_CHAR(WPARAM wParam)
 {
+  if (!IsCharAlphaNumeric(wParam)) return;
   GameType game_type = GameController::GetInstance()->GetGameType();
   if (game_type == GameType::GAME_EDITOR)
   {
     if (levelEditor.buttonTextSelect == nullptr)
       return;
-    if (IsCharAlphaNumeric(wParam))
-      levelEditor.buttonTextSelect->text.AddChar(wParam);
+    levelEditor.buttonTextSelect->text.AddChar(wParam);
   }
   else if (game_type == GameType::GAME_NORMAL)
   {
     if (GameController::GetInstance()->GetLevelState() == LevelState::HIGHSCORE)
     {
+      GameController::GetInstance()->GetHighscoreText().AddChar(wParam);
+    }
+  }
+}
 
+void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
+{
+  if (wParam == VK_ESCAPE)
+  {
+    GameController::GetInstance()->EndGame();
+    SetClientFocus(false);
+  }
+  GameType game_type = GameController::GetInstance()->GetGameType();
+  if (game_type == GameType::GAME_EDITOR)
+  {
+    if (levelEditor.buttonTextSelect == nullptr)
+      return;
+    if (wParam == VK_BACK)
+      levelEditor.buttonTextSelect->text.DeleteChar();
+    else if (wParam == VK_RETURN)
+      levelEditor.ClearSelected();
+  }
+  else if (game_type == GameType::GAME_NORMAL)
+  {
+    if (GameController::GetInstance()->GetLevelState() == LevelState::HIGHSCORE)
+    {
+      if (wParam == VK_BACK)
+        GameController::GetInstance()->GetHighscoreText().DeleteChar();
+      else if (wParam == VK_RETURN)
+      {//Seems dumb, but for now it allows the highscore text to be accessed
+        //in GameDraw.cpp
+        if (!GameController::GetInstance()->GetHighscoreText().GetString().empty())
+        {
+          GameController::GetInstance()->SetHighscoreName(
+            GameController::GetInstance()->GetHighscoreText().GetString());
+          GameController::GetInstance()->GetHighscoreText().Clear();
+          SetClientFocus(false);
+        }
+      }
     }
   }
 }
@@ -266,19 +304,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   }
   break;
   case WM_KEYDOWN:
-  {
-    if (wParam == VK_ESCAPE)
-    {
-        GameController::GetInstance()->EndGame();
-        pWnd->SetClientFocus(false);
-    }
-    if (levelEditor.buttonTextSelect == nullptr)
-      break;
-    if (wParam == VK_BACK)
-      levelEditor.buttonTextSelect->text.DeleteChar();
-    else if (wParam == VK_RETURN)
-      levelEditor.ClearSelected();
-  }
+    pWnd->ProcessWM_KEYDOWN(wParam);
   break;
   case WM_CHAR:
     pWnd->ProcessWM_CHAR(wParam);

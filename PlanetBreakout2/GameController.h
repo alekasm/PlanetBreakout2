@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include "GameLevel.h"
+#include "PrimitiveText.h"
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
 
@@ -25,13 +26,15 @@ struct GameController
   void Play();
   void Pause();
   void NextLevel();
-  void SetHighscoreName(std::wstring&);
+  void SetHighscoreName(std::wstring);
   BrickMap& GetBrickMap();
   LevelState GetLevelState();
   GameType GetGameType();
   void SetGameType(GameType);
   Bat* GetBat();
+  PrimitiveText& GetHighscoreText();// TODO
 private:
+  PrimitiveText highscore_text;
   LevelState level_state;
   GameType game_type;
   void Respawn();

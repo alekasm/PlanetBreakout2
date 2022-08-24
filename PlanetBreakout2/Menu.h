@@ -23,6 +23,7 @@ struct ClientMenu : Menu
   void RightClickLevel();
   void LeftClickLevel();
   void ProcessWM_CHAR(WPARAM);
+  void ProcessWM_KEYDOWN(WPARAM);
 };
 
 struct EditorSaveMenu : Menu

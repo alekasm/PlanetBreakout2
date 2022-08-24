@@ -392,9 +392,19 @@ void DrawGame(ClientMenu* menu)
     target->FillRectangle(D2D1::RectF(0.f, 0.f, GAME_WIDTH, GAME_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
 
-    std::wstring text = L"Game Complete!";
+    std::wstring text = L"New Highscore!";
     target->DrawText(text.c_str(), text.length(), formatBig,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 64.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 32.f),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+
+    std::wstring name = GameController::GetInstance()->GetHighscoreText().GetString();
+    target->DrawText(name.c_str(), name.length(), formatBig,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
+      ResourceLoader::GetBrush(ColorBrush::ORANGE));
+
+    std::wstring text2 = L"Press Enter to Accept!";
+    target->DrawText(text2.c_str(), text2.length(), formatMedium2,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) + 26.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 46.f),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
   }
 

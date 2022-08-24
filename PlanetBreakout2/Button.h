@@ -2,42 +2,9 @@
 #include "Drawable.h"
 #include "ResourceLoader.h"
 #include "GameController.h"
+#include "PrimitiveText.h"
 #include <functional>
 
-struct PrimitiveText
-{
-  PrimitiveText() = default;
-  PrimitiveText(std::wstring text)
-  {
-    this->text = text;
-  }
-  void AddChar(wchar_t letter)
-  {
-    if (text.size() < 16)
-      text += letter;
-  }
-
-  void DeleteChar()
-  {
-    if (!text.empty())
-      text.erase(text.size() - 1);
-  }
-
-  void Update(std::wstring text)
-  {
-    this->text = text;
-  }
-  const std::wstring& GetString() const
-  {
-    return text;
-  }
-  void Clear()
-  {
-    text.clear();
-  }
-private:
-  std::wstring text;
-};
 struct Text : PrimitiveText
 {
   IDWriteTextFormat* textFormat;
