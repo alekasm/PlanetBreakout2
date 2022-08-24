@@ -40,12 +40,14 @@ struct Highscore
 
 struct Campaign
 {
+  Campaign();
   std::wstring bat_sprite = L"bat";
   std::wstring ball_sprite = L"ball";
   std::wstring name = L"None";
   std::vector<GameLevel> levels;
   std::wstring path;
   void AddHighscore(Highscore&);
+  bool NewHighscore(uint16_t score);
   std::vector<Highscore>& GetHighscores();
   void SaveHighscores();
 private:

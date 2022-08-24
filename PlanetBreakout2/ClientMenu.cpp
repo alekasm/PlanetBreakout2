@@ -29,6 +29,7 @@ namespace
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
   RECT GameClipRect;
   bool focused = false;
+  //Text highscore_text(D2D1::RectF(20.f, CLIENT_WIDTH), L"New");
   //float window_cx = 0.f, window_cy = 0.f;
 }
 
@@ -160,6 +161,25 @@ void ClientMenu::RightClickLevel()
   }
 }
 
+void ClientMenu::ProcessWM_CHAR(WPARAM wParam)
+{
+  GameType game_type = GameController::GetInstance()->GetGameType();
+  if (game_type == GameType::GAME_EDITOR)
+  {
+    if (levelEditor.buttonTextSelect == nullptr)
+      return;
+    if (IsCharAlphaNumeric(wParam))
+      levelEditor.buttonTextSelect->text.AddChar(wParam);
+  }
+  else if (game_type == GameType::GAME_NORMAL)
+  {
+    if (GameController::GetInstance()->GetLevelState() == LevelState::HIGHSCORE)
+    {
+
+    }
+  }
+}
+
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
@@ -261,12 +281,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   }
   break;
   case WM_CHAR:
-  {
-    if (levelEditor.buttonTextSelect == nullptr)
-      break;
-    if (IsCharAlphaNumeric(wParam))
-      levelEditor.buttonTextSelect->text.AddChar(wParam);
-  }
+    pWnd->ProcessWM_CHAR(wParam);
   break;
   case WM_DESTROY:
     PostQuitMessage(0);

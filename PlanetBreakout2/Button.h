@@ -4,32 +4,52 @@
 #include "GameController.h"
 #include <functional>
 
-struct Text
+struct PrimitiveText
 {
-  std::wstring text;
-  IDWriteTextFormat* textFormat;
-  ID2D1Brush* textBrush;
-  D2D1_RECT_F textRect;
-
-  Text(const D2D1_RECT_F& drawable, const std::wstring& text) :
-    textRect(drawable), text(text)
+  PrimitiveText() = default;
+  PrimitiveText(std::wstring text)
   {
-    textFormat = ResourceLoader::GetTextFormat(TextFormat::CENTER_12F);
-    textBrush = ResourceLoader::GetBrush(ColorBrush::GRAY);
+    this->text = text;
   }
-
   void AddChar(wchar_t letter)
   {
-    if(text.size() < 16)
+    if (text.size() < 16)
       text += letter;
   }
 
   void DeleteChar()
   {
-    if(!text.empty())
+    if (!text.empty())
       text.erase(text.size() - 1);
   }
-  
+
+  void Update(std::wstring text)
+  {
+    this->text = text;
+  }
+  const std::wstring& GetString() const
+  {
+    return text;
+  }
+  void Clear()
+  {
+    text.clear();
+  }
+private:
+  std::wstring text;
+};
+struct Text : PrimitiveText
+{
+  IDWriteTextFormat* textFormat;
+  ID2D1Brush* textBrush;
+  D2D1_RECT_F textRect;
+
+  Text(const D2D1_RECT_F& drawable, const std::wstring& text) :
+    PrimitiveText(text), textRect(drawable)
+  {
+    textFormat = ResourceLoader::GetTextFormat(TextFormat::CENTER_12F);
+    textBrush = ResourceLoader::GetBrush(ColorBrush::GRAY);
+  }
 
   Text() = default;
 
@@ -43,11 +63,6 @@ struct Text
   {
     textRect.left += x_offset;
     textRect.top += y_offset;
-  }
-
-  void Update(std::wstring text)
-  {
-    this->text = text;
   }
 
 };

@@ -71,36 +71,49 @@ BrickMap& GameLevel::GetBrickMap()
   return brickMap;
 }
 
-void Campaign::AddHighscore(Highscore& highscore)
-{
-  if (highscores.size() < 5)
-    highscores.push_back(highscore);
-}
-
 namespace
 {
   const std::wstring HighscoreNames[HIGHSCORE_SIZE] =
   {
-    L"Zoomie", L"Alek", L"Tundra", L"David", L"Juneau"
+    L"Zoomie", L"Alek", L"Tundra", L"David", L"Juneau",
+    L"Kimber", L"Max", L"Minnie", L"Kobi", L"Nanuq"
   };
+}
+
+
+void Campaign::AddHighscore(Highscore& highscore)
+{
+  highscores.push_back(highscore);
+  std::sort(highscores.begin(), highscores.end());
+  highscores.erase(highscores.begin() + HIGHSCORE_SIZE, highscores.end());
+}
+
+bool Campaign::NewHighscore(uint16_t score)
+{
+  for (Highscore& h : highscores)
+  {
+    if (score > h.score)
+      return true;
+  }
+  return false;
+}
+
+Campaign::Campaign()
+{
+  for (unsigned i = 0; i < HIGHSCORE_SIZE; ++i)
+  {
+    Highscore h;
+    h.name = HighscoreNames[rand() % HIGHSCORE_SIZE];
+    h.score = (i + 1) * 100;
+    time_t now = time(NULL);
+    h.date = now - (rand() % 365 + 1) * 24 * 60 * 60;
+    highscores.push_back(h);
+  }
+  std::sort(highscores.begin(), highscores.end());
 }
 
 std::vector<Highscore>& Campaign::GetHighscores()
 {
-  if (highscores.size() < HIGHSCORE_SIZE)
-  {
-    //srand(time(NULL));
-    for (unsigned i = highscores.size(); i < HIGHSCORE_SIZE; ++i)
-    {
-      Highscore h;
-      h.name = HighscoreNames[i];
-      h.score = rand() % 5000 + 100;
-      time_t now = time(NULL);
-      h.date = now - (rand() % 365 + 1) * 24 * 60 * 60;
-      highscores.push_back(h);
-    }
-    std::sort(highscores.begin(), highscores.end());
-  }
   return highscores;
 }
 

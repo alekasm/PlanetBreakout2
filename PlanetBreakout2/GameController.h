@@ -25,6 +25,7 @@ struct GameController
   void Play();
   void Pause();
   void NextLevel();
+  void SetHighscoreName(std::wstring&);
   BrickMap& GetBrickMap();
   LevelState GetLevelState();
   GameType GetGameType();

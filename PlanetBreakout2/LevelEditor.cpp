@@ -43,8 +43,8 @@ void LevelEditor::ClearSelected()
     buttonTextSelect->selected = false;
     buttonTextSelect = nullptr;
   }
-  editorLevel.author = buttonAuthorName->text.text;
-  editorLevel.map_name = buttonMapName->text.text;
+  editorLevel.author = buttonAuthorName->text.GetString();
+  editorLevel.map_name = buttonMapName->text.GetString();
 }
 
 const unsigned LevelEditor::BrickIndexEnd()
@@ -69,8 +69,8 @@ void LevelEditor::initialize(ClientMenu* client)
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
       editorLevel.clear();
-      buttonMapName->text.text.clear();
-      buttonAuthorName->text.text.clear();
+      buttonMapName->text.Clear();
+      buttonAuthorName->text.Clear();
     };
     primaryButtons.push_back(button0);
   }
@@ -86,7 +86,7 @@ void LevelEditor::initialize(ClientMenu* client)
       std::wstring mapname;
       if (GameLoader::SaveMap(editorLevel, mapname))
       {
-        buttonMapName->text.text = mapname;
+        buttonMapName->text.Update(mapname);
       }
     };
     primaryButtons.push_back(button0);
@@ -104,8 +104,8 @@ void LevelEditor::initialize(ClientMenu* client)
       {
         if (GameLoader::LoadMap(loadmap, editorLevel))
         {
-          buttonMapName->text.text = editorLevel.map_name;
-          buttonAuthorName->text.text = editorLevel.author;
+          buttonMapName->text.Update(editorLevel.map_name);
+          buttonAuthorName->text.Update(editorLevel.author);
         }
       }
     };

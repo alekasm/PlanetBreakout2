@@ -30,7 +30,7 @@ void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
 
     if (button->hasText)
     {
-      std::wstring text = button->text.text;
+      std::wstring text = button->text.GetString();
       if (text.empty())
       {
         if (button->id == LevelEditorButton::AUTHOR_NAME)
@@ -290,7 +290,6 @@ void DrawGame(ClientMenu* menu)
     D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), darkGrayBrush);
   target->DrawText(text.c_str(), text.length(), formatBig,
     D2D1::RectF(GAME_WIDTH + 2, 1 + 10, CLIENT_WIDTH - 1, 1 + 10 + 24), greenBrush);
-
 
   size_t current_level = GameController::GetInstance()->current_level;
   const GameLevel& level = GameController::GetInstance()->campaign.levels.at(current_level);

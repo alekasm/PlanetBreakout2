@@ -22,6 +22,7 @@ struct ClientMenu : Menu
   void SetClientFocus(bool);
   void RightClickLevel();
   void LeftClickLevel();
+  void ProcessWM_CHAR(WPARAM);
 };
 
 struct EditorSaveMenu : Menu

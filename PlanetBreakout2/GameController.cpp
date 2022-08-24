@@ -41,12 +41,28 @@ void GameController::SetGameType(GameType type)
   game_type = type;
 }
 
+void GameController::SetHighscoreName(std::wstring& name)
+{
+  if (level_state != LevelState::HIGHSCORE)
+    return;
+  Highscore highscore;
+  highscore.date = time(NULL);
+  highscore.score = score;
+  highscore.name = name;
+  campaign.AddHighscore(highscore);
+  level_state = LevelState::GAME_OVER;
+}
+
 void GameController::Respawn()
 {
   balls.clear();
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
+    if (campaign.NewHighscore(score))
+    {
+      level_state = LevelState::HIGHSCORE;
+    }
   }
   else
   {
@@ -89,8 +105,9 @@ void GameController::NextLevel()
   if (level_state != LevelState::END)
     return;
   if (current_level + 1 >= campaign.levels.size())
-    return;
-  ++current_level;
+    current_level = 0;
+  else
+    ++current_level;
   bricks = campaign.levels.at(current_level).GetBrickMap();
   Respawn();
   level_state = LevelState::START;
@@ -106,10 +123,7 @@ void GameController::GameUpdate()
     return;
   if (bricks.Empty())
   {
-    if (current_level + 1 >= campaign.levels.size())
-      level_state = LevelState::HIGHSCORE;
-    else
-      level_state = LevelState::END;
+    level_state = LevelState::END;
     return;
   }
 
