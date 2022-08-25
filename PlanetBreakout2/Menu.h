@@ -24,6 +24,8 @@ struct ClientMenu : Menu
   void LeftClickLevel();
   void ProcessWM_CHAR(WPARAM);
   void ProcessWM_KEYDOWN(WPARAM);
+  void SetWindowedBorderless();
+  void SetWindowed();
 };
 
 struct EditorSaveMenu : Menu

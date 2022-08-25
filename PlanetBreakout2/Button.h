@@ -126,6 +126,7 @@ struct Button : Drawable
     if (highlighted)
     {
       action();
+      highlighted = false;
       return true;
     }
     return false;

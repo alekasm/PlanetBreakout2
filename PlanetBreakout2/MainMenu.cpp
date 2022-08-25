@@ -20,7 +20,7 @@ uint32_t MainMenu::GetCampaignPage()
 void MainMenu::initialize(ClientMenu* client)
 {
   {
-    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 150, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Play");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -33,7 +33,7 @@ void MainMenu::initialize(ClientMenu* client)
   }
 
   {
-    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 75 - 20, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 0, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Info");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -46,7 +46,7 @@ void MainMenu::initialize(ClientMenu* client)
   }
 
   {
-    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 0 - 40, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 50, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Level Editor");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -54,7 +54,19 @@ void MainMenu::initialize(ClientMenu* client)
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
       GameController::GetInstance()->SetGameType(GameType::GAME_EDITOR);
-      //state = MainMenuState::HIGHSCORE;
+    };
+    buttons[MainMenuState::MAIN].push_back(button0);
+  }
+
+  {
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 100, 300, 30);
+    Button* button0 = new Button(button0draw);
+    Text button0Text(button0draw.d2d1Rect, L"Exit");
+    button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
+    button0->SetText(button0Text);
+    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->action = [this]() {
+      PostQuitMessage(0);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
   }

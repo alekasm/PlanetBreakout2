@@ -26,7 +26,13 @@ namespace
   HCURSOR cursor;
   POINT window_center;
   POINT mouse_pos;
+  RECT FullscreenWindowRect;
+  bool fullscreen = false;
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
+  float mouse_scale_x = 1.f;
+  float mouse_scale_y = 1.f;
+  float window_scale_x = 1.f;
+  float window_scale_y = 1.f;
   RECT GameClipRect;
   bool focused = false;
   //Text highscore_text(D2D1::RectF(20.f, CLIENT_WIDTH), L"New");
@@ -50,11 +56,50 @@ void ClientMenu::PostInitialize()
 
 void ClientMenu::UpdateClientWindow()
 {
-  GameClipRect = GameWindowRect;
-  ClientToScreen(hWnd, (LPPOINT)&GameClipRect.left);
-  ClientToScreen(hWnd, (LPPOINT)&GameClipRect.right);
+  if (!fullscreen)
+  {
+    GameClipRect = GameWindowRect;
+    ClientToScreen(hWnd, (LPPOINT)&GameClipRect.left);
+    ClientToScreen(hWnd, (LPPOINT)&GameClipRect.right);
+  }
+  else
+  {
+    GameClipRect = { 0L, 0L,
+      (LONG)(GAME_WIDTH * window_scale_x),
+      (LONG)(GAME_HEIGHT * window_scale_y)};
+  }
 }
 
+void ClientMenu::SetWindowed()
+{
+  SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+  SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
+  ShowWindow(hWnd, SW_SHOWNORMAL);
+  SetWindowPos(hWnd, HWND_TOP,
+    0, 0,
+    WindowRect.right - WindowRect.left,
+    WindowRect.bottom - WindowRect.top,
+    SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  UpdateClientWindow();
+  mouse_scale_x = 1.f;
+  mouse_scale_y = 1.f;
+  window_scale_x = 1.f;
+  window_scale_y = 1.f;
+}
+
+void ClientMenu::SetWindowedBorderless()
+{
+  SetWindowLongPtr(hWnd, GWL_STYLE, 0);
+  SetWindowLongPtr(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
+  SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+  UpdateClientWindow();
+  GetWindowRect(hWnd, &FullscreenWindowRect);
+  mouse_scale_x = (float)WindowRect.right / FullscreenWindowRect.right;
+  mouse_scale_y = (float)WindowRect.bottom / FullscreenWindowRect.bottom;
+  window_scale_x = (float)FullscreenWindowRect.right / WindowRect.right;
+  window_scale_y = (float)FullscreenWindowRect.bottom / WindowRect.bottom;
+}
 
 void ClientMenu::SetClientFocus(bool value)
 {
@@ -152,8 +197,8 @@ void ClientMenu::RightClickLevel()
     Bat* bat = GameController::GetInstance()->GetBat();
     int x = bat->x + (BAT_WIDTH / 2);
     int y = bat->y;
-    mouse_pos.x = GameClipRect.left + x;
-    mouse_pos.y = GameClipRect.top + y;
+    mouse_pos.x = GameClipRect.left + (x * window_scale_x);
+    mouse_pos.y = GameClipRect.top + (y * window_scale_y);
     GameController::GetInstance()->MouseUpdate(mouse_pos);
     SetCursorPos(mouse_pos.x, mouse_pos.y);
     GameController::GetInstance()->Play();
@@ -182,6 +227,14 @@ void ClientMenu::ProcessWM_CHAR(WPARAM wParam)
 
 void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
 {
+  if (wParam == VK_F11)
+  {
+    fullscreen ^= true;
+    if (fullscreen)
+      SetWindowedBorderless();
+    else
+      SetWindowed();
+  }
   if (wParam == VK_ESCAPE)
   {
     GameController::GetInstance()->EndGame();
@@ -283,8 +336,9 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   {
     mouse_pos.x = GET_X_LPARAM(lParam);
     mouse_pos.y = GET_Y_LPARAM(lParam);
+    mouse_pos.x *= mouse_scale_x;
+    mouse_pos.y *= mouse_scale_y;
     GameController::GetInstance()->MouseUpdate(mouse_pos);
-    //pWnd->UpdateMousePosition();
     switch(GameController::GetInstance()->GetGameType())
     {
     case GameType::GAME_EDITOR:
@@ -323,7 +377,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 void ClientMenu::Initialize(HINSTANCE hInstance)
 {
-  grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+  grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
   grfExStyle = WS_EX_STATICEDGE;
   WindowRect = { 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
   AdjustWindowRectEx(&WindowRect, grfStyle, FALSE, grfExStyle);
