@@ -9,7 +9,7 @@
 #include "LogicHelper.h"
 
 std::vector<Brick> GameLoader::assetBricks;
-std::vector<Campaign> GameLoader::campaigns;
+CampaignMap GameLoader::campaignMap;
 HCURSOR GameLoader::cursor;
 
 std::vector<Brick>& GameLoader::GetAssetBricks()
@@ -17,9 +17,9 @@ std::vector<Brick>& GameLoader::GetAssetBricks()
   return assetBricks;
 }
 
-std::vector<Campaign>& GameLoader::GetCampaigns()
+CampaignMap& GameLoader::GetCampaigns()
 {
-  return campaigns;
+  return campaignMap;
 }
 
 //Used for parsing bricks from map files and for asset maps
@@ -184,6 +184,37 @@ bool ReadFile(const std::wstring& filename, std::vector<std::wstring>& tokens)
   return true;
 }
 
+bool GameLoader::SaveCampaign(Campaign& campaign)
+{
+  std::filesystem::path fs_path(campaign.path);
+  fs_path.append(L"campaign.cfg");
+  std::wofstream output(fs_path.wstring());
+  if (!output.is_open())
+  {
+    wprintf(L"Failed to save file (%d): %ls\n", GetLastError(),
+      fs_path.wstring().c_str());
+    return false;
+  }
+  output << L"name:" << campaign.name << L"\n";
+  output << L"bat:" << campaign.bat_sprite << L"\n";
+  output << L"ball:" << campaign.ball_sprite << L"\n";
+  for (const Highscore& h : campaign.GetHighscores())
+  {
+    if (h.pseudo) continue;
+    output << L"highscore:";
+    output << h.name << L",";
+    output << std::to_wstring(h.score) << L",";
+    output << std::to_wstring(h.date) << L"\n";
+  }
+  output.close();
+  CampaignMap::iterator it = campaignMap.find(campaign.name);
+  if (it != campaignMap.end())
+  {
+    it->second = campaign;
+  }
+  return true;
+}
+
 bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
 {
   std::vector<std::wstring> tokens;
@@ -219,7 +250,7 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
 
 bool GameLoader::LoadCampaigns()
 {
-  campaigns.clear();
+  campaignMap.clear();
   std::vector<std::filesystem::path> campaign_paths;
   for (const std::filesystem::directory_entry& entry :
     std::filesystem::directory_iterator(ResourceLoader::GetLevelPath()))
@@ -267,8 +298,7 @@ bool GameLoader::LoadCampaigns()
       }
     }
     wprintf(L"Loaded %s with %d levels\n", campaign.name.c_str(), campaign.levels.size());
-    campaigns.push_back(campaign);
-    //is_regular_file
+    campaignMap[campaign.name] = campaign;
   }  
   return true;
 }

@@ -204,13 +204,13 @@ void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
       if (wParam == VK_BACK)
         GameController::GetInstance()->GetHighscoreText().DeleteChar();
       else if (wParam == VK_RETURN)
-      {//Seems dumb, but for now it allows the highscore text to be accessed
-        //in GameDraw.cpp
+      { //Seems dumb, but for now it allows the highscore text to be accessed
         if (!GameController::GetInstance()->GetHighscoreText().GetString().empty())
         {
           GameController::GetInstance()->SetHighscoreName(
             GameController::GetInstance()->GetHighscoreText().GetString());
           GameController::GetInstance()->GetHighscoreText().Clear();
+          GameLoader::SaveCampaign(GameController::GetInstance()->campaign);
           SetClientFocus(false);
         }
       }

@@ -107,6 +107,7 @@ Campaign::Campaign()
     h.score = (i + 1) * 100;
     time_t now = time(NULL);
     h.date = now - (rand() % 365 + 1) * 24 * 60 * 60;
+    h.pseudo = true;
     highscores.push_back(h);
   }
   std::sort(highscores.begin(), highscores.end());

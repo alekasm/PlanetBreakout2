@@ -77,7 +77,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 160, 300, 30);
     Button* button0 = new Button(button0draw);
-    std::wstring name = GameLoader::GetCampaigns().at(0).name;
+    std::wstring name = GameLoader::GetCampaigns().begin()->second.name;
     Text button0Text(button0draw.d2d1Rect, name);
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
@@ -86,9 +86,9 @@ void MainMenu::initialize(ClientMenu* client)
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
         client->SetClientFocus(true);
-        GameController::GetInstance()->CreateGame(
-          GameLoader::GetCampaigns().at(campaign_page)
-        );
+        CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+        std::advance(it, campaign_page);
+        GameController::GetInstance()->CreateGame(it->second);
         state = MainMenuState::MAIN;
         campaign_page = 0;
       }
@@ -108,7 +108,9 @@ void MainMenu::initialize(ClientMenu* client)
         ++campaign_page;
       else
         campaign_page = 0;
-      button0->text.Update(GameLoader::GetCampaigns().at(campaign_page).name);
+      CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+      std::advance(it, campaign_page);
+      button0->text.Update(it->second.name);
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button1);
 
@@ -125,7 +127,9 @@ void MainMenu::initialize(ClientMenu* client)
         campaign_page = campaign_count - 1;
       else
         --campaign_page;
-      button0->text.Update(GameLoader::GetCampaigns().at(campaign_page).name);
+      CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+      std::advance(it, campaign_page);
+      button0->text.Update(it->second.name);
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button2);
   }

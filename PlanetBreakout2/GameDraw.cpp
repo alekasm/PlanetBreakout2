@@ -197,7 +197,11 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 
   if (mainMenu.GetState() == MainMenuState::CAMPAIGN_SELECT)
   {
-    Campaign& campaign = GameLoader::GetCampaigns().at(mainMenu.GetCampaignPage());
+    CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+    std::advance(it, mainMenu.GetCampaignPage());
+    
+    Campaign& campaign = it->second;
+
     unsigned i = 1;
     std::wstring name_string;
     std::wstring score_string;

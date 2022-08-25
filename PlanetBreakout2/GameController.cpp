@@ -52,6 +52,7 @@ void GameController::SetHighscoreName(std::wstring name)
   highscore.score = score;
   highscore.name = name;
   campaign.AddHighscore(highscore);
+  
   //Needs to write back to gameloader...
   level_state = LevelState::GAME_OVER;
   game_type = GameType::MAIN_MENU;
