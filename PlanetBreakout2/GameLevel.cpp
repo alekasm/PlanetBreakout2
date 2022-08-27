@@ -6,8 +6,9 @@
 //Returns true if a brick was removed
 bool BrickMap::Erase(uint32_t brick_index, bool force)
 {
-  std::vector<Brick>& bricks = at(brick_index);
-  if (bricks.empty()) return false;
+  BrickMap::iterator it = find(brick_index);
+  if (it == end() || it->second.empty()) return false;
+  std::vector<Brick>& bricks = it->second;
   size_t vector_index = bricks.size() - 1;
   if (force || bricks.at(vector_index).subtype == BrickType::NORMAL_BRICK)
   {
