@@ -26,6 +26,7 @@ struct ClientMenu : Menu
   void ProcessWM_KEYDOWN(WPARAM);
   void SetWindowedBorderless();
   void SetWindowed();
+  HWND containerhWnd;
 };
 
 struct EditorSaveMenu : Menu

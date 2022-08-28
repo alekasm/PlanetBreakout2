@@ -413,5 +413,6 @@ void DrawGame(ClientMenu* menu)
   }
 
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
+  target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), brushes);
   target->EndDraw();
 }

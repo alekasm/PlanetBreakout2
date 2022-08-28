@@ -26,15 +26,22 @@ namespace
   HCURSOR cursor;
   POINT window_center;
   POINT mouse_pos;
-  RECT FullscreenWindowRect;
+  //RECT FullscreenWindowRect;
   bool fullscreen = false;
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
-  float mouse_scale_x = 1.f;
-  float mouse_scale_y = 1.f;
-  float window_scale_x = 1.f;
-  float window_scale_y = 1.f;
+  float mouse_scale = 1.f;
+  //float window_scale_x = 1.f;
+  //float window_scale_y = 1.f;
+
+  float fs_scale_factor = 1.f;
+  float fs_scale_factor_rel = 1.f;
+
+  RECT ClientFullscreenRect;
+  RECT ClientFullscreenGameRect;
+
   RECT GameClipRect;
   bool focused = false;
+  RECT desktop;
   //Text highscore_text(D2D1::RectF(20.f, CLIENT_WIDTH), L"New");
   //float window_cx = 0.f, window_cy = 0.f;
 }
@@ -64,41 +71,41 @@ void ClientMenu::UpdateClientWindow()
   }
   else
   {
-    GameClipRect = { 0L, 0L,
-      (LONG)(GAME_WIDTH * window_scale_x),
-      (LONG)(GAME_HEIGHT * window_scale_y)};
+    GameClipRect = ClientFullscreenGameRect;
   }
 }
 
 void ClientMenu::SetWindowed()
 {
-  SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-  SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
-  ShowWindow(hWnd, SW_SHOWNORMAL);
-  SetWindowPos(hWnd, HWND_TOP,
+  SetWindowLongPtr(containerhWnd, GWL_STYLE, grfStyle);
+  SetWindowLongPtr(containerhWnd, GWL_EXSTYLE, grfExStyle);
+  ShowWindow(containerhWnd, SW_SHOWNORMAL);
+  SetWindowPos(containerhWnd, HWND_TOP,
     0, 0,
     WindowRect.right - WindowRect.left,
     WindowRect.bottom - WindowRect.top,
     SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  SetWindowPos(hWnd, HWND_TOP,
+    0, 0,CLIENT_WIDTH, CLIENT_HEIGHT,
+    SWP_NOZORDER);
   UpdateClientWindow();
-  mouse_scale_x = 1.f;
-  mouse_scale_y = 1.f;
-  window_scale_x = 1.f;
-  window_scale_y = 1.f;
+  mouse_scale = 1.f;
 }
 
 void ClientMenu::SetWindowedBorderless()
 {
-  SetWindowLongPtr(hWnd, GWL_STYLE, 0);
-  SetWindowLongPtr(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
-  SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-  ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+  SetWindowLongPtr(containerhWnd, GWL_STYLE, 0);
+  SetWindowLongPtr(containerhWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
+  SetWindowPos(containerhWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+  ShowWindow(containerhWnd, SW_SHOWMAXIMIZED);
+  SetWindowPos(hWnd, HWND_TOP,
+    ClientFullscreenRect.left, ClientFullscreenRect.top,
+    ClientFullscreenRect.right, ClientFullscreenRect.bottom,
+    SWP_NOZORDER);
+
   UpdateClientWindow();
-  GetWindowRect(hWnd, &FullscreenWindowRect);
-  mouse_scale_x = (float)WindowRect.right / FullscreenWindowRect.right;
-  mouse_scale_y = (float)WindowRect.bottom / FullscreenWindowRect.bottom;
-  window_scale_x = (float)FullscreenWindowRect.right / WindowRect.right;
-  window_scale_y = (float)FullscreenWindowRect.bottom / WindowRect.bottom;
+  //GetWindowRect(hWnd, &FullscreenWindowRect);
+  mouse_scale = fs_scale_factor_rel;
 }
 
 void ClientMenu::SetClientFocus(bool value)
@@ -197,8 +204,8 @@ void ClientMenu::RightClickLevel()
     Bat* bat = GameController::GetInstance()->GetBat();
     int x = bat->x + (BAT_WIDTH / 2);
     int y = bat->y;
-    mouse_pos.x = GameClipRect.left + (x * window_scale_x);
-    mouse_pos.y = GameClipRect.top + (y * window_scale_y);
+    mouse_pos.x = GameClipRect.left + (x * fs_scale_factor);
+    mouse_pos.y = GameClipRect.top + (y * fs_scale_factor);
     GameController::GetInstance()->MouseUpdate(mouse_pos);
     SetCursorPos(mouse_pos.x, mouse_pos.y);
     GameController::GetInstance()->Play();
@@ -229,11 +236,16 @@ void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
 {
   if (wParam == VK_F11)
   {
+    GameController::GetInstance()->Pause();
     fullscreen ^= true;
     if (fullscreen)
+    {
       SetWindowedBorderless();
+    }
     else
+    {
       SetWindowed();
+    }
   }
   if (wParam == VK_ESCAPE)
   {
@@ -271,16 +283,39 @@ void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
   }
 }
 
+LRESULT CALLBACK ContainerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
+
+  switch (message)
+  {
+  case WM_NCCREATE:
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lParam)->lpCreateParams);
+    break;
+  case WM_WINDOWPOSCHANGED:
+    pWnd->UpdateClientWindow();
+    break;
+  case WM_DESTROY:
+    PostQuitMessage(0);
+    break;
+  case WM_KEYDOWN:
+    pWnd->ProcessWM_KEYDOWN(wParam);
+    break;
+  case WM_CHAR:
+    pWnd->ProcessWM_CHAR(wParam);
+    break;
+  default:
+    return DefWindowProc(hWnd, message, wParam, lParam);
+  }
+  return pWnd == nullptr ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
+}
+
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
 
   switch (message)
   {
-  case WM_WINDOWPOSCHANGED:
-    pWnd->UpdateClientWindow();
-    //GameController::GetInstance()->MouseUpdate(mouse_pos, true);
-  break;
   case WM_NCCREATE:
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lParam)->lpCreateParams);
     break;
@@ -336,8 +371,8 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   {
     mouse_pos.x = GET_X_LPARAM(lParam);
     mouse_pos.y = GET_Y_LPARAM(lParam);
-    mouse_pos.x *= mouse_scale_x;
-    mouse_pos.y *= mouse_scale_y;
+    mouse_pos.x *= mouse_scale;
+    mouse_pos.y *= mouse_scale;
     GameController::GetInstance()->MouseUpdate(mouse_pos);
     switch(GameController::GetInstance()->GetGameType())
     {
@@ -357,49 +392,81 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     }
   }
   break;
-  case WM_KEYDOWN:
-    pWnd->ProcessWM_KEYDOWN(wParam);
-  break;
-  case WM_CHAR:
-    pWnd->ProcessWM_CHAR(wParam);
-  break;
   case WM_DESTROY:
     PostQuitMessage(0);
     break;
   case WM_ERASEBKGND:
-    break; //Fixes screen-drag flicker 
+    break; //Fixes screen-drag flicker
   default:
     return DefWindowProc(hWnd, message, wParam, lParam);
   }
   return pWnd == nullptr ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
-
 }
 
 void ClientMenu::Initialize(HINSTANCE hInstance)
 {
-  grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+  grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   grfExStyle = WS_EX_STATICEDGE;
   WindowRect = { 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
   AdjustWindowRectEx(&WindowRect, grfStyle, FALSE, grfExStyle);
 
-  WNDCLASSEX MainClass = {};
-  MainClass.cbClsExtra = 0;
-  MainClass.cbWndExtra = 0;
-  MainClass.lpszMenuName = 0;
+
+
+  WNDCLASSEX MainClass = { 0 };
   MainClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-  MainClass.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+  MainClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   MainClass.cbSize = sizeof(WNDCLASSEX);
   MainClass.hInstance = hInstance;
-  MainClass.lpfnWndProc = ClientWndProc;
-  MainClass.lpszClassName = "PlanetBreakout2ClientClass";
+  MainClass.lpfnWndProc = ContainerWndProc;
+  MainClass.lpszClassName = "PB2ContainerClass";
   MainClass.style = CS_HREDRAW | CS_VREDRAW;
   RegisterClassEx(&MainClass);
-
-  hWnd = CreateWindowEx(
+  
+  WNDCLASSEX MainClass2 = { 0 };
+  MainClass2.hCursor = LoadCursor(NULL, IDC_ARROW);
+  MainClass2.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+  MainClass2.cbSize = sizeof(WNDCLASSEX);
+  MainClass2.hInstance = hInstance;
+  MainClass2.lpfnWndProc = ClientWndProc;
+  MainClass2.lpszClassName = "PB2ClientClass";
+  MainClass2.style = CS_HREDRAW | CS_VREDRAW;
+  RegisterClassEx(&MainClass2);
+  
+  containerhWnd = CreateWindowEx(
     grfExStyle,
     MainClass.lpszClassName, "Planet Breakout 2",
-    grfStyle,
-    0, 0, WindowRect.right - WindowRect.left,
+    grfStyle, 0, 0,
+    WindowRect.right - WindowRect.left,
     WindowRect.bottom - WindowRect.top,
     NULL, NULL, hInstance, this);
+
+  hWnd = CreateWindow(
+    MainClass2.lpszClassName,
+    "", WS_VISIBLE | WS_CHILD,
+    0, 0,
+    CLIENT_WIDTH,
+    CLIENT_HEIGHT,
+    containerhWnd, NULL, hInstance, this);
+
+  const HWND hDesktop = GetDesktopWindow();
+  GetWindowRect(hDesktop, &desktop);
+
+  if (desktop.bottom <= desktop.right)
+  {
+    fs_scale_factor = (float)desktop.bottom / CLIENT_HEIGHT;
+    fs_scale_factor_rel = (float)CLIENT_HEIGHT / desktop.bottom;
+  }
+  else
+  {
+    fs_scale_factor = (float)desktop.right / CLIENT_WIDTH;
+    fs_scale_factor_rel = (float)CLIENT_WIDTH / desktop.right;
+  }
+  ClientFullscreenRect.right = CLIENT_WIDTH * fs_scale_factor;
+  ClientFullscreenRect.bottom = CLIENT_HEIGHT * fs_scale_factor;
+  ClientFullscreenRect.top = (desktop.bottom - ClientFullscreenRect.bottom) / 2;
+  ClientFullscreenRect.left = (desktop.right - ClientFullscreenRect.right) / 2;
+  ClientFullscreenGameRect.left = ClientFullscreenRect.left;
+  ClientFullscreenGameRect.top = ClientFullscreenRect.top;
+  ClientFullscreenGameRect.bottom = ClientFullscreenGameRect.top + (GAME_HEIGHT * fs_scale_factor);
+  ClientFullscreenGameRect.right = ClientFullscreenGameRect.left + (GAME_WIDTH * fs_scale_factor);
 }

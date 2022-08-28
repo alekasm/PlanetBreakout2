@@ -101,6 +101,8 @@ void GameController::Play()
 
 void GameController::Pause()
 {
+  if (game_type != GameType::GAME_NORMAL)
+    return;
   if (level_state == LevelState::ACTIVE)
     level_state = LevelState::PAUSED;
 }
