@@ -99,6 +99,32 @@ void GameController::Play()
   }
 }
 
+//Returns true if the specified ball should bounce
+bool GameController::BreakBrick(Ball* ball, uint32_t index)
+{
+  size_t erased = GetBrickMap().Erase(index, PB2_BRICKMAP_ERASE_TOP);
+  if (erased > 0)
+  {
+    GameController::GetInstance()->AddScore((uint16_t)(ball->GetSpeed() * 10));
+    return true;
+  }
+  return false;
+}
+
+const std::vector<Ball>& GameController::GetBalls() const
+{
+  return balls;
+}
+
+size_t GameController::GetCurrentLevel()
+{
+  return current_level;
+}
+uint32_t GameController::GetLives()
+{
+  return lives;
+}
+
 void GameController::Pause()
 {
   if (game_type != GameType::GAME_NORMAL)

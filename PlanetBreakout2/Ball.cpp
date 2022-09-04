@@ -44,9 +44,14 @@ void Ball::Collision(CollisionType type)
   speed = std::clamp(speed + 0.05f, 1.0f, 8.0f);
 }
 
-bool Ball::IsActive()
+const bool Ball::IsActive() const
 {
   return active;
+}
+
+float Ball::GetSpeed()
+{
+  return speed;
 }
 
 void Ball::UpdateFrame(int64_t elapsed)
@@ -130,16 +135,15 @@ void Ball::UpdateFrame(int64_t elapsed)
       BrickMap::iterator it = map.find(GetBrickIndex(p.x, p.y));
       if (it != map.end() && !it->second.empty())
       {
+        GameController::GetInstance()->BreakBrick(this, it->first);
+
         RECT brickRect = GetBrickRect(p.x, p.y);
         if (old_y > brickRect.bottom || (old_y + BALL_DIMENSION) < brickRect.top)
           Collision(CollisionType::HORIZONTAL);
         else
           Collision(CollisionType::VERTICAL);
-
-        if (map.Erase(it->first))
-        {
-          GameController::GetInstance()->AddScore((uint16_t)(speed * 10));
-        }
+       
+        
 
         //Seems fine for now, instead of manually setting ball position
         real_x = real_x + cos(direction);

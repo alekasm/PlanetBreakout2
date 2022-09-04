@@ -65,6 +65,7 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   std::wstring text = L"Planet Breakout 2 - Level Editor";
   target->DrawText(text.c_str(), text.length(), format2, D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
+  target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
   BrickMap::const_iterator map_it = level.GetBrickMap().begin();
   for (; map_it != level.GetBrickMap().end(); ++map_it)
@@ -295,7 +296,7 @@ void DrawGame(ClientMenu* menu)
   target->DrawText(text.c_str(), text.length(), formatBig,
     D2D1::RectF(GAME_WIDTH + 2, 1 + 10, CLIENT_WIDTH - 1, 1 + 10 + 24), greenBrush);
 
-  size_t current_level = GameController::GetInstance()->current_level;
+  size_t current_level = GameController::GetInstance()->GetCurrentLevel();
   const GameLevel& level = GameController::GetInstance()->campaign.levels.at(current_level);
   std::wstring campaign_name = GameController::GetInstance()->campaign.name;
   wchar_t buffer_score[64];
@@ -307,7 +308,7 @@ void DrawGame(ClientMenu* menu)
   PrintGameInfo(target, L"Level Author", level.author, 180.f);
   PrintGameInfo(target, L"Score", std::wstring(buffer_score), 300.f);
   PrintGameInfo(target, L"Lives", L"", 360.f);
-  for (uint32_t i = 0; i < GameController::GetInstance()->lives; ++i)
+  for (uint32_t i = 0; i < GameController::GetInstance()->GetLives(); ++i)
   {
     if (i > MAX_LIVES) break; //Should not be possible
     float row = (i / 3) == 0 ? 0.0 : (BAT_HEIGHT * 2.f);
@@ -335,7 +336,7 @@ void DrawGame(ClientMenu* menu)
     ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
     GameController::GetInstance()->bat->d2d1Rect, 1.0f);
 
-  for (Ball ball : GameController::GetInstance()->balls)
+  for (const Ball& ball : GameController::GetInstance()->GetBalls())
   {
     if (ball.IsActive())
     {

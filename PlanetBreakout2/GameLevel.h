@@ -5,9 +5,16 @@
 #include <unordered_map>
 #include "GameTypes.h"
 
+#define PB2_BRICKMAP_ERASE_TOP 0x0001
+#define PB2_BRICKMAP_ERASE_ALL 0x0002
+#define PB2_BRICKMAP_ERASE_ANY 0x0004
+
+
+
 struct BrickMap : std::unordered_map<uint32_t, std::vector<Brick>>
 {
-  bool Erase(uint32_t index, bool force = false);
+  //bool Erase(uint32_t index, bool force = false);
+  size_t Erase(uint32_t brick_index, UINT uFlags);
   void Add(uint32_t, Brick&);
   void Clear();
   bool Empty();

@@ -169,7 +169,8 @@ void RightClickLevelEditor()
   if (IsInGameSceen(x, y))
   {
     uint32_t index = GetBrickIndex(x, y);
-    levelEditor.editorLevel.GetBrickMap().Erase(index, true);
+    levelEditor.editorLevel.GetBrickMap().Erase(index,
+      PB2_BRICKMAP_ERASE_TOP | PB2_BRICKMAP_ERASE_ANY);
   }
 }
 
@@ -410,26 +411,21 @@ void ClientMenu::Initialize(HINSTANCE hInstance)
   WindowRect = { 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
   AdjustWindowRectEx(&WindowRect, grfStyle, FALSE, grfExStyle);
 
+  WNDCLASSEX BaseClass = { 0 };
+  BaseClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+  BaseClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+  BaseClass.cbSize = sizeof(WNDCLASSEX);
+  BaseClass.hInstance = hInstance;
+  BaseClass.style = CS_HREDRAW | CS_VREDRAW;
 
-
-  WNDCLASSEX MainClass = { 0 };
-  MainClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-  MainClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-  MainClass.cbSize = sizeof(WNDCLASSEX);
-  MainClass.hInstance = hInstance;
+  WNDCLASSEX MainClass = BaseClass;
   MainClass.lpfnWndProc = ContainerWndProc;
   MainClass.lpszClassName = "PB2ContainerClass";
-  MainClass.style = CS_HREDRAW | CS_VREDRAW;
   RegisterClassEx(&MainClass);
   
-  WNDCLASSEX MainClass2 = { 0 };
-  MainClass2.hCursor = LoadCursor(NULL, IDC_ARROW);
-  MainClass2.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-  MainClass2.cbSize = sizeof(WNDCLASSEX);
-  MainClass2.hInstance = hInstance;
+  WNDCLASSEX MainClass2 = BaseClass;
   MainClass2.lpfnWndProc = ClientWndProc;
   MainClass2.lpszClassName = "PB2ClientClass";
-  MainClass2.style = CS_HREDRAW | CS_VREDRAW;
   RegisterClassEx(&MainClass2);
   
   containerhWnd = CreateWindowEx(

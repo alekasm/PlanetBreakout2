@@ -3,26 +3,57 @@
 #include <algorithm>
 #include <time.h>
 
+
 //Returns true if a brick was removed
-bool BrickMap::Erase(uint32_t brick_index, bool force)
+size_t BrickMap::Erase(uint32_t brick_index, UINT uFlags)
 {
-  BrickMap::iterator it = find(brick_index);
-  if (it == end() || it->second.empty()) return false;
-  std::vector<Brick>& bricks = it->second;
-  size_t vector_index = bricks.size() - 1;
-  if (force || bricks.at(vector_index).subtype == BrickType::NORMAL_BRICK)
+  BrickMap::iterator map_it = find(brick_index);
+  if (map_it == end() || map_it->second.empty())
+    return 0;
+
+  std::vector<Brick>& bricks = map_it->second;
+
+  std::vector<Brick>::reverse_iterator brick_it;
+  size_t erased = 0;
+  for (brick_it = bricks.rbegin(); brick_it != bricks.rend();)
   {
-    bricks.erase(bricks.begin() + vector_index);
-    if (bricks.empty())
+    if ((uFlags & PB2_BRICKMAP_ERASE_ANY) ||
+      brick_it->subtype == BrickType::NORMAL_BRICK)
     {
-      erase(brick_index);
-      auto it = brick_check.find(brick_index);
-      if (it != brick_check.end())
-        brick_check.erase(it);
+      brick_it = decltype(brick_it){
+        bricks.erase(std::next(brick_it).base())
+      };
+      ++erased;
+      
+      bool end_of_index = false;
+      if (brick_it == bricks.rend())
+      {
+        erase(brick_index);
+        end_of_index = true;
+      }
+      else if (brick_it->subtype == BrickType::INVINCIBLE_BRICK)
+      {
+        end_of_index = true;
+      }
+
+      if (end_of_index)
+      {
+        auto it = brick_check.find(brick_index);
+        if (it != brick_check.end())
+          brick_check.erase(it);
+      }
+
+      if (end_of_index || uFlags & PB2_BRICKMAP_ERASE_TOP)
+      { 
+        return erased;
+      }
     }
-    return true;
+    else
+    {
+      ++brick_it;
+    }
   }
-  return false;
+  return erased;
 }
 
 void BrickMap::Add(uint32_t index, Brick& brick)
