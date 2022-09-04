@@ -8,15 +8,15 @@
 typedef int EntityId;
 enum EntityType { BAT, BALL, BRICK, POWERUP, TILE };
 enum BallType { NORMAL_BALL, FAST_BALL, SLOW_BALL };
-enum PowerUpType { FAST_BALL_PU, SLOW_BALL_PU, LONG_BAT_PU, SHORT_BAT_PU, LASER_BAT_PU };
-enum BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
+//enum PowerUpType { FAST_BALL_PU, SLOW_BALL_PU, LONG_BAT_PU, SHORT_BAT_PU, LASER_BAT_PU };
+enum class BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
 enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK };
 enum TileType { NONE_TILE };
 
 #define ISVALID_ENTITYTYPE(v) (v >= BAT && v <= TILE)
 #define ISVALID_BALLTYPE(v) (v >= NORMAL_BALL && v <= SLOW_BALL)
-#define ISVALID_POWERUPTYPE(v) (v >= FAST_BALL_PU && v <= LASER_BAT_PU)
-#define ISVALID_BATTYPE(v) (v >= SHORT_BAT && v <= LASER_BAT)
+//#define ISVALID_POWERUPTYPE(v) (v >= FAST_BALL_PU && v <= LASER_BAT_PU)
+//#define ISVALID_BATTYPE(v) (v >= SHORT_BAT && v <= LASER_BAT)
 #define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
 #define ISVALID_TILETYPE(v) (v == NONE_TILE)
 
@@ -56,6 +56,31 @@ struct Bat : Entity
   void UpdateType(BatType subtype)
   {
   }
+};
+
+struct DynamicEntity : Entity
+{
+  DynamicEntity(EntityType type, std::wstring sprite,
+    unsigned width, unsigned height) :
+    Entity(type, sprite, width, height)
+  {
+  }
+  virtual void UpdateFrame(int64_t elapsed) = 0;
+  virtual void Start() = 0;
+  const bool IsActive() const
+  {
+    return active;
+  }
+  float GetSpeed()
+  {
+    return speed;
+  }
+protected:
+  bool active = true;
+  float speed = 1.0f;
+  float direction = 0.f;
+  float real_x = 0.f;
+  float real_y = 0.f;
 };
 
 struct Brick : Entity

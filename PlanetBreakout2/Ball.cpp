@@ -44,16 +44,6 @@ void Ball::Collision(CollisionType type)
   speed = std::clamp(speed + 0.05f, 1.0f, 8.0f);
 }
 
-const bool Ball::IsActive() const
-{
-  return active;
-}
-
-float Ball::GetSpeed()
-{
-  return speed;
-}
-
 void Ball::UpdateFrame(int64_t elapsed)
 {
   if (!active) return;
@@ -135,16 +125,14 @@ void Ball::UpdateFrame(int64_t elapsed)
       BrickMap::iterator it = map.find(GetBrickIndex(p.x, p.y));
       if (it != map.end() && !it->second.empty())
       {
-        GameController::GetInstance()->BreakBrick(this, it->first);
-
-        RECT brickRect = GetBrickRect(p.x, p.y);
-        if (old_y > brickRect.bottom || (old_y + BALL_DIMENSION) < brickRect.top)
-          Collision(CollisionType::HORIZONTAL);
-        else
-          Collision(CollisionType::VERTICAL);
-       
-        
-
+        if (GameController::GetInstance()->BreakBrick(this, it->first))
+        {
+          RECT brickRect = GetBrickRect(p.x, p.y);
+          if (old_y > brickRect.bottom || (old_y + BALL_DIMENSION) < brickRect.top)
+            Collision(CollisionType::HORIZONTAL);
+          else
+            Collision(CollisionType::VERTICAL);
+        }
         //Seems fine for now, instead of manually setting ball position
         real_x = real_x + cos(direction);
         real_y = real_y + sin(direction);
@@ -164,5 +152,4 @@ void Ball::Start()
   float max = ((3.f * M_PI) / 4.f);
   RandomDirection(min, max);
   //direction = -(3*M_PI / 4);
-  
 } 

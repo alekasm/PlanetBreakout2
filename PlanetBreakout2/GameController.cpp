@@ -58,8 +58,15 @@ void GameController::SetHighscoreName(std::wstring name)
   game_type = GameType::MAIN_MENU;
 }
 
+void GameController::AddPowerup(PowerupType type)
+{
+  powerup_status[type] = true;
+}
+
 void GameController::Respawn()
 {
+  memset(powerup_status, false, POWERUP_COUNT);
+  powerups.clear();
   balls.clear();
   if (lives == 0)
   {
@@ -80,6 +87,7 @@ void GameController::Respawn()
     balls.push_back(starter_ball);
     bat->Update(0, BAT_Y);
     bat->MoveCenterX(GAME_WIDTH / 2);
+    
   }
 }
 
@@ -102,18 +110,35 @@ void GameController::Play()
 //Returns true if the specified ball should bounce
 bool GameController::BreakBrick(Ball* ball, uint32_t index)
 {
-  size_t erased = GetBrickMap().Erase(index, PB2_BRICKMAP_ERASE_TOP);
+  bool hyper_ball = powerup_status[PowerupType::HYPER_BALL];
+  size_t erased = GetBrickMap().Erase(index,
+    hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
+    PB2_BRICKMAP_ERASE_TOP);
+  GameController::GetInstance()->AddScore(
+    (uint16_t)(ball->GetSpeed() * 10 * erased));
   if (erased > 0)
   {
-    GameController::GetInstance()->AddScore((uint16_t)(ball->GetSpeed() * 10));
-    return true;
+    //todo randomize, this is for testing purposes
+    if (!hyper_ball && powerups.empty())
+    {
+      Powerup p;
+      p.Update(ball->x, ball->y);
+      p.Start();
+      powerups.push_back(p);
+    }
+    
   }
-  return false;
+  return !hyper_ball && erased > 0;
 }
 
 const std::vector<Ball>& GameController::GetBalls() const
 {
   return balls;
+}
+
+const std::vector<Powerup>& GameController::GetPowerups() const
+{
+  return powerups;
 }
 
 size_t GameController::GetCurrentLevel()
@@ -193,6 +218,12 @@ void GameController::GameUpdate()
     }
   }
 
+  for (Powerup& powerup : powerups)
+  {
+    if (powerup.IsActive())
+      powerup.UpdateFrame(delta.count());
+  }
+
   if (!any_ball_active)
   {
     lives--;
@@ -224,6 +255,7 @@ void GameController::AddScore(uint16_t amount)
 
 void GameController::CreateGame(Campaign& campaign)
 {
+  srand(time(NULL));
   this->campaign = campaign;
   bat = new Bat(campaign.bat_sprite);
   old_type = game_type;

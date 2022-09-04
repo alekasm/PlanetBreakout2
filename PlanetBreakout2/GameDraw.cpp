@@ -336,6 +336,15 @@ void DrawGame(ClientMenu* menu)
     ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
     GameController::GetInstance()->bat->d2d1Rect, 1.0f);
 
+  for (const Powerup& powerup : GameController::GetInstance()->GetPowerups())
+  {
+    if (powerup.IsActive())
+    {
+      target->DrawBitmap(
+        ResourceLoader::GetSpriteMap().at(powerup.sprite), powerup.d2d1Rect, 1.0f);
+    }
+  }
+
   for (const Ball& ball : GameController::GetInstance()->GetBalls())
   {
     if (ball.IsActive())

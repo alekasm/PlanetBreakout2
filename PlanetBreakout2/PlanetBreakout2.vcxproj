@@ -159,6 +159,7 @@
     <ClCompile Include="LogicHelper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Powerup.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Drawable.h" />
+    <ClInclude Include="Powerup.h" />
     <ClInclude Include="PrimitiveText.h" />
     <ClInclude Include="ResourceLoader.h" />
   </ItemGroup>
