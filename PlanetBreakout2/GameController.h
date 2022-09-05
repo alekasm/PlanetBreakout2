@@ -9,7 +9,34 @@
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
-enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL, HYPER_BALL, POWERUP_COUNT };
+
+struct GamePowerUp
+{
+  //The tile is 32x32, expected icon size is 16x16
+  GamePowerUp(std::wstring icon)
+  {
+    this->icon = icon;
+  }
+  GamePowerUp() = default;
+  const bool IsActive() const
+  {
+    return active;
+  }
+  const std::wstring& GetIcon() const
+  {
+    return icon;
+  }
+  void SetActive(bool value)
+  {
+    active = value;
+  }
+private:
+  ID2D1Bitmap* bitmap_active;
+  bool active = false;
+  std::wstring icon;
+};
+
+typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
 
 struct GameController
 {
@@ -29,6 +56,7 @@ struct GameController
   void NextLevel();
   void SetHighscoreName(std::wstring);
   void AddPowerup(PowerupType);
+  const GamePowerUpMap& GetGamePowerUpMap() const;
   BrickMap& GetBrickMap();
   LevelState GetLevelState();
   GameType GetGameType();
@@ -56,6 +84,11 @@ private:
   POINT mousePosPrev;
   BrickMap bricks;
   GameType old_type = GameType::MAIN_MENU;
-  bool powerup_status[POWERUP_COUNT] = { false };
+  GamePowerUpMap powerup_map = {
+    {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
+    {PowerupType::CREATOR_BALL, GamePowerUp(L"")},
+    {PowerupType::LASER_BAT, GamePowerUp(L"")},
+    {PowerupType::BONUS_POINTS, GamePowerUp(L"")},
+  };
   GameController();
 };

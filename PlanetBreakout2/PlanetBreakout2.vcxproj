@@ -151,7 +151,6 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="ClientMenu.cpp" />
-    <ClCompile Include="EditorSaveMenu.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameLoader.cpp" />

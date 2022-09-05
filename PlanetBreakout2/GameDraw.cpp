@@ -247,7 +247,6 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 
 void DrawGame(ClientMenu* menu)
 {
-  //menu->UpdateMousePosition();
   GameController::GetInstance()->GameUpdate();
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
@@ -289,6 +288,11 @@ void DrawGame(ClientMenu* menu)
     ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
   target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 300.f, CLIENT_WIDTH - 5.f, 460.f),
     ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 690.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 690.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
   
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatBig,
@@ -308,6 +312,7 @@ void DrawGame(ClientMenu* menu)
   PrintGameInfo(target, L"Level Author", level.author, 180.f);
   PrintGameInfo(target, L"Score", std::wstring(buffer_score), 300.f);
   PrintGameInfo(target, L"Lives", L"", 360.f);
+  PrintGameInfo(target, L"PowerUps", L"", 530.f);
   for (uint32_t i = 0; i < GameController::GetInstance()->GetLives(); ++i)
   {
     if (i > MAX_LIVES) break; //Should not be possible
@@ -319,6 +324,37 @@ void DrawGame(ClientMenu* menu)
       ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
       D2D1::RectF(GAME_WIDTH + x, y, GAME_WIDTH + x + BAT_WIDTH, y + BAT_HEIGHT), 1.0f);
   }
+
+  const GamePowerUpMap& pwr_map = GameController::GetInstance()->GetGamePowerUpMap();
+  GamePowerUpMap::const_iterator pwr_it = pwr_map.begin();
+  size_t index = 0;
+  for (; pwr_it != pwr_map.end(); ++pwr_it)
+  {
+    float row = (index / 4) == 0 ? 0.0 : (POWERUP_DIMENSION * 2.f);
+    float y = 530.f + 36.f + row;
+    float col = (index % 4);
+    float x = 16.f + (col * 20.f) + (col * POWERUP_DIMENSION);
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(pwr_it->second.IsActive() 
+        ? L"powerup_active" : L"powerup_inactive"),
+      D2D1::RectF(GAME_WIDTH + x,
+        y,
+        GAME_WIDTH + x + POWERUP_DIMENSION,
+        y + POWERUP_DIMENSION), 1.0f);
+    if (!pwr_it->second.GetIcon().empty())
+    {
+      x += 8.f;
+      y += 8.f;
+      target->DrawBitmap(
+        ResourceLoader::GetSpriteMap().at(pwr_it->second.GetIcon()),
+        D2D1::RectF(GAME_WIDTH + x, y,
+          GAME_WIDTH + x + POWERUP_ICON,
+          y + POWERUP_ICON), 1.0f);
+    }
+    ++index;
+  }
+
+
 
 
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();

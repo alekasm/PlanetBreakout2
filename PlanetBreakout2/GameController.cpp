@@ -57,15 +57,25 @@ void GameController::SetHighscoreName(std::wstring name)
   level_state = LevelState::GAME_OVER;
   game_type = GameType::MAIN_MENU;
 }
-
+const GamePowerUpMap& GameController::GetGamePowerUpMap() const
+{
+  return powerup_map;
+}
 void GameController::AddPowerup(PowerupType type)
 {
-  powerup_status[type] = true;
+  powerup_map[type].SetActive(true);
+  if (type == PowerupType::HYPER_BALL)
+  {
+    for (Ball& b : balls)
+      b.sprite = L"hyperball";
+  }
 }
 
 void GameController::Respawn()
 {
-  memset(powerup_status, false, POWERUP_COUNT);
+  GamePowerUpMap::iterator pwr_it = powerup_map.begin();
+  for (; pwr_it != powerup_map.end(); ++pwr_it)
+    pwr_it->second.SetActive(false);
   powerups.clear();
   balls.clear();
   if (lives == 0)
@@ -110,7 +120,7 @@ void GameController::Play()
 //Returns true if the specified ball should bounce
 bool GameController::BreakBrick(Ball* ball, uint32_t index)
 {
-  bool hyper_ball = powerup_status[PowerupType::HYPER_BALL];
+  bool hyper_ball = powerup_map.at(PowerupType::HYPER_BALL).IsActive();
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
@@ -122,6 +132,10 @@ bool GameController::BreakBrick(Ball* ball, uint32_t index)
     if (!hyper_ball && powerups.empty())
     {
       Powerup p;
+      //Since ball width < powerup width
+      unsigned x = ball->x;
+      if (x + POWERUP_DIMENSION > GAME_WIDTH)
+        x = GAME_WIDTH - POWERUP_DIMENSION;
       p.Update(ball->x, ball->y);
       p.Start();
       powerups.push_back(p);

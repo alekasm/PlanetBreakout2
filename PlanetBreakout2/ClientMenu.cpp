@@ -30,8 +30,6 @@ namespace
   bool fullscreen = false;
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
   float mouse_scale = 1.f;
-  //float window_scale_x = 1.f;
-  //float window_scale_y = 1.f;
 
   float fs_scale_factor = 1.f;
   float fs_scale_factor_rel = 1.f;
@@ -42,8 +40,6 @@ namespace
   RECT GameClipRect;
   bool focused = false;
   RECT desktop;
-  //Text highscore_text(D2D1::RectF(20.f, CLIENT_WIDTH), L"New");
-  //float window_cx = 0.f, window_cy = 0.f;
 }
 
 bool ClientMenu::IsFocused()

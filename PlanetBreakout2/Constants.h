@@ -15,6 +15,7 @@
 
 #define BALL_DIMENSION 16
 #define POWERUP_DIMENSION 32
+#define POWERUP_ICON 16
 #define TARGET_FPS 144.f
 //Microseconds / FPS
 #define TARGET_FRAMES ((1000.f * 1000.f) / TARGET_FPS)
@@ -26,6 +27,7 @@
 #define MAP_DIRECTORY L"assets\\maps\\"
 #define DEFAULT_BACKGROUND L"bg1"
 #define POWERUP_SPRITE L"powerup"
+#define HYPERBALL_SPRITE L"hyperball"
 #define EDITOR_BUTTONS_PER_PAGE 16
 #define EDITOR_BUTTON_HEIGHT 36
 #define EDITOR_BUTTON_WIDTH 110

@@ -20,6 +20,9 @@ enum TileType { NONE_TILE };
 #define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
 #define ISVALID_TILETYPE(v) (v == NONE_TILE)
 
+
+enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL, HYPER_BALL };
+
 struct Entity :  Drawable
 {
   EntityType type;
