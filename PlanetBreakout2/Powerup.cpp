@@ -39,7 +39,7 @@ void Powerup::UpdateFrame(int64_t elapsed)
       srand(time(NULL));
       //GameController::GetInstance()->AddPowerup(
       //  (PowerupType)(rand() % PowerupType::POWERUP_COUNT));
-      GameController::GetInstance()->AddPowerup(PowerupType::HYPER_BALL);
+      GameController::GetInstance()->AddPowerup();
       active = false;
     }
   }

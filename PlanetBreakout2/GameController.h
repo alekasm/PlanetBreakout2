@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <unordered_map>
+#include  <random>
 #include "GameLevel.h"
 #include "PrimitiveText.h"
 #include "Ball.h"
@@ -55,7 +56,7 @@ struct GameController
   void Pause();
   void NextLevel();
   void SetHighscoreName(std::wstring);
-  void AddPowerup(PowerupType);
+  void AddPowerup();
   const GamePowerUpMap& GetGamePowerUpMap() const;
   BrickMap& GetBrickMap();
   LevelState GetLevelState();
@@ -84,11 +85,14 @@ private:
   POINT mousePosPrev;
   BrickMap bricks;
   GameType old_type = GameType::MAIN_MENU;
+  std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
     {PowerupType::CREATOR_BALL, GamePowerUp(L"")},
     {PowerupType::LASER_BAT, GamePowerUp(L"")},
     {PowerupType::BONUS_POINTS, GamePowerUp(L"")},
+    {PowerupType::BARRIER, GamePowerUp(L"barrier_icon")},
+    {PowerupType::EXTRA_LIFE, GamePowerUp(L"heart")},
   };
   GameController();
 };

@@ -21,7 +21,8 @@ enum TileType { NONE_TILE };
 #define ISVALID_TILETYPE(v) (v == NONE_TILE)
 
 
-enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL, HYPER_BALL };
+#define POWERUP_SIZE 6
+enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL, HYPER_BALL, BARRIER, EXTRA_LIFE };
 
 struct Entity :  Drawable
 {

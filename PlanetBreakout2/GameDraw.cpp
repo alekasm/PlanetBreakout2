@@ -333,7 +333,7 @@ void DrawGame(ClientMenu* menu)
     float row = (index / 4) == 0 ? 0.0 : (POWERUP_DIMENSION * 2.f);
     float y = 530.f + 36.f + row;
     float col = (index % 4);
-    float x = 16.f + (col * 20.f) + (col * POWERUP_DIMENSION);
+    float x = 32.f + (col * 20.f) + (col * POWERUP_DIMENSION);
     target->DrawBitmap(
       ResourceLoader::GetSpriteMap().at(pwr_it->second.IsActive() 
         ? L"powerup_active" : L"powerup_inactive"),

@@ -1,5 +1,9 @@
 #include "GameController.h"
+#include "LogicHelper.h"
 #include <chrono>
+#include <numeric>
+#include <algorithm>
+#include <random>
 GameController* GameController::instance = nullptr;
 
 GameController::GameController()
@@ -61,13 +65,37 @@ const GamePowerUpMap& GameController::GetGamePowerUpMap() const
 {
   return powerup_map;
 }
-void GameController::AddPowerup(PowerupType type)
+void GameController::AddPowerup()
 {
-  powerup_map[type].SetActive(true);
-  if (type == PowerupType::HYPER_BALL)
+  std::vector<int> v_powerups(POWERUP_SIZE);
+  std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
+  std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  for (int i : v_powerups)
   {
-    for (Ball& b : balls)
-      b.sprite = L"hyperball";
+    PowerupType type = (PowerupType)i;
+    if (!powerup_map[type].IsActive())
+    {
+      powerup_map[type].SetActive(true);
+      switch (type)
+      {
+      case HYPER_BALL:
+      {
+        for (Ball& b : balls)
+          b.sprite = L"hyperball";
+      }
+      break;
+      case BARRIER:
+      { //TODO ball in brick when spawning?
+        for (int col = 0; col < GRID_COLUMNS; ++col)
+        {
+          Brick brick(BrickType::NORMAL_BRICK, L"barrier", col, GRID_ROWS - 1);
+          bricks[GetBrickIndex(col, GRID_ROWS - 1)].push_back(brick);
+        }
+      }
+      break;
+      }
+      break;
+    }
   }
 }
 
@@ -78,6 +106,11 @@ void GameController::Respawn()
     pwr_it->second.SetActive(false);
   powerups.clear();
   balls.clear();
+  //Clears barrier bricks
+  for (int col = 0; col < GRID_COLUMNS; ++col)
+  {
+    bricks[GetBrickIndex(col, GRID_ROWS - 1)].clear();
+  }
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
