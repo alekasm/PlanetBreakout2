@@ -154,11 +154,14 @@ void GameController::Play()
 bool GameController::BreakBrick(Ball* ball, uint32_t index)
 {
   bool hyper_ball = powerup_map.at(PowerupType::HYPER_BALL).IsActive();
+  float multiplier = 10.f;
+  if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
+    multiplier = 12.f;
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
   GameController::GetInstance()->AddScore(
-    (uint16_t)(ball->GetSpeed() * 10 * erased));
+    (uint16_t)(ball->GetSpeed() * multiplier *erased));
   if (erased > 0)
   {
     //todo randomize, this is for testing purposes
@@ -273,7 +276,10 @@ void GameController::GameUpdate()
 
   if (!any_ball_active)
   {
-    lives--;
+    if (!powerups.at(PowerupType::EXTRA_LIFE).IsActive())
+    {
+      lives--;
+    }
     Respawn();
     return;
   }

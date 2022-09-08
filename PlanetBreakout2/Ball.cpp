@@ -101,7 +101,7 @@ void Ball::UpdateFrame(int64_t elapsed)
       float dir = M_PI / 10.f + ((8.f * portion) * M_PI / 10.f); //pi/10 - 9pi/10
       direction = -dir;
     }
-  }
+  } //...
   else
   { 
     //Check brick collisions 

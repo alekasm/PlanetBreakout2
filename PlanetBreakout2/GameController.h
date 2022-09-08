@@ -90,7 +90,7 @@ private:
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
     {PowerupType::CREATOR_BALL, GamePowerUp(L"")},
     {PowerupType::LASER_BAT, GamePowerUp(L"")},
-    {PowerupType::BONUS_POINTS, GamePowerUp(L"")},
+    {PowerupType::BONUS_POINTS, GamePowerUp(L"points")},
     {PowerupType::BARRIER, GamePowerUp(L"barrier_icon")},
     {PowerupType::EXTRA_LIFE, GamePowerUp(L"heart")},
   };
