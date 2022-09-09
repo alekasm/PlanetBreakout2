@@ -143,6 +143,13 @@ void Ball::UpdateFrame(int64_t elapsed)
   Update(real_x, real_y);
 }
 
+void Ball::SetPosition(float x, float y)
+{
+  real_x = x;
+  real_y = y;
+  Update(real_x, real_y);
+}
+
 void Ball::Start()
 {
   speed = 3.f;

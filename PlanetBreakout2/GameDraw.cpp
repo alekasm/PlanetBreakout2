@@ -260,6 +260,8 @@ void DrawGame(ClientMenu* menu)
   ID2D1Brush* darkGreenBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GREEN);
   ID2D1Brush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
   ID2D1Brush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
+  ID2D1Brush* redBrush = ResourceLoader::GetBrush(ColorBrush::RED_HALF);
+  ID2D1Brush* redFullBrush = ResourceLoader::GetBrush(ColorBrush::RED);
   target->BeginDraw();
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
@@ -381,12 +383,27 @@ void DrawGame(ClientMenu* menu)
     }
   }
 
+  bool creator_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::CREATOR_BALL);
+  bool hyper_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::HYPER_BALL);
+  float radius = hyper_ball ? 2.f : 1.f;
+  ID2D1Brush* ellipse_brush = hyper_ball ? redFullBrush : greenBrush;
   for (const Ball& ball : GameController::GetInstance()->GetBalls())
   {
     if (ball.IsActive())
     {
       target->DrawBitmap(
         ResourceLoader::GetSpriteMap().at(ball.sprite), ball.d2d1Rect, 1.0f);
+      D2D1_ELLIPSE ellipse_radius = D2D1::Ellipse(
+        D2D1::Point2F(ball.d2d1Rect.left + 8.f,
+          ball.d2d1Rect.top + 8.f), 10.f, 10.f);
+      target->DrawEllipse(ellipse_radius, ellipse_brush, radius);
+      if (creator_ball)
+      {
+        D2D1_ELLIPSE ellipse_center = D2D1::Ellipse(
+          D2D1::Point2F(ball.d2d1Rect.left + 8.f,
+            ball.d2d1Rect.top + 8.f), 4.f, 3.f);
+        target->FillEllipse(ellipse_center, ellipse_brush);
+      }
     }
   }
 

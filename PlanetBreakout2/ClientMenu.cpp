@@ -443,16 +443,16 @@ void ClientMenu::Initialize(HINSTANCE hInstance)
   const HWND hDesktop = GetDesktopWindow();
   GetWindowRect(hDesktop, &desktop);
 
+  float scale_factor = 1.f;
   if (desktop.bottom <= desktop.right)
-  {
-    fs_scale_factor = (float)desktop.bottom / CLIENT_HEIGHT;
-    fs_scale_factor_rel = (float)CLIENT_HEIGHT / desktop.bottom;
-  }
+    scale_factor = (float)desktop.bottom / CLIENT_HEIGHT;
   else
-  {
-    fs_scale_factor = (float)desktop.right / CLIENT_WIDTH;
-    fs_scale_factor_rel = (float)CLIENT_WIDTH / desktop.right;
-  }
+    scale_factor = (float)desktop.right / CLIENT_WIDTH;
+
+  float modifier = std::fmodf(scale_factor, 0.1f);
+  fs_scale_factor = scale_factor - modifier;
+  fs_scale_factor_rel = 1.f / fs_scale_factor;
+
   ClientFullscreenRect.right = CLIENT_WIDTH * fs_scale_factor;
   ClientFullscreenRect.bottom = CLIENT_HEIGHT * fs_scale_factor;
   ClientFullscreenRect.top = (desktop.bottom - ClientFullscreenRect.bottom) / 2;

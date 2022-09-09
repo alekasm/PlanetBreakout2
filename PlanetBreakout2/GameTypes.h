@@ -7,7 +7,7 @@
 
 typedef int EntityId;
 enum EntityType { BAT, BALL, BRICK, POWERUP, TILE };
-enum BallType { NORMAL_BALL, FAST_BALL, SLOW_BALL };
+//enum class BallType { NORMAL_BALL, FAST_BALL, SLOW_BALL };
 //enum PowerUpType { FAST_BALL_PU, SLOW_BALL_PU, LONG_BAT_PU, SHORT_BAT_PU, LASER_BAT_PU };
 enum class BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
 enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK };
@@ -78,6 +78,14 @@ struct DynamicEntity : Entity
   float GetSpeed()
   {
     return speed;
+  }
+  float GetRealX()
+  {
+    return real_x;
+  }
+  float GetRealY()
+  {
+    return real_y;
   }
 protected:
   bool active = true;

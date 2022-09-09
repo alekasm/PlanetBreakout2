@@ -12,7 +12,8 @@ GameController::GameController()
   old_type = game_type;
   mousePos = POINT();
   mousePosPrev = POINT();
-  timer = std::chrono::milliseconds(0);
+  timer = std::chrono::microseconds(0);
+  timer_creator = std::chrono::microseconds(0);
   level_state = LevelState::START;
 }
 
@@ -64,6 +65,11 @@ void GameController::SetHighscoreName(std::wstring name)
 const GamePowerUpMap& GameController::GetGamePowerUpMap() const
 {
   return powerup_map;
+}
+
+bool GameController::IsPowerUpActive(PowerupType type)
+{
+  return powerup_map.at(type).IsActive();
 }
 void GameController::AddPowerup()
 {
@@ -122,8 +128,9 @@ void GameController::Respawn()
   else
   {
     level_state = LevelState::START;
+    timer = std::chrono::microseconds::zero();
+    timer_creator = std::chrono::microseconds::zero();
     Ball starter_ball(campaign.ball_sprite);
-    timer = std::chrono::milliseconds::zero();
     starter_ball.Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
     starter_ball.MoveCenterX(GAME_WIDTH / 2);
     starter_ball.Start();
@@ -161,7 +168,7 @@ bool GameController::BreakBrick(Ball* ball, uint32_t index)
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
   GameController::GetInstance()->AddScore(
-    (uint16_t)(ball->GetSpeed() * multiplier *erased));
+    (uint16_t)(ball->GetSpeed() * multiplier * erased));
   if (erased > 0)
   {
     //todo randomize, this is for testing purposes
@@ -253,19 +260,46 @@ void GameController::GameUpdate()
   if (timer.count() == 0)
   {
     timer = now;
-    return;
+     return;
   }
   std::chrono::microseconds delta = now - timer;
   timer = now;
 
+  bool spawn_creator = false;
+  if (IsPowerUpActive(PowerupType::CREATOR_BALL))
+  {
+    if (timer_creator.count() == 0)
+    {
+      timer_creator = now;
+    }
+    std::chrono::microseconds delta = now - timer_creator;
+    if (delta.count() > 5000 * 1000) // 5 seconds
+    {
+      timer_creator = now;
+      spawn_creator = true;
+    }
+  }
+
   bool any_ball_active = false;
+  std::vector<Ball> new_balls;
   for (Ball& ball : balls)
   {
     if (ball.IsActive())
     {
       any_ball_active = true;
       ball.UpdateFrame(delta.count());
+      if (spawn_creator)
+      {
+        Ball starter_ball(campaign.ball_sprite);
+        starter_ball.SetPosition(ball.GetRealX(), ball.GetRealY());
+        new_balls.push_back(starter_ball);
+      }
     }
+  }
+  for (Ball& newball : new_balls)
+  {
+    newball.Start();
+    balls.push_back(newball);
   }
 
   for (Powerup& powerup : powerups)
@@ -276,7 +310,7 @@ void GameController::GameUpdate()
 
   if (!any_ball_active)
   {
-    if (!powerups.at(PowerupType::EXTRA_LIFE).IsActive())
+    if (!powerup_map.at(PowerupType::EXTRA_LIFE).IsActive())
     {
       lives--;
     }

@@ -58,6 +58,7 @@ struct GameController
   void SetHighscoreName(std::wstring);
   void AddPowerup();
   const GamePowerUpMap& GetGamePowerUpMap() const;
+  bool IsPowerUpActive(PowerupType);
   BrickMap& GetBrickMap();
   LevelState GetLevelState();
   GameType GetGameType();
@@ -88,11 +89,12 @@ private:
   std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
-    {PowerupType::CREATOR_BALL, GamePowerUp(L"")},
-    {PowerupType::LASER_BAT, GamePowerUp(L"")},
+    {PowerupType::CREATOR_BALL, GamePowerUp(L"creator")},
+    {PowerupType::LASER_BAT, GamePowerUp(L"laser")},
     {PowerupType::BONUS_POINTS, GamePowerUp(L"points")},
     {PowerupType::BARRIER, GamePowerUp(L"barrier_icon")},
     {PowerupType::EXTRA_LIFE, GamePowerUp(L"heart")},
   };
+  std::chrono::microseconds timer_creator;
   GameController();
 };
