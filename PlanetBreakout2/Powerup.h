@@ -1,5 +1,5 @@
 #pragma once
-#include "GameTypes.h"
+#include "DynamicEntity.h"
 
 #define POWERUP_HYPERBALL 0x0001
 struct Powerup : DynamicEntity
@@ -8,7 +8,8 @@ struct Powerup : DynamicEntity
     DynamicEntity(EntityType::POWERUP, POWERUP_SPRITE,
       POWERUP_DIMENSION, POWERUP_DIMENSION)
   {
+    RegisterCollision(CollisionType::BAT);
   }
-  void UpdateFrame(int64_t elapsed) override;
   void Start() override;
+  virtual void CollisionBat(float x1, float x2) override;
 };

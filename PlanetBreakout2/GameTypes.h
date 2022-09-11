@@ -6,7 +6,7 @@
 #include "Drawable.h"
 
 typedef int EntityId;
-enum EntityType { BAT, BALL, BRICK, POWERUP, TILE };
+enum class EntityType { BAT, BALL, BRICK, POWERUP, TILE };
 //enum class BallType { NORMAL_BALL, FAST_BALL, SLOW_BALL };
 //enum PowerUpType { FAST_BALL_PU, SLOW_BALL_PU, LONG_BAT_PU, SHORT_BAT_PU, LASER_BAT_PU };
 enum class BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
@@ -60,39 +60,6 @@ struct Bat : Entity
   void UpdateType(BatType subtype)
   {
   }
-};
-
-struct DynamicEntity : Entity
-{
-  DynamicEntity(EntityType type, std::wstring sprite,
-    unsigned width, unsigned height) :
-    Entity(type, sprite, width, height)
-  {
-  }
-  virtual void UpdateFrame(int64_t elapsed) = 0;
-  virtual void Start() = 0;
-  const bool IsActive() const
-  {
-    return active;
-  }
-  float GetSpeed()
-  {
-    return speed;
-  }
-  float GetRealX()
-  {
-    return real_x;
-  }
-  float GetRealY()
-  {
-    return real_y;
-  }
-protected:
-  bool active = true;
-  float speed = 1.0f;
-  float direction = 0.f;
-  float real_x = 0.f;
-  float real_y = 0.f;
 };
 
 struct Brick : Entity

@@ -298,6 +298,8 @@ void GameController::GameUpdate()
   }
   for (Ball& newball : new_balls)
   {
+    if (IsPowerUpActive(PowerupType::HYPER_BALL))
+      newball.sprite = L"hyperball";
     newball.Start();
     balls.push_back(newball);
   }

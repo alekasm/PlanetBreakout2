@@ -24,6 +24,13 @@ RECT GetBrickRect(uint32_t col, uint32_t row)
     static_cast<long>((row * BRICK_HEIGHT) + BRICK_HEIGHT) };
 }
 
+RECT GetBrickRect(uint32_t index)
+{
+  unsigned col = index % GRID_COLUMNS;
+  unsigned row = index / GRID_COLUMNS;
+  return GetBrickRect(col, row);
+}
+
 bool IsReservedBrick(uint32_t col, uint32_t row)
 {
   return row >= GRID_ROWS - 6;
