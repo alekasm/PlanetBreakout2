@@ -76,6 +76,7 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  v_powerups[0] == PowerupType::HYPER_BALL;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -189,8 +190,7 @@ bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
     (uint16_t)(ball->GetSpeed() * multiplier * erased));
   if (erased > 0)
   {
-    //todo randomize, this is for testing purposes
-    if (powerups.empty() && (rand() % 9) == 0)
+    if ((rand() % 20) == 0)
     {
       Powerup p;
       //Since ball width < powerup width
@@ -201,9 +201,10 @@ bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
       p.Start();
       powerups.push_back(p);
     }
-    
   }
-  return !hyper_ball;
+  if (!hyper_ball) return true;
+  if (erased == 0) return true; //fast check
+  return bricks.find(index) != bricks.end(); //expensive check
 }
 
 const std::vector<Ball>& GameController::GetBalls() const

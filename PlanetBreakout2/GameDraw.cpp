@@ -410,8 +410,7 @@ void DrawGame(ClientMenu* menu)
   Laser laser = GameController::GetInstance()->GetLaser();
   if (laser.IsActive())
   {
-    target->FillRectangle(laser.d2d1Rect, hyper_ball ?
-      ResourceLoader::GetBrush(ColorBrush::RED) :
+    target->FillRectangle(laser.d2d1Rect,
       ResourceLoader::GetBrush(ColorBrush::GRADIENT_1));
   }
 
