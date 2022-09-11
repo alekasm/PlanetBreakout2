@@ -22,6 +22,8 @@ struct DynamicEntity : Entity
   virtual void CollisionHorizontalWall();
   virtual void CollisionBrick(uint32_t index);
   virtual void CollisionBat(float x1, float x2);
+  virtual void PostFrameUpdate();
+  void SetActive(bool);
 protected:
   bool active = true;
   float speed = 1.0f;

@@ -8,6 +8,7 @@ void DynamicEntity::CollisionVerticalWall() {}
 void DynamicEntity::CollisionHorizontalWall() {}
 void DynamicEntity::CollisionBrick(uint32_t index) {}
 void DynamicEntity::CollisionBat(float x1, float x2) {}
+void DynamicEntity::PostFrameUpdate() {}
 
 const bool DynamicEntity::IsActive() const
 {
@@ -29,6 +30,11 @@ float DynamicEntity::GetRealY()
 void DynamicEntity::RegisterCollision(CollisionType type)
 {
   collision_mask |= type;
+}
+
+void DynamicEntity::SetActive(bool value)
+{
+  active = value;
 }
 
 void DynamicEntity::UpdateFrame(int64_t elapsed)
@@ -119,4 +125,5 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
     }
   }
   Update(real_x, real_y);
+  PostFrameUpdate();
 }

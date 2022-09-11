@@ -1,7 +1,6 @@
 #pragma once
 #include "DynamicEntity.h"
 
-#define POWERUP_HYPERBALL 0x0001
 struct Powerup : DynamicEntity
 {
   Powerup() :

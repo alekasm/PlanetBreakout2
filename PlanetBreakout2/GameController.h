@@ -7,6 +7,7 @@
 #include "PrimitiveText.h"
 #include "Ball.h"
 #include "Powerup.h"
+#include "Laser.h"
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
@@ -41,7 +42,7 @@ typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
 
 struct GameController
 {
-  bool BreakBrick(Ball*, uint32_t);
+  bool BreakBrick(DynamicEntity*, uint32_t);
   static GameController* GetInstance();
   POINT mousePos;
   Bat* bat = nullptr;
@@ -69,7 +70,10 @@ struct GameController
   const std::vector<Powerup>& GetPowerups() const;
   size_t GetCurrentLevel();
   uint32_t GetLives();
+  void ShootLaser();
+  const Laser& GetLaser() const;
 private:
+  Laser laser;
   size_t current_level = 0;
   uint32_t lives = 0;
   std::vector<Ball> balls;

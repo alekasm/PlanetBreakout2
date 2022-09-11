@@ -112,6 +112,7 @@ void GameController::Respawn()
     pwr_it->second.SetActive(false);
   powerups.clear();
   balls.clear();
+  laser.SetActive(false);
   //Clears barrier bricks
   for (int col = 0; col < GRID_COLUMNS; ++col)
   {
@@ -157,8 +158,25 @@ void GameController::Play()
   }
 }
 
+const Laser& GameController::GetLaser() const
+{
+  return laser;
+}
+
+void GameController::ShootLaser()
+{
+  if (laser.IsActive())
+    return;
+  if (!powerup_map.at(PowerupType::LASER_BAT).IsActive())
+    return;
+  int cx = bat->x + (BAT_WIDTH / 2);
+  laser.Update(0, BAT_Y - 1);
+  laser.MoveCenterX(cx);
+  laser.Start();
+}
+
 //Returns true if the specified ball should bounce
-bool GameController::BreakBrick(Ball* ball, uint32_t index)
+bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
 {
   bool hyper_ball = powerup_map.at(PowerupType::HYPER_BALL).IsActive();
   float multiplier = 10.f;
@@ -172,7 +190,7 @@ bool GameController::BreakBrick(Ball* ball, uint32_t index)
   if (erased > 0)
   {
     //todo randomize, this is for testing purposes
-    if (!hyper_ball && powerups.empty())
+    if (powerups.empty() && (rand() % 9) == 0)
     {
       Powerup p;
       //Since ball width < powerup width
@@ -185,7 +203,7 @@ bool GameController::BreakBrick(Ball* ball, uint32_t index)
     }
     
   }
-  return !hyper_ball && erased > 0;
+  return !hyper_ball;
 }
 
 const std::vector<Ball>& GameController::GetBalls() const
@@ -280,6 +298,11 @@ void GameController::GameUpdate()
     }
   }
 
+  if (laser.IsActive())
+  {
+    laser.UpdateFrame(delta.count());
+  }
+
   bool any_ball_active = false;
   std::vector<Ball> new_balls;
   for (Ball& ball : balls)
@@ -302,6 +325,20 @@ void GameController::GameUpdate()
       newball.sprite = L"hyperball";
     newball.Start();
     balls.push_back(newball);
+  }
+
+  std::vector<Powerup>::iterator pwr_it;
+  for (pwr_it = powerups.begin(); pwr_it != powerups.end();)
+  {
+    if (pwr_it->IsActive())
+    {
+      pwr_it->UpdateFrame(delta.count());
+      ++pwr_it;
+    }
+    else
+    {
+      pwr_it = powerups.erase(pwr_it);
+    }
   }
 
   for (Powerup& powerup : powerups)
@@ -366,6 +403,8 @@ void GameController::EndGame()
     bat = nullptr;
   }
   balls.clear();
+  powerups.clear();
+  laser.SetActive(false);
   current_level = 0;
   game_type = old_type;
 }

@@ -183,6 +183,9 @@ void ClientMenu::LeftClickLevel()
     case LevelState::END:
       GameController::GetInstance()->NextLevel();
       break;
+    case LevelState::ACTIVE:
+      GameController::GetInstance()->ShootLaser();
+      break;
   }
 }
 

@@ -155,6 +155,7 @@
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameLoader.cpp" />
+    <ClCompile Include="Laser.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="LogicHelper.cpp" />
     <ClCompile Include="main.cpp" />
