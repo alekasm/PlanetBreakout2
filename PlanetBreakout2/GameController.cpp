@@ -92,6 +92,8 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  //TODO NO_POINT on brick, make it no points...
+  //v_powerups[0] = PowerupType::BRICK_SHIELD;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -109,6 +111,15 @@ void GameController::AddPowerup()
         }
       }
       break;
+      case BRICK_SHIELD:
+        for (uint32_t index : GetBrickMap().GetBrickCheckSet())
+        {
+          unsigned col = index % GRID_COLUMNS;
+          unsigned row = index / GRID_COLUMNS;
+          Brick brick(BrickType::NO_POINT, L"nopoint", col, row);
+          bricks[index].push_back(brick);
+        }
+        break;
       }
       break;
     }
@@ -120,9 +131,6 @@ void GameController::Respawn()
   GamePowerUpMap::iterator pwr_it = powerup_map.begin();
   for (; pwr_it != powerup_map.end(); ++pwr_it)
     pwr_it->second.SetActive(false);
-  powerup_map.at(PowerupType::LASER_BAT).SetActive(true);
-  powerup_map.at(PowerupType::HYPER_BALL).SetActive(true);
-
   powerups.clear();
   balls.clear();
   laser.SetActive(false);
@@ -197,6 +205,7 @@ bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
+  
   GameController::GetInstance()->AddScore(
     (uint16_t)(ball->GetSpeed() * multiplier * erased));
   if (erased > 0)

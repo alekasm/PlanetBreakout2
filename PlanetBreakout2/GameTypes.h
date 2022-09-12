@@ -7,22 +7,17 @@
 
 typedef int EntityId;
 enum class EntityType { BAT, BALL, BRICK, POWERUP, TILE };
-//enum class BallType { NORMAL_BALL, FAST_BALL, SLOW_BALL };
-//enum PowerUpType { FAST_BALL_PU, SLOW_BALL_PU, LONG_BAT_PU, SHORT_BAT_PU, LASER_BAT_PU };
 enum class BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
-enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK };
+enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK, NO_POINT };
 enum TileType { NONE_TILE };
 
-#define ISVALID_ENTITYTYPE(v) (v >= BAT && v <= TILE)
-#define ISVALID_BALLTYPE(v) (v >= NORMAL_BALL && v <= SLOW_BALL)
-//#define ISVALID_POWERUPTYPE(v) (v >= FAST_BALL_PU && v <= LASER_BAT_PU)
-//#define ISVALID_BATTYPE(v) (v >= SHORT_BAT && v <= LASER_BAT)
+//Used for loading types, user cannot specify a no-point brick
 #define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
 #define ISVALID_TILETYPE(v) (v == NONE_TILE)
 
 
-#define POWERUP_SIZE 6
-enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL, HYPER_BALL, BARRIER, EXTRA_LIFE };
+#define POWERUP_SIZE 8
+enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL, HYPER_BALL, BARRIER, EXTRA_LIFE, BRICK_SHIELD, GHOST };
 
 struct Entity :  Drawable
 {

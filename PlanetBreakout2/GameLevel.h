@@ -18,6 +18,7 @@ struct BrickMap : std::unordered_map<uint32_t, std::vector<Brick>>
   void Add(uint32_t, Brick&);
   void Clear();
   bool Empty();
+  const std::set<uint32_t>& GetBrickCheckSet() const;
 private:
   std::set<uint32_t> brick_check;
 };

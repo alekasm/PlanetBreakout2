@@ -243,8 +243,8 @@ void LevelEditor::initialize(ClientMenu* client)
     Brick brick = GameLoader::GetAssetBricks().at(i);
     Button* button1 = CreateButton(i);
 
-    std::wstring desc = brick.subtype ==
-      BrickType::NORMAL_BRICK ?
+    std::wstring desc = brick.subtype !=
+      BrickType::INVINCIBLE_BRICK ?
       L"Breakable" : L"Invincible";
 
     Text button1Text(button1->d2d1Rect, desc);

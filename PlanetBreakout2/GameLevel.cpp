@@ -4,6 +4,11 @@
 #include <time.h>
 
 
+const std::set<uint32_t>& BrickMap::GetBrickCheckSet() const
+{
+  return brick_check;
+}
+
 //Returns true if a brick was removed
 size_t BrickMap::Erase(uint32_t brick_index, UINT uFlags)
 {
@@ -18,7 +23,7 @@ size_t BrickMap::Erase(uint32_t brick_index, UINT uFlags)
   for (brick_it = bricks.rbegin(); brick_it != bricks.rend();)
   {
     if ((uFlags & PB2_BRICKMAP_ERASE_ANY) ||
-      brick_it->subtype == BrickType::NORMAL_BRICK)
+      brick_it->subtype != BrickType::INVINCIBLE_BRICK)
     {
       brick_it = decltype(brick_it){
         bricks.erase(std::next(brick_it).base())
