@@ -24,6 +24,7 @@ struct DynamicEntity : Entity
   virtual void CollisionBat(float x1, float x2);
   virtual void PostFrameUpdate();
   void SetActive(bool);
+  void SetPosition(float x, float y);
 protected:
   bool active = true;
   float speed = 1.0f;

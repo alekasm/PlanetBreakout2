@@ -15,7 +15,6 @@ struct Ball : DynamicEntity
   virtual void CollisionHorizontalWall() override;
   virtual void CollisionBrick(uint32_t index) override;
   virtual void CollisionBat(float x1, float x2) override;
-  void SetPosition(float x, float y);
 private:
   enum class BallCollisionType { HORIZONTAL, VERTICAL };
   void Collision(BallCollisionType);

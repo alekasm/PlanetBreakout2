@@ -77,13 +77,6 @@ void Ball::CollisionBat(float x1, float x2)
   direction = -dir;
 }
 
-void Ball::SetPosition(float x, float y)
-{
-  real_x = x;
-  real_y = y;
-  Update(real_x, real_y);
-}
-
 void Ball::Start()
 {
 

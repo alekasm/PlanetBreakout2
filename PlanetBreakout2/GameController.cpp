@@ -67,6 +67,22 @@ const GamePowerUpMap& GameController::GetGamePowerUpMap() const
   return powerup_map;
 }
 
+std::wstring GameController::GetSpriteForEntity(DynamicSpriteType type)
+{
+  switch (type)
+  {
+  case DynamicSpriteType::BAT:
+    if (IsPowerUpActive(PowerupType::LASER_BAT))
+      return L"laserbat";
+    return campaign.bat_sprite;
+  case DynamicSpriteType::BALL:
+    if (IsPowerUpActive(PowerupType::HYPER_BALL))
+      return L"hyperball";
+    return campaign.ball_sprite;
+  }
+  return L"";//not reachable
+}
+
 bool GameController::IsPowerUpActive(PowerupType type)
 {
   return powerup_map.at(type).IsActive();
@@ -76,7 +92,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  v_powerups[0] == PowerupType::HYPER_BALL;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -85,12 +100,6 @@ void GameController::AddPowerup()
       powerup_map[type].SetActive(true);
       switch (type)
       {
-      case HYPER_BALL:
-      {
-        for (Ball& b : balls)
-          b.sprite = L"hyperball";
-      }
-      break;
       case BARRIER:
       { //TODO ball in brick when spawning?
         for (int col = 0; col < GRID_COLUMNS; ++col)
@@ -111,6 +120,9 @@ void GameController::Respawn()
   GamePowerUpMap::iterator pwr_it = powerup_map.begin();
   for (; pwr_it != powerup_map.end(); ++pwr_it)
     pwr_it->second.SetActive(false);
+  powerup_map.at(PowerupType::LASER_BAT).SetActive(true);
+  powerup_map.at(PowerupType::HYPER_BALL).SetActive(true);
+
   powerups.clear();
   balls.clear();
   laser.SetActive(false);
@@ -139,7 +151,6 @@ void GameController::Respawn()
     balls.push_back(starter_ball);
     bat->Update(0, BAT_Y);
     bat->MoveCenterX(GAME_WIDTH / 2);
-    
   }
 }
 
@@ -170,9 +181,9 @@ void GameController::ShootLaser()
     return;
   if (!powerup_map.at(PowerupType::LASER_BAT).IsActive())
     return;
-  int cx = bat->x + (BAT_WIDTH / 2);
-  laser.Update(0, BAT_Y - 1);
-  laser.MoveCenterX(cx);
+  int cx = bat->x + (BAT_WIDTH / 2) - (laser.width / 2);
+  laser.SetPosition(cx, BAT_Y);
+  //laser.MoveCenterX(cx);
   laser.Start();
 }
 
@@ -322,8 +333,6 @@ void GameController::GameUpdate()
   }
   for (Ball& newball : new_balls)
   {
-    if (IsPowerUpActive(PowerupType::HYPER_BALL))
-      newball.sprite = L"hyperball";
     newball.Start();
     balls.push_back(newball);
   }

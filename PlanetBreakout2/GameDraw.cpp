@@ -370,9 +370,6 @@ void DrawGame(ClientMenu* menu)
         brick.d2d1Rect, 1.0f);
     }
   }
-  target->DrawBitmap(
-    ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
-    GameController::GetInstance()->bat->d2d1Rect, 1.0f);
 
   for (const Powerup& powerup : GameController::GetInstance()->GetPowerups())
   {
@@ -392,7 +389,10 @@ void DrawGame(ClientMenu* menu)
     if (ball.IsActive())
     {
       target->DrawBitmap(
-        ResourceLoader::GetSpriteMap().at(ball.sprite), ball.d2d1Rect, 1.0f);
+        ResourceLoader::GetSpriteMap().at(
+          GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BALL)),
+        ball.d2d1Rect, 1.0f);
+
       D2D1_ELLIPSE ellipse_radius = D2D1::Ellipse(
         D2D1::Point2F(ball.d2d1Rect.left + 8.f,
           ball.d2d1Rect.top + 8.f), 10.f, 10.f);
@@ -410,9 +410,16 @@ void DrawGame(ClientMenu* menu)
   Laser laser = GameController::GetInstance()->GetLaser();
   if (laser.IsActive())
   {
-    target->FillRectangle(laser.d2d1Rect,
+    target->FillRectangle(laser.d2d1Rect, hyper_ball ?
+      ResourceLoader::GetBrush(ColorBrush::RED) :
       ResourceLoader::GetBrush(ColorBrush::GRADIENT_1));
   }
+
+  target->DrawBitmap(
+    ResourceLoader::GetSpriteMap().at(
+      GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BAT)),
+    GameController::GetInstance()->bat->d2d1Rect, 1.0f);
+
 
   if (GameController::GetInstance()->GetLevelState() == LevelState::PAUSED)
   {

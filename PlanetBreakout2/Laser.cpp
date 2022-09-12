@@ -13,13 +13,13 @@ void Laser::Start()
 }
 void Laser::CollisionBrick(uint32_t index)
 {
-  GameController::GetInstance()->BreakBrick(this, index);
-  active = false;
+  if(GameController::GetInstance()->BreakBrick(this, index))
+    active = false;
 }
 
 void Laser::PostFrameUpdate()
 {
-  height = std::clamp(BAT_Y - y, 1U, 24U);
+  height = std::clamp((BAT_Y + BAT_HEIGHT) - y, 1U, 24U);
   RecalculateBounds();
 }
 

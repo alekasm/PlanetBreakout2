@@ -4,7 +4,7 @@
 struct Laser : DynamicEntity
 {
   Laser() :
-    DynamicEntity(EntityType::POWERUP, POWERUP_SPRITE, 3, 1)
+    DynamicEntity(EntityType::POWERUP, POWERUP_SPRITE, 2, 1)
   {
     active = false;
     RegisterCollision(CollisionType::BRICK);

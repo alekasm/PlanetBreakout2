@@ -11,6 +11,7 @@
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
+enum class DynamicSpriteType { BAT, BALL};
 
 struct GamePowerUp
 {
@@ -58,6 +59,7 @@ struct GameController
   void NextLevel();
   void SetHighscoreName(std::wstring);
   void AddPowerup();
+  std::wstring GetSpriteForEntity(DynamicSpriteType);
   const GamePowerUpMap& GetGamePowerUpMap() const;
   bool IsPowerUpActive(PowerupType);
   BrickMap& GetBrickMap();
