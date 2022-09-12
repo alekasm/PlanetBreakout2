@@ -9,7 +9,7 @@ const std::set<uint32_t>& BrickMap::GetBrickCheckSet() const
   return brick_check;
 }
 
-//Returns true if a brick was removed
+//Returns the amount of bricks erased
 size_t BrickMap::Erase(uint32_t brick_index, UINT uFlags)
 {
   BrickMap::iterator map_it = find(brick_index);
@@ -25,11 +25,13 @@ size_t BrickMap::Erase(uint32_t brick_index, UINT uFlags)
     if ((uFlags & PB2_BRICKMAP_ERASE_ANY) ||
       brick_it->subtype != BrickType::INVINCIBLE_BRICK)
     {
+      if (brick_it->subtype != BrickType::NO_POINT)
+        ++erased;
+
       brick_it = decltype(brick_it){
         bricks.erase(std::next(brick_it).base())
       };
-      ++erased;
-      
+
       bool end_of_index = false;
       if (brick_it == bricks.rend())
       {

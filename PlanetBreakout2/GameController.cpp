@@ -93,7 +93,6 @@ void GameController::AddPowerup()
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
   //TODO NO_POINT on brick, make it no points...
-  //v_powerups[0] = PowerupType::BRICK_SHIELD;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -114,10 +113,18 @@ void GameController::AddPowerup()
       case BRICK_SHIELD:
         for (uint32_t index : GetBrickMap().GetBrickCheckSet())
         {
+          //Should be a useless check, but just to be sure...
+          const BrickMap::const_iterator it = bricks.find(index);
+          if (it == bricks.end() || it->second.empty())
+            return;
           unsigned col = index % GRID_COLUMNS;
           unsigned row = index / GRID_COLUMNS;
-          Brick brick(BrickType::NO_POINT, L"nopoint", col, row);
-          bricks[index].push_back(brick);
+          const Brick& last = *(--it->second.end());
+          if(last.subtype != BrickType::NO_POINT)
+          {
+            Brick brick(BrickType::NO_POINT, L"nopoint", col, row);
+            bricks[index].push_back(brick);
+          }
         }
         break;
       }
@@ -223,7 +230,8 @@ bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
     }
   }
   if (!hyper_ball) return true;
-  if (erased == 0) return true; //fast check
+  //Cannot to fast check because of no-point bricks
+  //if (erased == 0) return true; //fast check
   return bricks.find(index) != bricks.end(); //expensive check
 }
 
