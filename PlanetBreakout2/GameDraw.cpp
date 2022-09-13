@@ -354,14 +354,22 @@ void DrawGame(ClientMenu* menu)
     ++index;
   }
 
-
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
   BrickMap::const_iterator map_it = brickMap.begin();
   for (; map_it != brickMap.end(); ++map_it)
   {
     if (map_it->second.empty()) continue;
-    const Brick& brick = *(--map_it->second.cend());
-    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.sprite), brick.d2d1Rect, 1.0f);
+    auto brick_it = (--map_it->second.cend());
+    if (brick_it->subtype == BrickType::NO_POINT && map_it->second.size() > 1)
+    {
+      auto prev_brick_it = std::prev(brick_it);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(prev_brick_it->sprite), prev_brick_it->d2d1Rect, 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->sprite), brick_it->d2d1Rect, 0.8f);
+    }
+    else
+    {
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->sprite), brick_it->d2d1Rect, 1.0f);
+    }
   }
 
   for (const Powerup& powerup : GameController::GetInstance()->GetPowerups())

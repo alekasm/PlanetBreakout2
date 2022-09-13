@@ -102,7 +102,7 @@ private:
     {PowerupType::BARRIER, GamePowerUp(L"barrier_icon")},
     {PowerupType::EXTRA_LIFE, GamePowerUp(L"heart")},
     {PowerupType::GHOST, GamePowerUp(L"ghost")},
-    {PowerupType::BRICK_SHIELD, GamePowerUp(L"hammer")},
+    {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
   };
   std::chrono::microseconds timer_creator;
   GameController();
