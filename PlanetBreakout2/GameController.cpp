@@ -92,7 +92,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  //TODO NO_POINT on brick, make it no points...
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -108,7 +107,7 @@ void GameController::AddPowerup()
         {
           Brick brick(BrickType::NORMAL_BRICK, L"barrier", col, GRID_ROWS - 1);
           uint32_t index;
-          if (!GetBrickIndex(col, GRID_ROWS - 1, index));
+          if (!GetBrickIndex(col, GRID_ROWS - 1, index))
             continue;
           bricks[index].push_back(brick);
         }

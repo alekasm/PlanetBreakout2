@@ -58,13 +58,18 @@ void Ball::CollisionBrick(uint32_t index)
   {
     RECT brickRect = GetBrickRect(index);
     if (old_y > brickRect.bottom || (old_y + BALL_DIMENSION) < brickRect.top)
+    {
       Collision(BallCollisionType::HORIZONTAL);
+    }
     else
+    {
       Collision(BallCollisionType::VERTICAL);
+    }
+    //(old_y + BALL_DIMENSION) > brickRect.left
   }
   //Seems fine for now, instead of manually setting ball position
-  real_x = real_x + cos(direction);
-  real_y = real_y + sin(direction);
+  real_x = old_x; // real_x + cos(direction);
+  real_y = old_y; // real_y + sin(direction);
 }
 void Ball::CollisionBat(float x1, float x2)
 {
