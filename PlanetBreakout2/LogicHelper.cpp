@@ -1,9 +1,14 @@
 #include "LogicHelper.h"
 #include <vector>
 
-uint32_t GetBrickIndex(uint32_t col, uint32_t row)
+bool GetBrickIndex(uint32_t col, uint32_t row, uint32_t& index)
 {
-  return col + GRID_COLUMNS * row;
+  if (col >= GRID_COLUMNS)
+    return false;
+  if (row >= GRID_ROWS)
+    return false;
+  index = col + GRID_COLUMNS * row;
+  return true;
 }
 
 D2D1_RECT_F GetBrickRectF(uint32_t col, uint32_t row)

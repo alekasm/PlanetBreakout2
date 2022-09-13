@@ -164,7 +164,9 @@ void RightClickLevelEditor()
   unsigned y = p.y / BRICK_HEIGHT;
   if (IsInGameSceen(x, y))
   {
-    uint32_t index = GetBrickIndex(x, y);
+    uint32_t index;
+    if (!GetBrickIndex(x, y, index))
+      return;
     levelEditor.editorLevel.GetBrickMap().Erase(index,
       PB2_BRICKMAP_ERASE_TOP | PB2_BRICKMAP_ERASE_ANY);
   }

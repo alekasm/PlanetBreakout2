@@ -66,31 +66,37 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
   bool new_below = y_new_bottom >= BAT_Y;
 
 
+  bool collision = false;
   if (real_x < 0.f)
   {
+    collision = true;
     real_x = 0.f;
     if (collision_mask & CollisionType::WALL_VERT)
       CollisionVerticalWall();
   }
-  else if (real_x + BALL_DIMENSION > GAME_WIDTH)
+  else if (real_x + width >= GAME_WIDTH)
   {
-    real_x = GAME_WIDTH - BALL_DIMENSION;
+    collision = true;
+    real_x = GAME_WIDTH - width;
     if (collision_mask & CollisionType::WALL_VERT)
       CollisionVerticalWall();
   }
 
   if (real_y < 0.f)
   {
+    collision = true;
     real_y = 0.f;
     if (collision_mask & CollisionType::WALL_HOR)
       CollisionHorizontalWall();
   }
-  else if (real_y /* + height */ > GAME_HEIGHT)
+  else if (real_y > GAME_HEIGHT)
   {
+    collision = true;
     active = false;
   }
   else if (old_above && new_below)
   {
+    collision = true;
     if(collision_mask & CollisionType::BAT)
     {
       float bat_x = GameController::GetInstance()->bat->x;
@@ -102,12 +108,13 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
         CollisionBat(x1, x2);
       }
     }
-  } //...
-  else if(collision_mask & CollisionType::BRICK)
+  }
+  
+  if(!collision && (collision_mask & CollisionType::BRICK))
   {
     //Check brick collisions 
-    float right = real_x + BALL_DIMENSION;
-    float bottom = real_y + BALL_DIMENSION;
+    float right = real_x + width;
+    float bottom = real_y + height;
     long px1 = real_x / BRICK_WIDTH;
     long py1 = real_y / BRICK_HEIGHT;
     long px2 = right / BRICK_WIDTH;
@@ -123,7 +130,10 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
     BrickMap& map = GameController::GetInstance()->GetBrickMap();
     for (const POINT& p : index_check)
     {
-      BrickMap::iterator it = map.find(GetBrickIndex(p.x, p.y));
+      uint32_t index;
+      if (!GetBrickIndex(p.x, p.y, index))
+        continue;
+      BrickMap::iterator it = map.find(index);
       if (it != map.end() && !it->second.empty())
       {
         CollisionBrick(it->first);
@@ -131,6 +141,7 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
       }
     }
   }
+
   Update(real_x, real_y);
   PostFrameUpdate();
 }

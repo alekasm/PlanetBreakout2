@@ -99,6 +99,7 @@ void GameController::AddPowerup()
     if (!powerup_map[type].IsActive())
     {
       powerup_map[type].SetActive(true);
+      random_chance += 5;
       switch (type)
       {
       case BARRIER:
@@ -106,7 +107,10 @@ void GameController::AddPowerup()
         for (int col = 0; col < GRID_COLUMNS; ++col)
         {
           Brick brick(BrickType::NORMAL_BRICK, L"barrier", col, GRID_ROWS - 1);
-          bricks[GetBrickIndex(col, GRID_ROWS - 1)].push_back(brick);
+          uint32_t index;
+          if (!GetBrickIndex(col, GRID_ROWS - 1, index));
+            continue;
+          bricks[index].push_back(brick);
         }
       }
       break;
@@ -141,10 +145,14 @@ void GameController::Respawn()
   powerups.clear();
   balls.clear();
   laser.SetActive(false);
+  random_chance = 20;
   //Clears barrier bricks
   for (int col = 0; col < GRID_COLUMNS; ++col)
   {
-    bricks[GetBrickIndex(col, GRID_ROWS - 1)].clear();
+    uint32_t index;
+    if (!GetBrickIndex(col, GRID_ROWS - 1, index))
+      continue;
+    bricks[index].clear();
   }
   if (lives == 0)
   {
@@ -217,7 +225,7 @@ bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
     (uint16_t)(ball->GetSpeed() * multiplier * erased));
   if (erased > 0)
   {
-    if ((rand() % 20) == 0)
+    if ((rand() % random_chance) == 0)
     {
       Powerup p;
       //Since ball width < powerup width

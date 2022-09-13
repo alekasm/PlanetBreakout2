@@ -87,6 +87,7 @@ private:
   void UpdateBalls();
   float game_speed = 5.f;
   uint16_t score = 0;
+  size_t random_chance = 20;
   std::chrono::microseconds timer;
   static GameController* instance;
   POINT mousePosPrev;

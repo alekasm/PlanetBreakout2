@@ -101,8 +101,9 @@ void GameLevel::clear()
 void GameLevel::AddBrick(Brick brick)
 {
   if (IsReservedBrick(brick)) return;
-  uint32_t index = GetBrickIndex(brick.col, brick.row);
-  brickMap.Add(index, brick);
+  uint32_t index;
+  if(GetBrickIndex(brick.col, brick.row, index))
+   brickMap.Add(index, brick);
 }
 
 BrickMap& GameLevel::GetBrickMap()

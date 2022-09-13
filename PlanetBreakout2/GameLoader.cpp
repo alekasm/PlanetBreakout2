@@ -329,8 +329,11 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
     level.author = info.author;
     for (Brick& brick : info.bricks)
     {
-      uint32_t index = GetBrickIndex(brick.col, brick.row);
-      level.GetBrickMap().Add(index, brick);
+      uint32_t index;
+      if (GetBrickIndex(brick.col, brick.row, index))
+      {
+        level.GetBrickMap().Add(index, brick);
+      }
       //level.brickMap[index].push_back(brick);
     }
     out = level;
