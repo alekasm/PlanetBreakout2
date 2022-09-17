@@ -264,7 +264,7 @@ void DrawGame(ClientMenu* menu)
   target->SetTransform(D2D1::Matrix3x2F::Identity());
   target->Clear();
 
-  for(int y = 0; y < CLIENT_WIDTH; y += 64)
+  for(int y = 0; y < CLIENT_HEIGHT; y += 64)
     for (int x = GAME_WIDTH; x < CLIENT_WIDTH; x += 64)
     {
       target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"bg1"),
