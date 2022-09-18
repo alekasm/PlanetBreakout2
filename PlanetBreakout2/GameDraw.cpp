@@ -60,7 +60,17 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   ID2D1Brush* blackBrush = ResourceLoader::GetBrush(ColorBrush::BLACK);
   target->BeginDraw();
-  target->SetTransform(D2D1::Matrix3x2F::Identity());
+  if (menu->IsFullScreen())
+  {
+    target->SetTransform(
+      D2D1::Matrix3x2F::Scale(
+        D2D1::Size(menu->GetFullScreenScale(),
+          menu->GetFullScreenScale())));
+  }
+  else
+  {
+    target->SetTransform(D2D1::Matrix3x2F::Identity());
+  }
   target->Clear();
   std::wstring text = L"Planet Breakout 2 - Level Editor";
   target->DrawText(text.c_str(), text.length(), format2, D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
@@ -180,7 +190,17 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
 
   target->BeginDraw();
-  target->SetTransform(D2D1::Matrix3x2F::Identity());
+  if (menu->IsFullScreen())
+  {
+    target->SetTransform(
+      D2D1::Matrix3x2F::Scale(
+        D2D1::Size(menu->GetFullScreenScale(),
+          menu->GetFullScreenScale())));
+  }
+  else
+  {
+    target->SetTransform(D2D1::Matrix3x2F::Identity());
+  }
   target->Clear();
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatHuge,
@@ -260,8 +280,19 @@ void DrawGame(ClientMenu* menu)
   ID2D1Brush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
   ID2D1Brush* redBrush = ResourceLoader::GetBrush(ColorBrush::RED_HALF);
   ID2D1Brush* redFullBrush = ResourceLoader::GetBrush(ColorBrush::RED);
+
   target->BeginDraw();
-  target->SetTransform(D2D1::Matrix3x2F::Identity());
+  if (menu->IsFullScreen())
+  {
+    target->SetTransform(
+      D2D1::Matrix3x2F::Scale(
+       D2D1::Size(menu->GetFullScreenScale(),
+         menu->GetFullScreenScale())));
+  }
+  else
+  {
+    target->SetTransform(D2D1::Matrix3x2F::Identity());
+  }
   target->Clear();
 
   for(int y = 0; y < CLIENT_HEIGHT; y += 64)

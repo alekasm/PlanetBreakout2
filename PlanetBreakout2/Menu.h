@@ -26,7 +26,8 @@ struct ClientMenu : Menu
   void ProcessWM_KEYDOWN(WPARAM);
   void SetWindowedBorderless();
   void SetWindowed();
-  HWND containerhWnd;
+  bool IsFullScreen();
+  float GetFullScreenScale();
 };
 
 struct EditorSaveMenu : Menu

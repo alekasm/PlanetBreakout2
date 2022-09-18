@@ -40,6 +40,7 @@ private:
   static std::filesystem::path runpath;
   static SpriteMap sprite_map;
   static ID2D1HwndRenderTarget* target;
+  static ID2D1HwndRenderTarget* fullscreenTarget;
   static ID2D1Factory* factory;
   static IDWriteFactory* wfactory;
   static ID2D1Brush* brushes[];

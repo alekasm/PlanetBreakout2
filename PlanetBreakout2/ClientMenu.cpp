@@ -26,13 +26,22 @@ namespace
   HCURSOR cursor;
   POINT window_center;
   POINT mouse_pos;
-  //RECT FullscreenWindowRect;
+
+
+  HWND containerhWnd;
   bool fullscreen = false;
+  float fs_scale_factor = 1.f;
+  float fs_scale_factor_rel = 1.f;
+
+  //RECT FullscreenWindowRect;
+  
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
   float mouse_scale = 1.f;
 
-  float fs_scale_factor = 1.f;
-  float fs_scale_factor_rel = 1.f;
+  //float fs_scale_factor = 1.f;
+  //float fs_scale_factor_rel = 1.f;
+
+  D2D1_SIZE_U FullScreenDimension;
 
   RECT ClientFullscreenRect;
   RECT ClientFullscreenGameRect;
@@ -42,9 +51,19 @@ namespace
   RECT desktop;
 }
 
+bool ClientMenu::IsFullScreen()
+{
+  return fullscreen;
+}
+
 bool ClientMenu::IsFocused()
 {
   return focused;
+}
+
+float ClientMenu::GetFullScreenScale()
+{
+  return fs_scale_factor;
 }
 
 void ClientMenu::PostInitialize()
@@ -73,6 +92,10 @@ void ClientMenu::UpdateClientWindow()
 
 void ClientMenu::SetWindowed()
 {
+  HRESULT hr_resized = ResourceLoader::GetHwndRenderTarget()->Resize(
+    D2D1::SizeU(CLIENT_WIDTH, CLIENT_HEIGHT));
+  if (hr_resized != S_OK)
+    return;
   SetWindowLongPtr(containerhWnd, GWL_STYLE, grfStyle);
   SetWindowLongPtr(containerhWnd, GWL_EXSTYLE, grfExStyle);
   ShowWindow(containerhWnd, SW_SHOWNORMAL);
@@ -84,12 +107,16 @@ void ClientMenu::SetWindowed()
   SetWindowPos(hWnd, HWND_TOP,
     0, 0,CLIENT_WIDTH, CLIENT_HEIGHT,
     SWP_NOZORDER);
+  
   UpdateClientWindow();
   mouse_scale = 1.f;
 }
 
 void ClientMenu::SetWindowedBorderless()
 {
+  HRESULT hr_resized = ResourceLoader::GetHwndRenderTarget()->Resize(FullScreenDimension);
+  if (hr_resized != S_OK)
+    return;
   SetWindowLongPtr(containerhWnd, GWL_STYLE, 0);
   SetWindowLongPtr(containerhWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
   SetWindowPos(containerhWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
@@ -97,7 +124,8 @@ void ClientMenu::SetWindowedBorderless()
   SetWindowPos(hWnd, HWND_TOP,
     ClientFullscreenRect.left, ClientFullscreenRect.top,
     ClientFullscreenRect.right, ClientFullscreenRect.bottom,
-    SWP_NOZORDER);
+   SWP_NOZORDER);
+  
 
   UpdateClientWindow();
   //GetWindowRect(hWnd, &FullscreenWindowRect);
@@ -444,7 +472,7 @@ void ClientMenu::Initialize(HINSTANCE hInstance)
     CLIENT_WIDTH,
     CLIENT_HEIGHT,
     containerhWnd, NULL, hInstance, this);
-
+  
   const HWND hDesktop = GetDesktopWindow();
   GetWindowRect(hDesktop, &desktop);
 
@@ -454,16 +482,19 @@ void ClientMenu::Initialize(HINSTANCE hInstance)
   else
     scale_factor = (float)desktop.right / CLIENT_WIDTH;
 
-  float modifier = std::fmodf(scale_factor, 0.1f);
-  fs_scale_factor = scale_factor - modifier;
+  fs_scale_factor = scale_factor;
+  //float modifier = std::fmodf(scale_factor, 0.1f);
+  //fs_scale_factor = scale_factor - modifier;
   fs_scale_factor_rel = 1.f / fs_scale_factor;
 
   ClientFullscreenRect.right = CLIENT_WIDTH * fs_scale_factor;
   ClientFullscreenRect.bottom = CLIENT_HEIGHT * fs_scale_factor;
   ClientFullscreenRect.top = (desktop.bottom - ClientFullscreenRect.bottom) / 2;
   ClientFullscreenRect.left = (desktop.right - ClientFullscreenRect.right) / 2;
+  FullScreenDimension = D2D1::SizeU(CLIENT_WIDTH * fs_scale_factor, CLIENT_HEIGHT * fs_scale_factor);
+
   ClientFullscreenGameRect.left = ClientFullscreenRect.left;
   ClientFullscreenGameRect.top = ClientFullscreenRect.top;
   ClientFullscreenGameRect.bottom = ClientFullscreenGameRect.top + (GAME_HEIGHT * fs_scale_factor);
-  ClientFullscreenGameRect.right = ClientFullscreenGameRect.left + (GAME_WIDTH * fs_scale_factor);
+  ClientFullscreenGameRect.right = ClientFullscreenGameRect.left + (GAME_WIDTH * fs_scale_factor);  
 }

@@ -12,7 +12,8 @@
 
 
 SpriteMap ResourceLoader::sprite_map;
-ID2D1HwndRenderTarget*  ResourceLoader::target;
+ID2D1HwndRenderTarget* ResourceLoader::target;
+ID2D1HwndRenderTarget* ResourceLoader::fullscreenTarget;
 ID2D1Factory* ResourceLoader::factory;
 IDWriteFactory* ResourceLoader::wfactory;
 ID2D1Brush* ResourceLoader::brushes[16];
@@ -194,11 +195,13 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   factory->CreateHwndRenderTarget(
     D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_HARDWARE),
     D2D1::HwndRenderTargetProperties(hWnd,
+      //D2D1::SizeU(1440, 1080),
       D2D1::SizeU(CLIENT_WIDTH, CLIENT_HEIGHT),
       D2D1_PRESENT_OPTIONS_IMMEDIATELY),
     &target);
 
-  target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
+  //target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
   target->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
   target->CreateSolidColorBrush(D2D1::ColorF(0x9A9FA8, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GRAY]);
   target->CreateSolidColorBrush(D2D1::ColorF(0x98DF50, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GREEN]);
