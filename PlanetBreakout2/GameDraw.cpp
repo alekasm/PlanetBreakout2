@@ -368,8 +368,7 @@ void DrawGame(ClientMenu* menu)
     target->DrawBitmap(
       ResourceLoader::GetSpriteMap().at(pwr_it->second.IsActive() 
         ? L"powerup_active" : L"powerup_inactive"),
-      D2D1::RectF(GAME_WIDTH + x,
-        y,
+      D2D1::RectF(GAME_WIDTH + x, y,
         GAME_WIDTH + x + POWERUP_DIMENSION,
         y + POWERUP_DIMENSION), 1.0f);
     if (!pwr_it->second.GetIcon().empty())

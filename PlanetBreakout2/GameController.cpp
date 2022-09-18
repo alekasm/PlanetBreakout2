@@ -145,6 +145,7 @@ void GameController::Respawn()
   balls.clear();
   laser.SetActive(false);
   random_chance = 20;
+
   //Clears barrier bricks
   for (int col = 0; col < GRID_COLUMNS; ++col)
   {
@@ -153,6 +154,19 @@ void GameController::Respawn()
       continue;
     bricks[index].clear();
   }
+
+  //Remove brick shield
+  BrickMap::iterator it;
+  for (it = bricks.begin(); it != bricks.end(); ++it)
+  {
+    if (it->second.empty())
+      continue;
+
+    auto brick_it = (--it->second.end());
+    if (brick_it->subtype == BrickType::NO_POINT)
+      it->second.erase(brick_it);
+  }
+
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
