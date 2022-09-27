@@ -190,6 +190,11 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
 
   target->BeginDraw();
+  for (const Star& star : mainMenu.GetStars())
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
+  }
   if (menu->IsFullScreen())
   {
     target->SetTransform(

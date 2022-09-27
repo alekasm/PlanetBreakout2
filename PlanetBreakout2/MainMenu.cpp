@@ -17,8 +17,17 @@ uint32_t MainMenu::GetCampaignPage()
   return campaign_page;
 }
 
+const std::vector<Star> MainMenu::GetStars() const
+{
+  return stars;
+}
+
 void MainMenu::initialize(ClientMenu* client)
 {
+  for (int i = 0; i < 350; ++i)
+  {
+    stars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
+  }
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
     Button* button0 = new Button(button0draw);

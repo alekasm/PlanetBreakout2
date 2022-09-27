@@ -448,9 +448,7 @@ void GameController::CreateGame(Campaign& campaign)
   stars.clear();
   for (int i = 0; i < 200; ++i)
   {
-    Star star;
-    star.Start();
-    stars.push_back(star);
+    stars.push_back(Star(GAME_WIDTH, GAME_HEIGHT));
   }
   Respawn();
 }
