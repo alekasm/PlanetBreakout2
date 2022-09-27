@@ -15,6 +15,7 @@ GameController::GameController()
   timer = std::chrono::microseconds(0);
   timer_creator = std::chrono::microseconds(0);
   level_state = LevelState::START;
+  srand(time(NULL));
 }
 
 PrimitiveText& GameController::GetHighscoreText()
@@ -320,18 +321,21 @@ void GameController::GameUpdate()
     dx = GAME_WIDTH - bat->width;
   bat->Update(dx, bat->y);
 
-  if (level_state == LevelState::START)
-    return;
-
   std::chrono::microseconds now = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::system_clock::now().time_since_epoch());
   if (timer.count() == 0)
   {
     timer = now;
-     return;
+    return;
   }
   std::chrono::microseconds delta = now - timer;
   timer = now;
+
+  for (Star& star : stars)
+    star.UpdateFrame(delta.count());
+
+  if (level_state == LevelState::START)
+    return;
 
   bool spawn_creator = false;
   if (IsPowerUpActive(PowerupType::CREATOR_BALL))
@@ -426,10 +430,13 @@ void GameController::AddScore(uint16_t amount)
   }
 }
 
+const std::vector<Star>& GameController::GetStars() const
+{
+  return stars;
+}
 
 void GameController::CreateGame(Campaign& campaign)
 {
-  srand(time(NULL));
   this->campaign = campaign;
   bat = new Bat(campaign.bat_sprite);
   old_type = game_type;
@@ -438,6 +445,13 @@ void GameController::CreateGame(Campaign& campaign)
   current_level = 0;
   score = 0;
   bricks = campaign.levels.at(current_level).GetBrickMap();
+  stars.clear();
+  for (int i = 0; i < 200; ++i)
+  {
+    Star star;
+    star.Start();
+    stars.push_back(star);
+  }
   Respawn();
 }
 

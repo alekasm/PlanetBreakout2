@@ -27,6 +27,7 @@
 #define MAP_DIRECTORY L"assets\\maps\\"
 #define DEFAULT_BACKGROUND L"bg1"
 #define POWERUP_SPRITE L"powerup"
+#define STAR_SPRITE L"star"
 #define HYPERBALL_SPRITE L"hyperball"
 #define EDITOR_BUTTONS_PER_PAGE 16
 #define EDITOR_BUTTON_HEIGHT 36

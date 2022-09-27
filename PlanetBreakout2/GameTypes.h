@@ -6,7 +6,7 @@
 #include "Drawable.h"
 
 typedef int EntityId;
-enum class EntityType { BAT, BALL, BRICK, POWERUP, TILE };
+enum class EntityType { BAT, BALL, BRICK, POWERUP, STAR, TILE };
 enum class BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
 enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK, NO_POINT };
 enum TileType { NONE_TILE };

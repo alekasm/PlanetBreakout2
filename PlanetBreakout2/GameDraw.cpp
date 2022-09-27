@@ -384,6 +384,12 @@ void DrawGame(ClientMenu* menu)
     ++index;
   }
 
+  for (const Star& star : GameController::GetInstance()->GetStars())
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
+  }
+
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
   BrickMap::const_iterator map_it = brickMap.begin();
   for (; map_it != brickMap.end(); ++map_it)

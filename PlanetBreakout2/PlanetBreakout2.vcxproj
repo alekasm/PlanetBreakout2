@@ -162,6 +162,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Powerup.cpp" />
     <ClCompile Include="ResourceLoader.cpp" />
+    <ClCompile Include="Star.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Powerup.h" />
     <ClInclude Include="PrimitiveText.h" />
     <ClInclude Include="ResourceLoader.h" />
+    <ClInclude Include="Star.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

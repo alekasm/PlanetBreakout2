@@ -8,6 +8,7 @@
 #include "Ball.h"
 #include "Powerup.h"
 #include "Laser.h"
+#include "Star.h"
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
@@ -74,12 +75,14 @@ struct GameController
   uint32_t GetLives();
   void ShootLaser();
   const Laser& GetLaser() const;
+  const std::vector<Star>& GetStars() const;
 private:
   Laser laser;
   size_t current_level = 0;
   uint32_t lives = 0;
   std::vector<Ball> balls;
   std::vector<Powerup> powerups;
+  std::vector<Star> stars;
   PrimitiveText highscore_text;
   LevelState level_state;
   GameType game_type;

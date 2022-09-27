@@ -44,4 +44,12 @@ struct Drawable
     this->y = y;
     RecalculateBounds();
   }
+
+  void UpdateSize(unsigned width, unsigned height)
+  {
+    this->width = width;
+    this->height = height;
+    RecalculateBounds();
+  }
+
 };
