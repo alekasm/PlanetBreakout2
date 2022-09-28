@@ -183,6 +183,7 @@ void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstr
 
 void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 {
+  GameController::GetInstance()->GameUpdate();
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   IDWriteTextFormat* formatBig = ResourceLoader::GetTextFormat(TextFormat::LEFT_24F);
@@ -190,11 +191,6 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
 
   target->BeginDraw();
-  for (const Star& star : mainMenu.GetStars())
-  {
-    target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
-  }
   if (menu->IsFullScreen())
   {
     target->SetTransform(
@@ -207,6 +203,11 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
     target->SetTransform(D2D1::Matrix3x2F::Identity());
   }
   target->Clear();
+  for (const Star& star : GameController::GetInstance()->GetStars())
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
+  }
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatHuge,
     D2D1::RectF(0.f, 100.f, CLIENT_WIDTH - 1, 200.f),
@@ -264,6 +265,42 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 
     target->DrawText(date_string.c_str(), date_string.length(), formatBig,
       D2D1::RectF(CLIENT_WIDTH - 256.f, y, CLIENT_WIDTH - 32.f, y + 32.f), greenBrush);
+  }
+  else if (mainMenu.GetState() == MainMenuState::INFO)
+  {
+    const GamePowerUpMap& pwr_map = GameController::GetInstance()->GetGamePowerUpMap();
+    GamePowerUpMap::const_iterator pwr_it = pwr_map.begin();
+    size_t index = 0;
+    for (; pwr_it != pwr_map.end(); ++pwr_it)
+    {
+      float y = 240.f + (index * 36.f);
+      float x = 64.f;
+
+      target->DrawRectangle(
+        D2D1::RectF( x, y,
+           x + POWERUP_DIMENSION,
+          y + POWERUP_DIMENSION),
+        darkGrayBrush, 1.0f);
+      x += 8.f;
+      y += 8.f;
+      target->DrawBitmap(
+        ResourceLoader::GetSpriteMap().at(pwr_it->second.GetIcon()),
+        D2D1::RectF( x, y,
+          x + POWERUP_ICON,
+          y + POWERUP_ICON), 1.0f);
+      std::wstring desc = mainMenu.GetDescription(pwr_it->first);
+      target->DrawText(desc.c_str(), desc.length(),
+        ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+        D2D1::RectF(x + 48.f, y, CLIENT_WIDTH, y + 64.f),
+        ResourceLoader::GetBrush(ColorBrush::GREEN));
+      ++index;
+    }
+
+    target->DrawText(mainMenu.GetInfoDescription().c_str(),
+      mainMenu.GetInfoDescription().length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+      D2D1::RectF(0.f, CLIENT_HEIGHT - 64.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::GRAY));
   }
   target->EndDraw();
 }
@@ -370,12 +407,13 @@ void DrawGame(ClientMenu* menu)
     float y = 530.f + 36.f + row;
     float col = (index % 4);
     float x = 32.f + (col * 20.f) + (col * POWERUP_DIMENSION);
-    target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(pwr_it->second.IsActive() 
-        ? L"powerup_active" : L"powerup_inactive"),
+
+    target->DrawRectangle(
       D2D1::RectF(GAME_WIDTH + x, y,
         GAME_WIDTH + x + POWERUP_DIMENSION,
-        y + POWERUP_DIMENSION), 1.0f);
+        y + POWERUP_DIMENSION),
+      pwr_it->second.IsActive() ? orangeBrush : darkGrayBrush, 2.0f);
+
     if (!pwr_it->second.GetIcon().empty())
     {
       x += 8.f;

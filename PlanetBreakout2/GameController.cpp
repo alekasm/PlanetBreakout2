@@ -16,6 +16,11 @@ GameController::GameController()
   timer_creator = std::chrono::microseconds(0);
   level_state = LevelState::START;
   srand(time(NULL));
+  menuStars.clear();
+  for (int i = 0; i < 300; ++i)
+  {
+    menuStars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
+  }
 }
 
 PrimitiveText& GameController::GetHighscoreText()
@@ -297,8 +302,27 @@ void GameController::NextLevel()
   level_state = LevelState::START;
 }
 
+
 void GameController::GameUpdate()
 {
+
+  std::chrono::microseconds now = std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::system_clock::now().time_since_epoch());
+  if (timer.count() == 0)
+  {
+    timer = now;
+    return;
+  }
+  std::chrono::microseconds delta = now - timer;
+  timer = now;
+
+  if (game_type == GameType::MAIN_MENU)
+  {
+    for (Star& star : menuStars)
+      star.UpdateFrame(delta.count());
+    return;
+  }
+
   if (level_state == LevelState::PAUSED)
     return;
   if (level_state == LevelState::GAME_OVER)
@@ -320,16 +344,6 @@ void GameController::GameUpdate()
   else if (dx + bat->width > GAME_WIDTH)
     dx = GAME_WIDTH - bat->width;
   bat->Update(dx, bat->y);
-
-  std::chrono::microseconds now = std::chrono::duration_cast<std::chrono::microseconds>(
-    std::chrono::system_clock::now().time_since_epoch());
-  if (timer.count() == 0)
-  {
-    timer = now;
-    return;
-  }
-  std::chrono::microseconds delta = now - timer;
-  timer = now;
 
   for (Star& star : stars)
     star.UpdateFrame(delta.count());
@@ -408,7 +422,6 @@ void GameController::GameUpdate()
     Respawn();
     return;
   }
-
 }
 
 BrickMap& GameController::GetBrickMap()
@@ -432,6 +445,8 @@ void GameController::AddScore(uint16_t amount)
 
 const std::vector<Star>& GameController::GetStars() const
 {
+  if (game_type == GameType::MAIN_MENU)
+    return menuStars;
   return stars;
 }
 

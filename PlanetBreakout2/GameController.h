@@ -83,6 +83,7 @@ private:
   std::vector<Ball> balls;
   std::vector<Powerup> powerups;
   std::vector<Star> stars;
+  std::vector<Star> menuStars;
   PrimitiveText highscore_text;
   LevelState level_state;
   GameType game_type;

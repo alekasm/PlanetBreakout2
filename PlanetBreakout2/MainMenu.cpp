@@ -17,17 +17,28 @@ uint32_t MainMenu::GetCampaignPage()
   return campaign_page;
 }
 
-const std::vector<Star> MainMenu::GetStars() const
+const std::wstring& MainMenu::GetDescription(PowerupType type) const
 {
-  return stars;
+  return powerupDescriptions.at(type);
+}
+
+const std::wstring& MainMenu::GetInfoDescription() const
+{
+  return infoDescription;
 }
 
 void MainMenu::initialize(ClientMenu* client)
 {
-  for (int i = 0; i < 350; ++i)
-  {
-    stars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
-  }
+  powerupDescriptions = {
+   {PowerupType::HYPER_BALL, L"Hyper Ball: Destroys all bricks in its path, applies to lasers too"},
+   {PowerupType::CREATOR_BALL, L"Creator Ball: Each ball will create another ball every few seconds"},
+   {PowerupType::LASER_BAT, L"Laser Bat: Left-Click to shoot lasers"},
+   {PowerupType::BONUS_POINTS, L"Bonus Points: Increases the point multiplier"},
+   {PowerupType::BARRIER, L"Barrier: Creates a barrier under your bat to prevent balls from escaping"},
+   {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
+   {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},
+   {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a shield, destroying them doesn't yield any points"},
+  };
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
     Button* button0 = new Button(button0draw);

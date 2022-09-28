@@ -65,8 +65,11 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
   bool old_above = y_old_bottom <= BAT_Y;
   bool new_below = y_new_bottom >= BAT_Y;
 
-
   bool collision = false;
+
+  if (type == EntityType::VISUAL)
+    goto end_frame_update;
+  
   if (real_x < 0.f)
   {
     collision = true;
@@ -141,7 +144,7 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
       }
     }
   }
-
+  end_frame_update:
   Update(real_x, real_y);
   PostFrameUpdate();
 }
