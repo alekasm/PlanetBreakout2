@@ -1,50 +1,50 @@
-#include "DynamicEntity.h"
+#include "DynamicCollider.h"
 #include "GameController.h"
 #include "LogicHelper.h"
 #include <cmath>
 
 
-void DynamicEntity::CollisionVerticalWall() {}
-void DynamicEntity::CollisionHorizontalWall() {}
-void DynamicEntity::CollisionBrick(uint32_t index) {}
-void DynamicEntity::CollisionBat(float x1, float x2) {}
-void DynamicEntity::PostFrameUpdate() {}
+void DynamicCollider::CollisionVerticalWall() {}
+void DynamicCollider::CollisionHorizontalWall() {}
+void DynamicCollider::CollisionBrick(uint32_t index) {}
+void DynamicCollider::CollisionBat(float x1, float x2) {}
+void DynamicCollider::PostFrameUpdate() {}
 
-const bool DynamicEntity::IsActive() const
+const bool DynamicCollider::IsActive() const
 {
   return active;
 }
-float DynamicEntity::GetSpeed()
+float DynamicCollider::GetSpeed()
 {
   return speed;
 }
-float DynamicEntity::GetRealX()
+float DynamicCollider::GetRealX()
 {
   return real_x;
 }
-float DynamicEntity::GetRealY()
+float DynamicCollider::GetRealY()
 {
   return real_y;
 }
 
-void DynamicEntity::RegisterCollision(CollisionType type)
+void DynamicCollider::RegisterCollision(CollisionType type)
 {
   collision_mask |= type;
 }
 
-void DynamicEntity::SetActive(bool value)
+void DynamicCollider::SetActive(bool value)
 {
   active = value;
 }
 
-void DynamicEntity::SetPosition(float x, float y)
+void DynamicCollider::SetPosition(float x, float y)
 {
   real_x = x;
   real_y = y;
   Update(real_x, real_y);
 }
 
-void DynamicEntity::UpdateFrame(int64_t elapsed)
+void DynamicCollider::UpdateFrame(int64_t elapsed)
 {
   if (!active) return;
 

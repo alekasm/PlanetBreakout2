@@ -1,10 +1,10 @@
 #pragma once
-#include "DynamicEntity.h"
+#include "DynamicCollider.h"
 
-struct Laser : DynamicEntity
+struct Laser : DynamicCollider
 {
   Laser() :
-    DynamicEntity(EntityType::POWERUP, POWERUP_SPRITE, 2, 1)
+    DynamicCollider(EntityType::POWERUP, POWERUP_SPRITE, 2, 1)
   {
     active = false;
     RegisterCollision(CollisionType::BRICK);

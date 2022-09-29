@@ -6,6 +6,7 @@
 void Laser::Start()
 {
   active = true;
+  height = 1;
   speed = 9.f;
   real_x = x;
   real_y = y;
@@ -19,7 +20,7 @@ void Laser::CollisionBrick(uint32_t index)
 
 void Laser::PostFrameUpdate()
 {
-  height = std::clamp((BAT_Y + BAT_HEIGHT) - y, 1U, 24U);
+  height = std::clamp((BAT_Y + BAT_HEIGHT) - y - 1, 1U, 24U);
   RecalculateBounds();
 }
 

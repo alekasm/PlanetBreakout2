@@ -54,7 +54,7 @@
     <ClCompile Include="Laser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicEntity.cpp">
+    <ClCompile Include="DynamicCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Star.cpp">
@@ -113,10 +113,13 @@
     <ClInclude Include="Laser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicEntity.h">
+    <ClInclude Include="DynamicCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Star.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

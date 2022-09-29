@@ -2,7 +2,7 @@
 
 
 Star::Star(unsigned max_x, unsigned max_y) :
-  DynamicEntity(EntityType::VISUAL, STAR_SPRITE, 4, 4)
+  DynamicCollider(EntityType::VISUAL, STAR_SPRITE, 4, 4)
 {  
     direction = 0.f;
     speed = 0.f;

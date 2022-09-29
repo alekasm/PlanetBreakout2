@@ -1,9 +1,9 @@
 #pragma once
-#include "DynamicEntity.h"
-struct Ball : DynamicEntity
+#include "DynamicCollider.h"
+struct Ball : DynamicCollider
 {
   Ball(std::wstring sprite) :
-    DynamicEntity(EntityType::BALL, sprite, BALL_DIMENSION, BALL_DIMENSION)
+    DynamicCollider(EntityType::BALL, sprite, BALL_DIMENSION, BALL_DIMENSION)
   {
     RegisterCollision(CollisionType::WALL_VERT);
     RegisterCollision(CollisionType::WALL_HOR);

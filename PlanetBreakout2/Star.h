@@ -1,6 +1,6 @@
 #pragma once
-#include "DynamicEntity.h"
-struct Star : DynamicEntity
+#include "DynamicCollider.h"
+struct Star : DynamicCollider
 {
   Star(unsigned max_x, unsigned max_y);
     

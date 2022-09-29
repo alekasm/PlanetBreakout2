@@ -44,7 +44,7 @@ typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
 
 struct GameController
 {
-  bool BreakBrick(DynamicEntity*, uint32_t);
+  bool BreakBrick(DynamicCollider*, uint32_t);
   static GameController* GetInstance();
   POINT mousePos;
   Bat* bat = nullptr;

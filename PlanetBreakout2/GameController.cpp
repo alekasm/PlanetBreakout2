@@ -225,12 +225,11 @@ void GameController::ShootLaser()
     return;
   int cx = bat->x + (BAT_WIDTH / 2) - (laser.width / 2);
   laser.SetPosition(cx, BAT_Y);
-  //laser.MoveCenterX(cx);
   laser.Start();
 }
 
 //Returns true if the specified ball should bounce
-bool GameController::BreakBrick(DynamicEntity* ball, uint32_t index)
+bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
 {
   bool hyper_ball = powerup_map.at(PowerupType::HYPER_BALL).IsActive();
   float multiplier = 10.f;

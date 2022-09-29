@@ -2,10 +2,11 @@
 #include "GameTypes.h"
 #include <unordered_map>
 
-
-struct DynamicEntity : Entity
+enum CollisionType { WALL_VERT = 1, WALL_HOR = 2, BRICK = 4, BAT = 8 };
+//typedef std::unordered_map<CollisionType, CollisionFunc> CollisionMap;
+struct DynamicCollider : Entity
 {
-  DynamicEntity(EntityType type, std::wstring sprite,
+  DynamicCollider(EntityType type, std::wstring sprite,
     unsigned width, unsigned height) :
     Entity(type, sprite, width, height)
   {
@@ -16,6 +17,11 @@ struct DynamicEntity : Entity
   float GetSpeed();
   float GetRealX();
   float GetRealY();
+  void RegisterCollision(CollisionType);
+  virtual void CollisionVerticalWall();
+  virtual void CollisionHorizontalWall();
+  virtual void CollisionBrick(uint32_t index);
+  virtual void CollisionBat(float x1, float x2);
   virtual void PostFrameUpdate();
   void SetActive(bool);
   void SetPosition(float x, float y);
@@ -27,4 +33,6 @@ protected:
   float real_y = 0.f;
   float old_x = 0.f;
   float old_y = 0.f;
+private:
+  unsigned collision_mask = 0;
 };

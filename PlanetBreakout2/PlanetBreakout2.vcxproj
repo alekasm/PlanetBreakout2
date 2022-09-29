@@ -149,7 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="DynamicEntity.cpp" />
+    <ClCompile Include="DynamicCollider.cpp" />
     <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="ClientMenu.cpp" />
     <ClCompile Include="GameController.cpp" />
@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="DynamicCollider.h" />
     <ClInclude Include="DynamicEntity.h" />
     <ClInclude Include="GameDraw.h" />
     <ClInclude Include="Laser.h" />
