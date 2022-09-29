@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="DynamicCollider.cpp" />
+    <ClCompile Include="DynamicEntity.cpp" />
     <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="ClientMenu.cpp" />
     <ClCompile Include="GameController.cpp" />

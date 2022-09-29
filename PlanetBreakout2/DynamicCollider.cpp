@@ -8,57 +8,18 @@ void DynamicCollider::CollisionVerticalWall() {}
 void DynamicCollider::CollisionHorizontalWall() {}
 void DynamicCollider::CollisionBrick(uint32_t index) {}
 void DynamicCollider::CollisionBat(float x1, float x2) {}
-void DynamicCollider::PostFrameUpdate() {}
 
-const bool DynamicCollider::IsActive() const
-{
-  return active;
-}
-float DynamicCollider::GetSpeed()
-{
-  return speed;
-}
-float DynamicCollider::GetRealX()
-{
-  return real_x;
-}
-float DynamicCollider::GetRealY()
-{
-  return real_y;
-}
 
 void DynamicCollider::RegisterCollision(CollisionType type)
 {
   collision_mask |= type;
 }
 
-void DynamicCollider::SetActive(bool value)
+
+void DynamicCollider::PreFrameUpdate()
 {
-  active = value;
-}
-
-void DynamicCollider::SetPosition(float x, float y)
-{
-  real_x = x;
-  real_y = y;
-  Update(real_x, real_y);
-}
-
-void DynamicCollider::UpdateFrame(int64_t elapsed)
-{
-  if (!active) return;
-
-  float frame_modifier = 1.0f;
-  if (elapsed < TARGET_FRAMES) //slow down
-    frame_modifier = elapsed / TARGET_FRAMES;
-  float distance = frame_modifier * speed;
-  old_x = real_x;
-  old_y = real_y;
-
-  //cap the distance or x/y?
-  //TODO calculate worst case scenario for bricks
-  real_x = real_x + cos(direction) * distance;
-  real_y = real_y + sin(direction) * distance;
+  if (type == EntityType::VISUAL)
+    return;
 
   float y_new_bottom = real_y + height;
   float y_old_bottom = old_y + height;
@@ -66,9 +27,6 @@ void DynamicCollider::UpdateFrame(int64_t elapsed)
   bool new_below = y_new_bottom >= BAT_Y;
 
   bool collision = false;
-
-  if (type == EntityType::VISUAL)
-    goto end_frame_update;
   
   if (real_x < 0.f)
   {
@@ -144,7 +102,4 @@ void DynamicCollider::UpdateFrame(int64_t elapsed)
       }
     }
   }
-  end_frame_update:
-  Update(real_x, real_y);
-  PostFrameUpdate();
 }

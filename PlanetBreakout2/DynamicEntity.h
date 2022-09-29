@@ -16,6 +16,7 @@ struct DynamicEntity : Entity
   float GetSpeed();
   float GetRealX();
   float GetRealY();
+  virtual void PreFrameUpdate();
   virtual void PostFrameUpdate();
   void SetActive(bool);
   void SetPosition(float x, float y);
