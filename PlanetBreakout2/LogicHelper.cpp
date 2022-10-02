@@ -1,5 +1,8 @@
 #include "LogicHelper.h"
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <random>
 
 bool GetBrickIndex(uint32_t col, uint32_t row, uint32_t& index)
 {
@@ -59,4 +62,20 @@ D2D1_RECT_F AdjustRect(const D2D1_RECT_F& rect, float offsetX, float offsetY)
   copy.top += offsetY;
   copy.bottom += offsetY;
   return copy;
+}
+
+float normalize(float angle)
+{
+  if (angle < 0)
+    return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
+  return atan2(sin(angle), cos(angle)) + M_PI;
+}
+
+float Random(float a, float b)
+{
+  float min = min(a, b);
+  float max = max(a, b);
+  std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
+  std::uniform_real_distribution<float> distribution(min, max);
+  return distribution(generator);
 }

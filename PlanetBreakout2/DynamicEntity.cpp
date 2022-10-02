@@ -1,4 +1,7 @@
 #include "DynamicEntity.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <random>
 
 void DynamicEntity::PreFrameUpdate() {}
 void DynamicEntity::PostFrameUpdate() {}
@@ -30,6 +33,14 @@ void DynamicEntity::SetPosition(float x, float y)
   real_x = x;
   real_y = y;
   Update(real_x, real_y);
+}
+
+void DynamicEntity::RandomDirection(float min, float max)
+{
+  std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
+  //Allows me to use real math where y pos is up
+  std::uniform_real_distribution<float> distribution(-max, -min);
+  direction = distribution(generator);
 }
 
 void DynamicEntity::UpdateFrame(int64_t elapsed)

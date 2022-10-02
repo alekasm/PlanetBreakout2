@@ -250,7 +250,12 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
     GameController::GetInstance()->AddScore(
       (uint16_t)(ball->GetSpeed() * multiplier * erased));
     RECT r = GetBrickRect(index);
+    /*
     effects.push_back(new RingEffect(
+      r.left + (BRICK_WIDTH / 2),
+      r.top + (BRICK_HEIGHT / 2)));
+    */
+    effects.push_back(new SpinSquareEffect(
       r.left + (BRICK_WIDTH / 2),
       r.top + (BRICK_HEIGHT / 2)));
     if ((rand() % random_chance) == 0)
@@ -383,13 +388,15 @@ void GameController::GameUpdate()
   std::vector<DynamicEffect*>::iterator effects_it;
   for (effects_it = effects.begin(); effects_it != effects.end();)
   {
-    if (!(*effects_it)->IsActive())
+    DynamicEffect* effect = (*effects_it);
+    if (!effect->IsActive())
     {
       effects_it = effects.erase(effects_it);
+      delete effect;
     }
     else
     {
-      (*effects_it)->UpdateFrame(delta.count());
+      effect->UpdateFrame(delta.count());
       ++effects_it;
     }
   }
@@ -408,6 +415,8 @@ void GameController::GameUpdate()
         Ball starter_ball(campaign.ball_sprite);
         starter_ball.SetPosition(ball.GetRealX(), ball.GetRealY());
         new_balls.push_back(starter_ball);
+        effects.push_back(new RingEffect(starter_ball.GetRealX(),
+          starter_ball.GetRealY()));
       }
     }
   }

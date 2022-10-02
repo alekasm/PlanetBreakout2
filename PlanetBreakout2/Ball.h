@@ -18,5 +18,4 @@ struct Ball : DynamicCollider
 private:
   enum class BallCollisionType { HORIZONTAL, VERTICAL };
   void Collision(BallCollisionType);
-  void RandomDirection(float min, float max);
 };

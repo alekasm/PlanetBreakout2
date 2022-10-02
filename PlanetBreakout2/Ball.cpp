@@ -6,31 +6,6 @@
 #include <random>
 #include <set>
 
-
-inline float normalize(float angle)
-{
-  if (angle < 0)
-    return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
- return atan2(sin(angle), cos(angle)) + M_PI;
-}
-
-void Ball::RandomDirection(float min, float max)
-{
-  std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
-  //Allows me to use real math where y pos is up
-  std::uniform_real_distribution<float> distribution(-max, -min);
-  direction = distribution(generator);
-}
-
-inline float Random(float a, float b)
-{
-  float min = min(a, b);
-  float max = max(a, b);
-  std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
-  std::uniform_real_distribution<float> distribution(min, max);
-  return distribution(generator);
-}
-
 void Ball::Collision(BallCollisionType type)
 {
   if (type == BallCollisionType::VERTICAL)
