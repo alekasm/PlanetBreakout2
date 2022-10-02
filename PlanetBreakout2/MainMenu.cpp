@@ -33,7 +33,7 @@ void MainMenu::initialize(ClientMenu* client)
    {PowerupType::HYPER_BALL, L"Hyper Ball: Destroys all bricks in its path, applies to lasers too"},
    {PowerupType::CREATOR_BALL, L"Creator Ball: Each ball will create another ball every few seconds"},
    {PowerupType::LASER_BAT, L"Laser Bat: Left-Click to shoot lasers"},
-   {PowerupType::BONUS_POINTS, L"Bonus Points: Increases the point multiplier"},
+   {PowerupType::BONUS_POINTS, L"Rare Gems: Increases the point multiplier"},
    {PowerupType::BARRIER, L"Barrier: Creates a barrier under your bat to prevent balls from escaping"},
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
    {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},

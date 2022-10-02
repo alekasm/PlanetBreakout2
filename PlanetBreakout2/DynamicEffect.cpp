@@ -17,7 +17,7 @@ DynamicEffect::DynamicEffect(float x, float y) :
   DynamicEntity(EntityType::VISUAL, STAR_SPRITE, 1, 1)
 {
   ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
-    D2D1::ColorF(0x98DF50, 0.2f), &brush);
+    D2D1::ColorF(0x98DF50, 0.25f), &brush);
   SetPosition(x, y);
 }
 
