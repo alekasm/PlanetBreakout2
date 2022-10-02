@@ -45,6 +45,11 @@ void GameController::MouseUpdate(const POINT& mouse)
   mousePos = mouse;
 }
 
+const std::vector<DynamicEffect*> GameController::GetEffects() const
+{
+  return effects;
+}
+
 GameType GameController::GetGameType()
 {
   return game_type;
@@ -149,6 +154,7 @@ void GameController::Respawn()
     pwr_it->second.SetActive(false);
   powerups.clear();
   balls.clear();
+  effects.clear();
   laser.SetActive(false);
   random_chance = 20;
 
@@ -239,10 +245,14 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
   
-  GameController::GetInstance()->AddScore(
-    (uint16_t)(ball->GetSpeed() * multiplier * erased));
   if (erased > 0)
   {
+    GameController::GetInstance()->AddScore(
+      (uint16_t)(ball->GetSpeed() * multiplier * erased));
+    RECT r = GetBrickRect(index);
+    effects.push_back(new RingEffect(
+      r.left + (BRICK_WIDTH / 2),
+      r.top + (BRICK_HEIGHT / 2)));
     if ((rand() % random_chance) == 0)
     {
       Powerup p;
@@ -369,6 +379,21 @@ void GameController::GameUpdate()
   {
     laser.UpdateFrame(delta.count());
   }
+
+  std::vector<DynamicEffect*>::iterator effects_it;
+  for (effects_it = effects.begin(); effects_it != effects.end();)
+  {
+    if (!(*effects_it)->IsActive())
+    {
+      effects_it = effects.erase(effects_it);
+    }
+    else
+    {
+      (*effects_it)->UpdateFrame(delta.count());
+      ++effects_it;
+    }
+  }
+
 
   bool any_ball_active = false;
   std::vector<Ball> new_balls;

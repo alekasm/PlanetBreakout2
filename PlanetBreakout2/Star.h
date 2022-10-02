@@ -3,7 +3,6 @@
 struct Star : DynamicEntity
 {
   Star(unsigned max_x, unsigned max_y);
-    
   void Start() override;
   const float GetOpacity() const;
   virtual void PostFrameUpdate() override;

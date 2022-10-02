@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="DynamicCollider.cpp" />
+    <ClCompile Include="DynamicEffect.cpp" />
     <ClCompile Include="DynamicEntity.cpp" />
     <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="ClientMenu.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="DynamicCollider.h" />
+    <ClInclude Include="DynamicEffect.h" />
     <ClInclude Include="DynamicEntity.h" />
     <ClInclude Include="GameDraw.h" />
     <ClInclude Include="Laser.h" />

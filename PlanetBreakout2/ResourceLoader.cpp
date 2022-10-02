@@ -20,6 +20,11 @@ ID2D1Brush* ResourceLoader::brushes[16];
 IDWriteTextFormat* ResourceLoader::formats[16];
 std::filesystem::path ResourceLoader::runpath;
 
+ID2D1Factory* ResourceLoader::GetFactory()
+{
+  return factory;
+}
+
 const SpriteMap& ResourceLoader::GetSpriteMap()
 {
   return sprite_map;

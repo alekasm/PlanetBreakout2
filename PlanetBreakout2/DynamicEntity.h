@@ -22,7 +22,7 @@ struct DynamicEntity : Entity
   void SetPosition(float x, float y);
 protected:
   bool active = true;
-  float speed = 1.0f;
+  float speed = 0.0f;
   float direction = 0.f;
   float real_x = 0.f;
   float real_y = 0.f;

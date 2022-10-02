@@ -9,6 +9,7 @@
 #include "Powerup.h"
 #include "Laser.h"
 #include "Star.h"
+#include "DynamicEffect.h"
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
@@ -76,6 +77,7 @@ struct GameController
   void ShootLaser();
   const Laser& GetLaser() const;
   const std::vector<Star>& GetStars() const;
+  const std::vector<DynamicEffect*> GetEffects() const;
 private:
   Laser laser;
   size_t current_level = 0;
@@ -84,6 +86,7 @@ private:
   std::vector<Powerup> powerups;
   std::vector<Star> stars;
   std::vector<Star> menuStars;
+  std::vector<DynamicEffect*> effects;
   PrimitiveText highscore_text;
   LevelState level_state;
   GameType game_type;

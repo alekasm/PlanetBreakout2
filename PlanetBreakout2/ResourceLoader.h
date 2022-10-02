@@ -35,6 +35,7 @@ struct ResourceLoader
   static ID2D1HwndRenderTarget* GetHwndRenderTarget();
   static ID2D1Brush* GetBrush(ColorBrush);
   static IDWriteTextFormat* GetTextFormat(TextFormat);
+  static ID2D1Factory* GetFactory();
   static std::filesystem::path GetLevelPath();
 private:
   static std::filesystem::path runpath;

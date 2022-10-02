@@ -451,6 +451,12 @@ void DrawGame(ClientMenu* menu)
     }
   }
 
+  for (DynamicEffect* effect : GameController::GetInstance()->GetEffects())
+  {
+    if(effect->IsActive())
+      target->DrawGeometry(effect->GetGeometry(), greenBrush, 2.0f);
+  }
+
   for (const Powerup& powerup : GameController::GetInstance()->GetPowerups())
   {
     if (powerup.IsActive())
