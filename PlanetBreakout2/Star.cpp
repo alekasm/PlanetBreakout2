@@ -28,7 +28,7 @@ void Star::Start()
 {
 }
 
-void Star::PostFrameUpdate()
+void Star::PostFrameUpdate(float elapsed)
 {
   if (starDirection == StarDirection::BRIGHTER)
   {

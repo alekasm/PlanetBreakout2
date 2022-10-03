@@ -13,5 +13,5 @@ struct Laser : DynamicCollider
   void Start() override;
   virtual void CollisionBrick(uint32_t index) override;
   virtual void CollisionHorizontalWall() override;
-  virtual void PostFrameUpdate() override;
+  virtual void PostFrameUpdate(float elapsed) override;
 };

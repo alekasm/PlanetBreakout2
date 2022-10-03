@@ -18,7 +18,7 @@ void Laser::CollisionBrick(uint32_t index)
     active = false;
 }
 
-void Laser::PostFrameUpdate()
+void Laser::PostFrameUpdate(float elapsed)
 {
   height = std::clamp((BAT_Y + BAT_HEIGHT) - y - 1, 1U, 24U);
   RecalculateBounds();

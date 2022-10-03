@@ -4,7 +4,7 @@
 #include <random>
 
 void DynamicEntity::PreFrameUpdate() {}
-void DynamicEntity::PostFrameUpdate() {}
+void DynamicEntity::PostFrameUpdate(float elapsed) {}
 
 const bool DynamicEntity::IsActive() const
 {
@@ -61,5 +61,5 @@ void DynamicEntity::UpdateFrame(int64_t elapsed)
 
   PreFrameUpdate();
   Update(real_x, real_y);
-  PostFrameUpdate();
+  PostFrameUpdate(frame_modifier);
 }

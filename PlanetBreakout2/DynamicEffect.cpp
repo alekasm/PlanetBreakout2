@@ -16,12 +16,14 @@ void DynamicEffect::Start()
 DynamicEffect::DynamicEffect(float x, float y) :
   DynamicEntity(EntityType::VISUAL, STAR_SPRITE, 1, 1)
 {
+  ID2D1SolidColorBrush* solidBrush;
   ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
-    D2D1::ColorF(0x98DF50, 0.25f), &brush);
+    D2D1::ColorF(0x98DF50, 0.3f), &solidBrush);
+  brush = solidBrush;
   SetPosition(x, y);
 }
 
-ID2D1SolidColorBrush* DynamicEffect::GetBrush()
+ID2D1Brush* DynamicEffect::GetBrush()
 {
   return brush;
 }
@@ -40,8 +42,10 @@ RingEffect::RingEffect(float x, float y) : DynamicEffect(x, y)
 {
   ID2D1Factory* factory = ResourceLoader::GetFactory();
   ID2D1EllipseGeometry* m_pEllipseGeometry;
+  ID2D1SolidColorBrush* solidBrush;
   ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
-    D2D1::ColorF(0x98DF50, 0.75f), &brush);
+    D2D1::ColorF(0x98DF50, 0.75f), &solidBrush);
+  brush = solidBrush;
   maxUpdates = 200;
   HRESULT hrCreateEllipse =
     factory->CreateEllipseGeometry(
@@ -60,7 +64,7 @@ RingEffect::RingEffect(float x, float y) : DynamicEffect(x, y)
   active = true;
 }
 
-void RingEffect::PostFrameUpdate()
+void RingEffect::PostFrameUpdate(float elapsed)
 {
   ID2D1Factory* factory = ResourceLoader::GetFactory();
   ID2D1TransformedGeometry* transformed;
@@ -116,7 +120,7 @@ SpinSquareEffect::SpinSquareEffect(float x, float y) : DynamicEffect(x, y)
   active = true;
 }
 
-void SpinSquareEffect::PostFrameUpdate()
+void SpinSquareEffect::PostFrameUpdate(float elapsed)
 {
   ID2D1Factory* factory = ResourceLoader::GetFactory();
   ID2D1TransformedGeometry* transformed;
@@ -135,4 +139,55 @@ void SpinSquareEffect::PostFrameUpdate()
   ++updates;
   if (updates > maxUpdates)
     active = false;
+}
+
+PlanetEffect::PlanetEffect(float x, float y) : DynamicEffect(x, y)
+{
+  D2D1_GRADIENT_STOP stops[] =
+  {
+      //{ 0.0f, D2D1::ColorF(rand() % 0xFFFFFF, 1.0f)},
+      { 0.0f, D2D1::ColorF(D2D1::ColorF::DarkBlue)},
+      { 1.0f, D2D1::ColorF(D2D1::ColorF::Black) }
+  };
+
+  ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
+  ID2D1GradientStopCollection* collection = nullptr;
+  target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+  if (collection)
+  {
+    ID2D1LinearGradientBrush* planetBrush;
+    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+    target->CreateLinearGradientBrush(props, collection, &planetBrush);
+    planetBrush->SetStartPoint(D2D1::Point2F(0.f, 0.f));
+    planetBrush->SetEndPoint(D2D1::Point2F(CLIENT_WIDTH, CLIENT_HEIGHT));
+    brush = planetBrush;
+  }
+
+  lightAngle1 = (3.f * M_PI / 4.f);
+  lightAngle2 = (7.f * M_PI / 4.f);
+}
+
+void PlanetEffect::PostFrameUpdate(float elapsed)
+{
+  lightAngle1 += 0.002f * elapsed;
+  if (lightAngle1 > 2.f * M_PI)
+    lightAngle1 -= 2.f * M_PI;
+  lightAngle2 += 0.002f * elapsed;
+  if (lightAngle2 > 2.f * M_PI)
+    lightAngle2 -= 2.f * M_PI;
+  float cx = CLIENT_WIDTH / 2.f;
+  float cy = CLIENT_HEIGHT / 2.f;
+ // float dist1 = std::fabs(lightAngle1) * (256.f / (2.f * M_PI));
+  float dist1 = 256.f;
+
+  ID2D1LinearGradientBrush* planetBrush = (ID2D1LinearGradientBrush*)brush;
+  planetBrush->SetStartPoint(D2D1::Point2F(
+    cx + (dist1 * sin(lightAngle1)),
+    cy + (dist1 * cos(lightAngle1))));
+
+  float dist2 = 256.f;
+  //float dist2 = std::fabs(lightAngle2) * (256.f / (2.f * M_PI));
+  planetBrush->SetEndPoint(D2D1::Point2F(
+    cx + (dist2 * sin(lightAngle2)),
+    cy + (dist2 * cos(lightAngle2))));
 }

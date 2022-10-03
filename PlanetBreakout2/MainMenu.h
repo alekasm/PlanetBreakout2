@@ -20,6 +20,7 @@ private:
   std::unordered_map<MainMenuState, std::vector<Button*>> buttons;
   MainMenuState state = MainMenuState::MAIN;
   uint32_t campaign_page = 0;
+  ID2D1LinearGradientBrush* planetBrush = nullptr;
   std::unordered_map<PowerupType, std::wstring> powerupDescriptions;
   const std::wstring infoDescription =
     L"Written by Aleksander Krimsky (2022)\n"

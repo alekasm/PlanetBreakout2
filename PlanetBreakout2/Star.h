@@ -5,7 +5,7 @@ struct Star : DynamicEntity
   Star(unsigned max_x, unsigned max_y);
   void Start() override;
   const float GetOpacity() const;
-  virtual void PostFrameUpdate() override;
+  virtual void PostFrameUpdate(float elapsed) override;
 private:
   enum StarDirection {
     BRIGHTER, DARKER

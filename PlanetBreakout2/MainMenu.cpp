@@ -1,6 +1,8 @@
 #include "MainMenu.h"
 #include "GameController.h"
 #include "GameLoader.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 std::vector<Button*>& MainMenu::GetButtons()
 {
@@ -27,6 +29,7 @@ const std::wstring& MainMenu::GetInfoDescription() const
   return infoDescription;
 }
 
+
 void MainMenu::initialize(ClientMenu* client)
 {
   powerupDescriptions = {
@@ -39,6 +42,7 @@ void MainMenu::initialize(ClientMenu* client)
    {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a shield, destroying them doesn't yield any points"},
   };
+
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
     Button* button0 = new Button(button0draw);

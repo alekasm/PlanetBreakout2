@@ -201,13 +201,22 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   else
   {
     target->SetTransform(D2D1::Matrix3x2F::Identity());
-  }
+  } 
   target->Clear();
   for (const Star& star : GameController::GetInstance()->GetStars())
   {
     target->DrawBitmap(
       ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
   }
+
+  target->FillEllipse(D2D1::Ellipse(D2D1::Point2F(
+    CLIENT_WIDTH / 2.f, CLIENT_HEIGHT / 2.f), 256.f, 256.f),
+    GameController::GetInstance()->GetPlanetEffect()->GetBrush());
+
+  target->DrawEllipse(D2D1::Ellipse(D2D1::Point2F(
+    CLIENT_WIDTH / 2.f, CLIENT_HEIGHT / 2.f), 256.f, 256.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF), 1.f);
+
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatHuge,
     D2D1::RectF(0.f, 100.f, CLIENT_WIDTH - 1, 200.f),

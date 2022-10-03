@@ -8,6 +8,7 @@ GameController* GameController::instance = nullptr;
 
 GameController::GameController()
 {
+  srand(time(NULL));
   game_type = GameType::MAIN_MENU;
   old_type = game_type;
   mousePos = POINT();
@@ -15,12 +16,18 @@ GameController::GameController()
   timer = std::chrono::microseconds(0);
   timer_creator = std::chrono::microseconds(0);
   level_state = LevelState::START;
-  srand(time(NULL));
+  planetEffect = new PlanetEffect(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT / 2.f);
+  
   menuStars.clear();
   for (int i = 0; i < 300; ++i)
   {
     menuStars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
   }
+}
+
+PlanetEffect* GameController::GetPlanetEffect()
+{
+  return planetEffect;
 }
 
 PrimitiveText& GameController::GetHighscoreText()
@@ -334,6 +341,7 @@ void GameController::GameUpdate()
   {
     for (Star& star : menuStars)
       star.UpdateFrame(delta.count());
+    planetEffect->UpdateFrame(delta.count());
     return;
   }
 

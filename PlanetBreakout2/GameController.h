@@ -78,10 +78,12 @@ struct GameController
   const Laser& GetLaser() const;
   const std::vector<Star>& GetStars() const;
   const std::vector<DynamicEffect*> GetEffects() const;
+  PlanetEffect* GetPlanetEffect();
 private:
   Laser laser;
   size_t current_level = 0;
   uint32_t lives = 0;
+  PlanetEffect* planetEffect;
   std::vector<Ball> balls;
   std::vector<Powerup> powerups;
   std::vector<Star> stars;
@@ -112,5 +114,7 @@ private:
     {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
   };
   std::chrono::microseconds timer_creator;
+  POINTF menuLightOrigin;
+  POINTF menuLightEnd;
   GameController();
 };
