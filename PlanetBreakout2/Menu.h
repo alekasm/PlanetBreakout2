@@ -27,6 +27,7 @@ struct ClientMenu : Menu
   void SetWindowedBorderless();
   void SetWindowed();
   bool IsFullScreen();
+  void ToggleFullScreen();
   float GetFullScreenScale();
 };
 

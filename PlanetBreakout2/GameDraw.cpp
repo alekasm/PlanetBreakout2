@@ -201,7 +201,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   else
   {
     target->SetTransform(D2D1::Matrix3x2F::Identity());
-  } 
+  }
   target->Clear();
   for (const Star& star : GameController::GetInstance()->GetStars())
   {
@@ -233,7 +233,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   {
     CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
     std::advance(it, mainMenu.GetCampaignPage());
-    
+
     Campaign& campaign = it->second;
 
     unsigned i = 1;
@@ -286,15 +286,15 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
       float x = 64.f;
 
       target->DrawRectangle(
-        D2D1::RectF( x, y,
-           x + POWERUP_DIMENSION,
+        D2D1::RectF(x, y,
+          x + POWERUP_DIMENSION,
           y + POWERUP_DIMENSION),
         darkGrayBrush, 1.0f);
       x += 8.f;
       y += 8.f;
       target->DrawBitmap(
         ResourceLoader::GetSpriteMap().at(pwr_it->second.GetIcon()),
-        D2D1::RectF( x, y,
+        D2D1::RectF(x, y,
           x + POWERUP_ICON,
           y + POWERUP_ICON), 1.0f);
       std::wstring desc = mainMenu.GetDescription(pwr_it->first);
@@ -305,11 +305,17 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
       ++index;
     }
 
+    std::wstring text_hotkey = L"Hotkeys\nESC = Return to Menu\nF11 = Toggle Fullscreen";
+    target->DrawText(text_hotkey.c_str(), text_hotkey.size(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+      D2D1::RectF(0.f, 660.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+
     target->DrawText(mainMenu.GetInfoDescription().c_str(),
       mainMenu.GetInfoDescription().length(),
-      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-      D2D1::RectF(0.f, CLIENT_HEIGHT - 64.f, CLIENT_WIDTH, CLIENT_HEIGHT),
-      ResourceLoader::GetBrush(ColorBrush::GRAY));
+      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+      D2D1::RectF(0.f, 0.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
   }
   target->EndDraw();
 }
@@ -337,8 +343,8 @@ void DrawGame(ClientMenu* menu)
   {
     target->SetTransform(
       D2D1::Matrix3x2F::Scale(
-       D2D1::Size(menu->GetFullScreenScale(),
-         menu->GetFullScreenScale())));
+        D2D1::Size(menu->GetFullScreenScale(),
+          menu->GetFullScreenScale())));
   }
   else
   {
@@ -346,7 +352,7 @@ void DrawGame(ClientMenu* menu)
   }
   target->Clear();
 
-  for(int y = 0; y < CLIENT_HEIGHT; y += 64)
+  for (int y = 0; y < CLIENT_HEIGHT; y += 64)
     for (int x = GAME_WIDTH; x < CLIENT_WIDTH; x += 64)
     {
       target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"bg1"),
@@ -371,11 +377,11 @@ void DrawGame(ClientMenu* menu)
   target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 300.f, CLIENT_WIDTH - 5.f, 460.f),
     ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
 
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 690.f),
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 740.f),
     ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 690.f),
+  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 740.f),
     ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-  
+
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatBig,
     D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), darkGrayBrush);
@@ -412,7 +418,7 @@ void DrawGame(ClientMenu* menu)
   size_t index = 0;
   for (; pwr_it != pwr_map.end(); ++pwr_it)
   {
-    float row = (index / 4) == 0 ? 0.0 : (POWERUP_DIMENSION * 2.f);
+    float row = (index / 4) * (POWERUP_DIMENSION * 2.f);
     float y = 530.f + 36.f + row;
     float col = (index % 4);
     float x = 32.f + (col * 20.f) + (col * POWERUP_DIMENSION);
@@ -421,7 +427,7 @@ void DrawGame(ClientMenu* menu)
       D2D1::RectF(GAME_WIDTH + x, y,
         GAME_WIDTH + x + POWERUP_DIMENSION,
         y + POWERUP_DIMENSION),
-      pwr_it->second.IsActive() ? orangeBrush : darkGrayBrush, 2.0f);
+      pwr_it->second.IsActive() ? greenBrush : darkGrayBrush, 2.0f);
 
     if (!pwr_it->second.GetIcon().empty())
     {
@@ -432,6 +438,17 @@ void DrawGame(ClientMenu* menu)
         D2D1::RectF(GAME_WIDTH + x, y,
           GAME_WIDTH + x + POWERUP_ICON,
           y + POWERUP_ICON), 1.0f);
+
+      if (pwr_it->second.HasTime() && pwr_it->second.IsActive())
+      {
+        float height_percentage = pwr_it->second.GetPercentRemaining() * POWERUP_DIMENSION;
+        target->FillRectangle(D2D1::RectF(
+          GAME_WIDTH + x - 8 + 1,
+          y - 8 + 1,
+          GAME_WIDTH + x + POWERUP_DIMENSION - 8 - 1,
+          y + height_percentage - 8 - 1),
+          ResourceLoader::GetBrush(ColorBrush::GREEN_HALF));
+      }
     }
     ++index;
   }
@@ -462,7 +479,7 @@ void DrawGame(ClientMenu* menu)
 
   for (DynamicEffect* effect : GameController::GetInstance()->GetEffects())
   {
-    if(effect->IsActive())
+    if (effect->IsActive())
       target->DrawGeometry(effect->GetGeometry(), effect->GetBrush(), 2.0f);
   }
 

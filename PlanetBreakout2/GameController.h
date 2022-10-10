@@ -18,9 +18,11 @@ enum class DynamicSpriteType { BAT, BALL};
 struct GamePowerUp
 {
   //The tile is 32x32, expected icon size is 16x16
-  GamePowerUp(std::wstring icon)
+  GamePowerUp(std::wstring icon, uint32_t timeMS = 0)
   {
     this->icon = icon;
+    this->timeMS = timeMS * 1000;
+    timer = std::chrono::microseconds::zero();
   }
   GamePowerUp() = default;
   const bool IsActive() const
@@ -31,14 +33,40 @@ struct GamePowerUp
   {
     return icon;
   }
-  void SetActive(bool value)
+  void SetActive(bool value, std::chrono::microseconds current)
   {
     active = value;
+    timer = current;
+  }
+  void ResumeTime(std::chrono::microseconds offset)
+  {
+    timer += offset;
+  }
+  const bool HasTime() const
+  {
+    return timeMS > 0;
+  }
+  const float GetPercentRemaining() const
+  {
+    return percent;
+  }
+  bool ShouldTrigger(std::chrono::microseconds current)
+  {
+    std::chrono::microseconds delta = (current - timer);
+    bool shouldTrigger = active &&
+      (time == 0 || delta.count() > timeMS);
+    if (shouldTrigger)
+      timer = current;
+    else
+      percent = (float)delta.count() / timeMS;
+    return shouldTrigger;
   }
 private:
-  ID2D1Bitmap* bitmap_active;
   bool active = false;
   std::wstring icon;
+  std::chrono::microseconds timer;
+  uint32_t timeMS = 0;
+  float percent = 0.f;
 };
 
 typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
@@ -105,15 +133,19 @@ private:
   std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
-    {PowerupType::CREATOR_BALL, GamePowerUp(L"creator")},
+    {PowerupType::CREATOR_BALL, GamePowerUp(L"creator", 5000)},
     {PowerupType::LASER_BAT, GamePowerUp(L"laser")},
     {PowerupType::BONUS_POINTS, GamePowerUp(L"points")},
     {PowerupType::BARRIER, GamePowerUp(L"barrier_icon")},
     {PowerupType::EXTRA_LIFE, GamePowerUp(L"heart")},
     {PowerupType::GHOST, GamePowerUp(L"ghost")},
     {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
+    {PowerupType::PORTAL, GamePowerUp(L"portal", 10000)},
   };
-  std::chrono::microseconds timer_creator;
+  //std::chrono::microseconds timer_creator;
+  //std::chrono::microseconds timer_portal;
+  //const uint32_t time_creator_us = 5000 * 1000;
+  //const uint32_t time_portal_us = 10000 * 1000;
   POINTF menuLightOrigin;
   POINTF menuLightEnd;
   GameController();

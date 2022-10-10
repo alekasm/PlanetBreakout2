@@ -14,10 +14,9 @@ GameController::GameController()
   mousePos = POINT();
   mousePosPrev = POINT();
   timer = std::chrono::microseconds(0);
-  timer_creator = std::chrono::microseconds(0);
   level_state = LevelState::START;
   planetEffect = new PlanetEffect(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT / 2.f);
-  
+
   menuStars.clear();
   for (int i = 0; i < 300; ++i)
   {
@@ -75,7 +74,7 @@ void GameController::SetHighscoreName(std::wstring name)
   highscore.score = score;
   highscore.name = name;
   campaign.AddHighscore(highscore);
-  
+
   //Needs to write back to gameloader...
   level_state = LevelState::GAME_OVER;
   game_type = GameType::MAIN_MENU;
@@ -110,12 +109,14 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  v_powerups[0] = PowerupType::CREATOR_BALL;
+  v_powerups[1] = PowerupType::PORTAL;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
     if (!powerup_map[type].IsActive())
     {
-      powerup_map[type].SetActive(true);
+      powerup_map[type].SetActive(true, timer);
       random_chance += 5;
       switch (type)
       {
@@ -141,7 +142,7 @@ void GameController::AddPowerup()
           unsigned col = index % GRID_COLUMNS;
           unsigned row = index / GRID_COLUMNS;
           const Brick& last = *(--it->second.end());
-          if(last.subtype != BrickType::NO_POINT)
+          if (last.subtype != BrickType::NO_POINT)
           {
             Brick brick(BrickType::NO_POINT, L"nopoint", col, row);
             bricks[index].push_back(brick);
@@ -158,7 +159,7 @@ void GameController::Respawn()
 {
   GamePowerUpMap::iterator pwr_it = powerup_map.begin();
   for (; pwr_it != powerup_map.end(); ++pwr_it)
-    pwr_it->second.SetActive(false);
+    pwr_it->second.SetActive(false, std::chrono::microseconds::zero());
   powerups.clear();
   balls.clear();
   effects.clear();
@@ -198,7 +199,7 @@ void GameController::Respawn()
   {
     level_state = LevelState::START;
     timer = std::chrono::microseconds::zero();
-    timer_creator = std::chrono::microseconds::zero();
+    //timer_creator = std::chrono::microseconds::zero();
     Ball starter_ball(campaign.ball_sprite);
     starter_ball.Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
     starter_ball.MoveCenterX(GAME_WIDTH / 2);
@@ -216,11 +217,21 @@ Bat* GameController::GetBat()
 
 void GameController::Play()
 {
+  //Update all the timers
   if (level_state == LevelState::START ||
-      level_state == LevelState::PAUSED)
+    level_state == LevelState::PAUSED)
   {
-    //redundant, but just to make sure
-    timer = std::chrono::milliseconds::zero();
+
+    std::chrono::microseconds now = std::chrono::duration_cast<std::chrono::microseconds>(
+      std::chrono::system_clock::now().time_since_epoch());
+    if (timer.count() == 0)
+      timer = now;
+
+    std::chrono::microseconds offset = (now - timer);
+    GamePowerUpMap::iterator it = powerup_map.begin();
+    for (; it != powerup_map.end(); ++it)
+      it->second.ResumeTime(offset);
+    timer = now;
     level_state = LevelState::ACTIVE;
   }
 }
@@ -251,7 +262,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
-  
+
   if (erased > 0)
   {
     GameController::GetInstance()->AddScore(
@@ -323,9 +334,11 @@ void GameController::NextLevel()
   level_state = LevelState::START;
 }
 
-
 void GameController::GameUpdate()
 {
+
+  if (level_state == LevelState::PAUSED)
+    return;
 
   std::chrono::microseconds now = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::system_clock::now().time_since_epoch());
@@ -374,17 +387,18 @@ void GameController::GameUpdate()
     return;
 
   bool spawn_creator = false;
-  if (IsPowerUpActive(PowerupType::CREATOR_BALL))
+  bool spawn_portal = false;
+  GamePowerUpMap::iterator it = powerup_map.begin();
+  for (; it != powerup_map.end(); ++it)
   {
-    if (timer_creator.count() == 0)
+    switch (it->first)
     {
-      timer_creator = now;
-    }
-    std::chrono::microseconds delta = now - timer_creator;
-    if (delta.count() > 5000 * 1000) // 5 seconds
-    {
-      timer_creator = now;
-      spawn_creator = true;
+    case PowerupType::CREATOR_BALL:
+      spawn_creator = it->second.ShouldTrigger(now);
+      break;
+    case PowerupType::PORTAL:
+      spawn_portal = it->second.ShouldTrigger(now);
+      break;
     }
   }
 
@@ -425,6 +439,15 @@ void GameController::GameUpdate()
         new_balls.push_back(starter_ball);
         effects.push_back(new RingEffect(starter_ball.GetRealX(),
           starter_ball.GetRealY()));
+      }
+      if (spawn_portal)
+      {
+        effects.push_back(new RingEffect(ball.GetRealX(),
+          ball.GetRealY()));
+        ball.Reset();
+        ball.Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
+        ball.MoveCenterX(GAME_WIDTH / 2);
+        ball.Start();
       }
     }
   }
@@ -477,7 +500,7 @@ uint16_t GameController::GetScore()
 
 #undef max
 void GameController::AddScore(uint16_t amount)
-{  
+{
   if (score < std::numeric_limits<uint16_t>::max())
   {
     score += amount;

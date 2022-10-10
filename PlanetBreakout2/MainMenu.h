@@ -14,6 +14,7 @@ struct MainMenu
   std::vector<Button*>& GetButtons();
   MainMenuState GetState();
   uint32_t GetCampaignPage();
+  void RefreshFullscreenButton(ClientMenu* client);
   const std::wstring& GetDescription(PowerupType) const;
   const std::wstring& GetInfoDescription() const;
 private:
@@ -21,8 +22,12 @@ private:
   MainMenuState state = MainMenuState::MAIN;
   uint32_t campaign_page = 0;
   ID2D1LinearGradientBrush* planetBrush = nullptr;
+  Button* fullscreenButton;
   std::unordered_map<PowerupType, std::wstring> powerupDescriptions;
   const std::wstring infoDescription =
-    L"Written by Aleksander Krimsky (2022)\n"
-    L"Created with C++17 and Direct2D\n";
+    L"Version " + std::to_wstring(VERSION) + L"\n"
+    L"Written by Aleksander Krimsky\n"
+    L"www.krimsky.net\n"
+    L"Made with C++17 and Direct2D\n";
+
 };

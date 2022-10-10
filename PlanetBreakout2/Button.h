@@ -92,6 +92,14 @@ struct Button : Drawable
     hasText = true;
   }
 
+  void UpdateText(std::wstring string)
+  {
+    if (hasText)
+    {
+      text.Update(string);
+    }
+  }
+
   void SetIcon(const Icon& icon)
   {
     this->icon = icon;

@@ -23,6 +23,16 @@ float DynamicEntity::GetRealY()
   return real_y;
 }
 
+void DynamicEntity::Reset()
+{
+  speed = 0.0f;
+  direction = 0.f;
+  real_x = 0.f;
+  real_y = 0.f;
+  old_x = 0.f;
+  old_y = 0.f;
+}
+
 void DynamicEntity::SetActive(bool value)
 {
   active = value;

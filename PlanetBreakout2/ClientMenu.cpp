@@ -262,20 +262,21 @@ void ClientMenu::ProcessWM_CHAR(WPARAM wParam)
   }
 }
 
+void ClientMenu::ToggleFullScreen()
+{
+  if (fullscreen ^= true)
+    SetWindowedBorderless();
+  else
+    SetWindowed();
+}
+
 void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
 {
   if (wParam == VK_F11)
   {
     GameController::GetInstance()->Pause();
-    fullscreen ^= true;
-    if (fullscreen)
-    {
-      SetWindowedBorderless();
-    }
-    else
-    {
-      SetWindowed();
-    }
+    ToggleFullScreen();
+    mainMenu.RefreshFullscreenButton(this);
   }
   if (wParam == VK_ESCAPE)
   {

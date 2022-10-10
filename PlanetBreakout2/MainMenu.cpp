@@ -29,6 +29,15 @@ const std::wstring& MainMenu::GetInfoDescription() const
   return infoDescription;
 }
 
+void MainMenu::RefreshFullscreenButton(ClientMenu* client)
+{
+  if (fullscreenButton == nullptr)
+    return;
+  if (client->IsFullScreen())
+    fullscreenButton->text.Update(L"Windowed");
+  else
+    fullscreenButton->text.Update(L"Fullscreen");
+}
 
 void MainMenu::initialize(ClientMenu* client)
 {
@@ -41,10 +50,11 @@ void MainMenu::initialize(ClientMenu* client)
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
    {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a shield, destroying them doesn't yield any points"},
+   {PowerupType::PORTAL, L"Portal: Teleports all balls to the starting position"},
   };
 
   {
-    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 100, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Play");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -57,7 +67,7 @@ void MainMenu::initialize(ClientMenu* client)
   }
 
   {
-    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 0, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.d2d1Rect, L"Info");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -67,6 +77,22 @@ void MainMenu::initialize(ClientMenu* client)
       state = MainMenuState::INFO;
     };
     buttons[MainMenuState::MAIN].push_back(button0);
+  }
+
+  {
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 0, 300, 30);
+    Button* button0 = new Button(button0draw);
+    Text button0Text(button0draw.d2d1Rect, L"Fullscreen");
+    button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
+    button0->SetText(button0Text);
+    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    fullscreenButton = button0;
+    button0->action = [this, button0, client]() {
+      client->ToggleFullScreen();
+      RefreshFullscreenButton(client);
+    };
+    buttons[MainMenuState::MAIN].push_back(button0);
+    
   }
 
   {
