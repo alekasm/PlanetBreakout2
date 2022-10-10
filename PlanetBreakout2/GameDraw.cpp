@@ -469,7 +469,7 @@ void DrawGame(ClientMenu* menu)
     {
       auto prev_brick_it = std::prev(brick_it);
       target->DrawBitmap(ResourceLoader::GetSpriteMap().at(prev_brick_it->sprite), prev_brick_it->d2d1Rect, 1.0f);
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->sprite), brick_it->d2d1Rect, 0.8f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->sprite), brick_it->d2d1Rect, 1.0f);
     }
     else
     {
@@ -494,8 +494,11 @@ void DrawGame(ClientMenu* menu)
 
   for (const DroneLaser& droneLaser : GameController::GetInstance()->GetDroneLasers())
   {
-    target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(droneLaser.sprite), droneLaser.d2d1Rect, 1.0f);
+    D2D1_ELLIPSE ellipse_radius = D2D1::Ellipse(
+      D2D1::Point2F(droneLaser.d2d1Rect.left + 4.f,
+        droneLaser.d2d1Rect.top + 4.f), 4.f, 4.f);
+    target->FillEllipse(ellipse_radius, ResourceLoader::GetBrush(ColorBrush::PURPLE));
+    //target->DrawRectangle(droneLaser.d2d1Rect, greenBrush, 1.f);
   }
 
   bool creator_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::CREATOR_BALL);

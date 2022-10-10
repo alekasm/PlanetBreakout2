@@ -219,6 +219,7 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   target->CreateSolidColorBrush(D2D1::ColorF(0xFF0000, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::RED]);
   target->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::WHITE]);
   target->CreateSolidColorBrush(D2D1::ColorF(0x98DF50, 0.3f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GREEN_HALF]);
+  target->CreateSolidColorBrush(D2D1::ColorF(0xFF00FF, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::PURPLE]);
 
   D2D1_GRADIENT_STOP stops[] =
   {

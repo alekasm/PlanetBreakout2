@@ -109,6 +109,7 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  v_powerups[0] = PowerupType::BRICK_SHIELD;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -165,7 +166,6 @@ void GameController::Respawn()
   laser.SetActive(false);
   destroyBat = false;
   random_chance = 20;
-
   //Clears barrier bricks
   for (int col = 0; col < GRID_COLUMNS; ++col)
   {
