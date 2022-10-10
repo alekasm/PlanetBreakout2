@@ -492,6 +492,12 @@ void DrawGame(ClientMenu* menu)
     }
   }
 
+  for (const DroneLaser& droneLaser : GameController::GetInstance()->GetDroneLasers())
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(droneLaser.sprite), droneLaser.d2d1Rect, 1.0f);
+  }
+
   bool creator_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::CREATOR_BALL);
   bool ghost = GameController::GetInstance()->IsPowerUpActive(PowerupType::GHOST);
   bool hyper_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::HYPER_BALL);

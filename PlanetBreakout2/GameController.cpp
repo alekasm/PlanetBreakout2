@@ -109,8 +109,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  v_powerups[0] = PowerupType::CREATOR_BALL;
-  v_powerups[1] = PowerupType::PORTAL;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -161,9 +159,11 @@ void GameController::Respawn()
   for (; pwr_it != powerup_map.end(); ++pwr_it)
     pwr_it->second.SetActive(false, std::chrono::microseconds::zero());
   powerups.clear();
+  droneLasers.clear();
   balls.clear();
   effects.clear();
   laser.SetActive(false);
+  destroyBat = false;
   random_chance = 20;
 
   //Clears barrier bricks
@@ -304,6 +304,11 @@ const std::vector<Powerup>& GameController::GetPowerups() const
   return powerups;
 }
 
+const std::vector<DroneLaser>& GameController::GetDroneLasers() const
+{
+  return droneLasers;
+}
+
 size_t GameController::GetCurrentLevel()
 {
   return current_level;
@@ -388,6 +393,7 @@ void GameController::GameUpdate()
 
   bool spawn_creator = false;
   bool spawn_portal = false;
+  bool spawn_drone = false;
   GamePowerUpMap::iterator it = powerup_map.begin();
   for (; it != powerup_map.end(); ++it)
   {
@@ -398,6 +404,9 @@ void GameController::GameUpdate()
       break;
     case PowerupType::PORTAL:
       spawn_portal = it->second.ShouldTrigger(now);
+      break;
+    case PowerupType::DRONE:
+      spawn_drone = it->second.ShouldTrigger(now);
       break;
     }
   }
@@ -426,31 +435,45 @@ void GameController::GameUpdate()
 
   bool any_ball_active = false;
   std::vector<Ball> new_balls;
-  for (Ball& ball : balls)
+  std::vector<Ball>::iterator ball_it;
+  for (ball_it = balls.begin(); ball_it != balls.end();)
   {
-    if (ball.IsActive())
+    if (ball_it->IsActive())
     {
       any_ball_active = true;
-      ball.UpdateFrame(delta.count());
+      ball_it->UpdateFrame(delta.count());
       if (spawn_creator)
       {
         Ball starter_ball(campaign.ball_sprite);
-        starter_ball.SetPosition(ball.GetRealX(), ball.GetRealY());
+        starter_ball.SetPosition(ball_it->GetRealX(), ball_it->GetRealY());
         new_balls.push_back(starter_ball);
         effects.push_back(new RingEffect(starter_ball.GetRealX(),
           starter_ball.GetRealY()));
       }
       if (spawn_portal)
       {
-        effects.push_back(new RingEffect(ball.GetRealX(),
-          ball.GetRealY()));
-        ball.Reset();
-        ball.Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
-        ball.MoveCenterX(GAME_WIDTH / 2);
-        ball.Start();
+        effects.push_back(new RingEffect(ball_it->GetRealX(),
+          ball_it->GetRealY()));
+        ball_it->Reset();
+        ball_it->Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
+        ball_it->MoveCenterX(GAME_WIDTH / 2);
+        ball_it->Start();
       }
+      if (spawn_drone)
+      {
+        DroneLaser dlaser;
+        dlaser.SetPosition(ball_it->GetRealX(), ball_it->GetRealY());
+        dlaser.Start();
+        droneLasers.push_back(dlaser);
+      }
+      ++ball_it;
+    }
+    else
+    {
+      ball_it = balls.erase(ball_it);
     }
   }
+
   for (Ball& newball : new_balls)
   {
     newball.Start();
@@ -471,21 +494,41 @@ void GameController::GameUpdate()
     }
   }
 
+  std::vector<DroneLaser>::iterator drone_it;
+  for (drone_it = droneLasers.begin(); drone_it != droneLasers.end();)
+  {
+    if (drone_it->IsActive())
+    {
+      drone_it->UpdateFrame(delta.count());
+      ++drone_it;
+    }
+    else
+    {
+      drone_it = droneLasers.erase(drone_it);
+    }
+  }
+
   for (Powerup& powerup : powerups)
   {
     if (powerup.IsActive())
       powerup.UpdateFrame(delta.count());
   }
 
-  if (!any_ball_active)
+  //TODO have a mark for bat getting destroyed, add a new dynamic effect
+  //switch to next level when all the dynamic effects are finished
+  if (!any_ball_active || destroyBat)
   {
     if (!powerup_map.at(PowerupType::EXTRA_LIFE).IsActive())
     {
       lives--;
     }
     Respawn();
-    return;
   }
+}
+
+void GameController::DestroyBat()
+{
+  destroyBat = true;
 }
 
 BrickMap& GameController::GetBrickMap()
@@ -523,6 +566,7 @@ void GameController::CreateGame(Campaign& campaign)
   lives = 6;
   current_level = 0;
   score = 0;
+  destroyBat = false;
   bricks = campaign.levels.at(current_level).GetBrickMap();
   stars.clear();
   for (int i = 0; i < 200; ++i)
@@ -543,6 +587,7 @@ void GameController::EndGame()
   }
   balls.clear();
   powerups.clear();
+  droneLasers.clear();
   laser.SetActive(false);
   current_level = 0;
   game_type = old_type;

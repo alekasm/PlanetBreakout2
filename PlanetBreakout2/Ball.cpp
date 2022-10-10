@@ -59,7 +59,6 @@ void Ball::CollisionBat(float x1, float x2)
 
 void Ball::Start()
 {
-
   speed = 3.f;
   real_x = x;
   real_y = y;

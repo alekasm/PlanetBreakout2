@@ -52,7 +52,7 @@ void DynamicCollider::PreFrameUpdate()
   }
   else if (real_y > GAME_HEIGHT)
   {
-    collision = true;
+    //collision = true;
     active = false;
   }
   else if (old_above && new_below)

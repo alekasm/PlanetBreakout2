@@ -50,7 +50,8 @@ void MainMenu::initialize(ClientMenu* client)
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
    {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a shield, destroying them doesn't yield any points"},
-   {PowerupType::PORTAL, L"Portal: Teleports all balls to the starting position"},
+   {PowerupType::PORTAL, L"Time Portal: All balls travel back in time to the start position"},
+   {PowerupType::DRONE, L"Drone: Each ball shoots a laser, which can also kill you"},
   };
 
   {

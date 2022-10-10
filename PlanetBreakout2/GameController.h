@@ -10,6 +10,7 @@
 #include "Laser.h"
 #include "Star.h"
 #include "DynamicEffect.h"
+#include "DroneLaser.h"
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
@@ -100,6 +101,7 @@ struct GameController
   PrimitiveText& GetHighscoreText();// TODO
   const std::vector<Ball>& GetBalls() const;
   const std::vector<Powerup>& GetPowerups() const;
+  const std::vector<DroneLaser>& GetDroneLasers() const;
   size_t GetCurrentLevel();
   uint32_t GetLives();
   void ShootLaser();
@@ -107,6 +109,7 @@ struct GameController
   const std::vector<Star>& GetStars() const;
   const std::vector<DynamicEffect*> GetEffects() const;
   PlanetEffect* GetPlanetEffect();
+  void DestroyBat();
 private:
   Laser laser;
   size_t current_level = 0;
@@ -116,6 +119,7 @@ private:
   std::vector<Powerup> powerups;
   std::vector<Star> stars;
   std::vector<Star> menuStars;
+  std::vector<DroneLaser> droneLasers;
   std::vector<DynamicEffect*> effects;
   PrimitiveText highscore_text;
   LevelState level_state;
@@ -130,6 +134,7 @@ private:
   POINT mousePosPrev;
   BrickMap bricks;
   GameType old_type = GameType::MAIN_MENU;
+  bool destroyBat = false;
   std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
@@ -141,6 +146,7 @@ private:
     {PowerupType::GHOST, GamePowerUp(L"ghost")},
     {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
     {PowerupType::PORTAL, GamePowerUp(L"portal", 10000)},
+    {PowerupType::DRONE, GamePowerUp(L"drone", 4000)},
   };
   //std::chrono::microseconds timer_creator;
   //std::chrono::microseconds timer_portal;
