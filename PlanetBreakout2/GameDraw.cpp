@@ -282,7 +282,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
     size_t index = 0;
     for (; pwr_it != pwr_map.end(); ++pwr_it)
     {
-      float y = 240.f + (index * 36.f);
+      float y = 210.f + (index * 36.f);
       float x = 64.f;
 
       target->DrawRectangle(

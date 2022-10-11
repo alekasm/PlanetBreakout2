@@ -109,7 +109,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  v_powerups[0] = PowerupType::BRICK_SHIELD;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -148,6 +147,23 @@ void GameController::AddPowerup()
           }
         }
         break;
+      case STRIKE:
+      {
+        uint32_t max_index = GRID_COLUMNS * (GRID_ROWS - 6);
+        std::set<uint32_t> strike;
+        for (int i = 0; i < 50; ++i)
+        {
+          uint32_t index = rand() % max_index;
+          strike.insert(index);
+        }
+        for (uint32_t index : strike)
+        {
+          RECT r = GetBrickRect(index);
+          effects.push_back(new BrickBurnEffect(r.left, r.top));
+          BreakBrick(nullptr, index);
+        }
+      }
+      break;
       }
       break;
     }
@@ -256,37 +272,37 @@ void GameController::ShootLaser()
 bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
 {
   bool hyper_ball = powerup_map.at(PowerupType::HYPER_BALL).IsActive();
-  float multiplier = 10.f;
-  if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
-    multiplier = 12.f;
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
 
   if (erased > 0)
   {
-    GameController::GetInstance()->AddScore(
-      (uint16_t)(ball->GetSpeed() * multiplier * erased));
     RECT r = GetBrickRect(index);
-    /*
-    effects.push_back(new RingEffect(
-      r.left + (BRICK_WIDTH / 2),
-      r.top + (BRICK_HEIGHT / 2)));
-    */
     effects.push_back(new SpinSquareEffect(
       r.left + (BRICK_WIDTH / 2),
       r.top + (BRICK_HEIGHT / 2)));
-    if ((rand() % random_chance) == 0)
+
+    if (ball != nullptr)
     {
-      Powerup p;
-      //Since ball width < powerup width
-      unsigned x = ball->x;
-      if (x + POWERUP_DIMENSION > GAME_WIDTH)
-        x = GAME_WIDTH - POWERUP_DIMENSION;
-      p.Update(ball->x, ball->y);
-      p.Start();
-      powerups.push_back(p);
+      float multiplier = 10.f;
+      if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
+        multiplier = 12.f;
+      GameController::GetInstance()->AddScore(
+        (uint16_t)(ball->GetSpeed() * multiplier * erased));
+      if ((rand() % random_chance) == 0)
+      {
+        Powerup p;
+        //Since ball width < powerup width
+        unsigned x = ball->x;
+        if (x + POWERUP_DIMENSION > GAME_WIDTH)
+          x = GAME_WIDTH - POWERUP_DIMENSION;
+        p.Update(ball->x, ball->y);
+        p.Start();
+        powerups.push_back(p);
+      }
     }
+
   }
   if (!hyper_ball) return true;
   //Cannot to fast check because of no-point bricks

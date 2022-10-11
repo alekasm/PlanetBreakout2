@@ -38,6 +38,14 @@ private:
   float rotation = 0.f;
 };
 
+struct BrickBurnEffect : DynamicEffect
+{
+  BrickBurnEffect(float x, float y);
+  virtual void PostFrameUpdate(float elapsed) override;
+private:
+  float opacity = 1.f;
+};
+
 struct PlanetEffect : DynamicEffect
 {
   PlanetEffect(float x, float y);

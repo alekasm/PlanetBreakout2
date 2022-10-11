@@ -42,16 +42,17 @@ void MainMenu::RefreshFullscreenButton(ClientMenu* client)
 void MainMenu::initialize(ClientMenu* client)
 {
   powerupDescriptions = {
-   {PowerupType::HYPER_BALL, L"Hyper Ball: Destroys all bricks in its path, applies to lasers too"},
+   {PowerupType::HYPER_BALL, L"Hyper Energy: Balls and lasers destroy everything in their path"},
    {PowerupType::CREATOR_BALL, L"Creator Ball: Each ball will create another ball every few seconds"},
    {PowerupType::LASER_BAT, L"Laser Bat: Left-Click to shoot lasers"},
    {PowerupType::BONUS_POINTS, L"Rare Gems: Increases the point multiplier"},
-   {PowerupType::BARRIER, L"Barrier: Creates a barrier under your bat to prevent balls from escaping"},
+   {PowerupType::BARRIER, L"Barrier: Creates an energy barrier under your bat for protection"},
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
    {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},
-   {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a shield, destroying them doesn't yield any points"},
+   {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a plasma shield, they don't give points"},
    {PowerupType::PORTAL, L"Time Portal: All balls travel back in time to the start position"},
-   {PowerupType::DRONE, L"Drone: Each ball shoots a laser, which can also kill you"},
+   {PowerupType::DRONE, L"Drone: Transforms balls into drones that shoot lasers, which can also kill you"},
+   {PowerupType::STRIKE, L"Brick Strike: Galactic artillery strike that fires at up to 50 bricks"},
   };
 
   {

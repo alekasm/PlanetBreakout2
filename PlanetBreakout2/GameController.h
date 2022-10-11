@@ -147,6 +147,7 @@ private:
     {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
     {PowerupType::PORTAL, GamePowerUp(L"portal", 10000)},
     {PowerupType::DRONE, GamePowerUp(L"drone", 4000)},
+    {PowerupType::STRIKE, GamePowerUp(L"strike")},
   };
   //std::chrono::microseconds timer_creator;
   //std::chrono::microseconds timer_portal;

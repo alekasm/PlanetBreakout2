@@ -191,3 +191,55 @@ void PlanetEffect::PostFrameUpdate(float elapsed)
     cx + (dist2 * sin(lightAngle2)),
     cy + (dist2 * cos(lightAngle2))));
 }
+
+
+BrickBurnEffect::BrickBurnEffect(float x, float y) : DynamicEffect(x, y)
+{
+  ID2D1Factory* factory = ResourceLoader::GetFactory();
+  ID2D1RectangleGeometry* pRectangleGeometry;
+  //speed = 3.f;
+  //maxUpdates = 250;
+  //RandomDirection(0, 2.f * M_PI);
+
+  HRESULT hrCreateRectangle =
+    factory->CreateRectangleGeometry(
+      D2D1::RectF(
+        x, y,
+        x + BRICK_WIDTH, y + BRICK_HEIGHT),
+      &pRectangleGeometry);
+
+  if (hrCreateRectangle == S_OK)
+    geometry = pRectangleGeometry;
+
+  HRESULT hrTransformed =
+    factory->CreateTransformedGeometry(
+      geometry, D2D1::Matrix3x2F::Scale(
+        D2D1::SizeF(1.0f, 1.0f),
+        D2D1::Point2F(real_x, real_y)),
+      &transformedGeometry);
+
+  ID2D1SolidColorBrush* solidBrush;
+  ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
+    D2D1::ColorF(0xFF0000, 1.f), &solidBrush);
+  brush = solidBrush;
+
+}
+void BrickBurnEffect::PostFrameUpdate(float elapsed)
+{
+  if (opacity <= 0.f)
+  {
+    active = false;
+    return;
+  }
+  float new_opacity = opacity - (elapsed * 0.005f);
+  if (new_opacity < 0.f)
+    new_opacity = 0.f;
+  opacity = new_opacity;
+  ID2D1SolidColorBrush* solidBrush;
+  ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
+    D2D1::ColorF(0xFF0000, opacity), &solidBrush);
+  ID2D1Brush* old = brush;
+  brush = solidBrush;
+  old->Release();
+}
+
