@@ -19,7 +19,7 @@ enum TileType { NONE_TILE };
 #define POWERUP_SIZE 8
 enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL,
   HYPER_BALL, BARRIER, EXTRA_LIFE, BRICK_SHIELD, GHOST,
-  PORTAL, DRONE, STRIKE };
+  PORTAL, DRONE, STRIKE, EMP };
 
 struct Entity :  Drawable
 {

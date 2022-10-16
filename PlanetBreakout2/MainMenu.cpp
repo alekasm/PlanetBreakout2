@@ -53,6 +53,7 @@ void MainMenu::initialize(ClientMenu* client)
    {PowerupType::PORTAL, L"Time Portal: All balls travel back in time to the start position"},
    {PowerupType::DRONE, L"Drone: Transforms balls into drones that shoot lasers, which can also kill you"},
    {PowerupType::STRIKE, L"Brick Strike: Galactic artillery strike that fires at up to 50 bricks"},
+   {PowerupType::EMP, L"EMP Bomb: Clears an entire brick shield and barrier"},
   };
 
   {

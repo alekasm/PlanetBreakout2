@@ -111,6 +111,8 @@ struct GameController
   PlanetEffect* GetPlanetEffect();
   void DestroyBat();
 private:
+  void ClearBarrierBricks();
+  void ClearBrickShield();
   Laser laser;
   size_t current_level = 0;
   uint32_t lives = 0;
@@ -148,6 +150,7 @@ private:
     {PowerupType::PORTAL, GamePowerUp(L"portal", 10000)},
     {PowerupType::DRONE, GamePowerUp(L"drone", 4000)},
     {PowerupType::STRIKE, GamePowerUp(L"strike")},
+    {PowerupType::EMP, GamePowerUp(L"emp")},
   };
   //std::chrono::microseconds timer_creator;
   //std::chrono::microseconds timer_portal;

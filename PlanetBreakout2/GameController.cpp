@@ -118,6 +118,10 @@ void GameController::AddPowerup()
       random_chance += 5;
       switch (type)
       {
+      case EMP:
+        ClearBrickShield();
+        ClearBarrierBricks();
+        break;
       case BARRIER:
       { //TODO ball in brick when spawning?
         for (int col = 0; col < GRID_COLUMNS; ++col)
@@ -169,29 +173,26 @@ void GameController::AddPowerup()
     }
   }
 }
-
-void GameController::Respawn()
+void GameController::ClearBarrierBricks()
 {
-  GamePowerUpMap::iterator pwr_it = powerup_map.begin();
-  for (; pwr_it != powerup_map.end(); ++pwr_it)
-    pwr_it->second.SetActive(false, std::chrono::microseconds::zero());
-  powerups.clear();
-  droneLasers.clear();
-  balls.clear();
-  effects.clear();
-  laser.SetActive(false);
-  destroyBat = false;
-  random_chance = 20;
-  //Clears barrier bricks
   for (int col = 0; col < GRID_COLUMNS; ++col)
   {
     uint32_t index;
     if (!GetBrickIndex(col, GRID_ROWS - 1, index))
       continue;
-    bricks[index].clear();
+    BrickMap::iterator it = bricks.find(index);
+    if (it != bricks.end() && !it->second.empty())
+    {
+      RECT r = GetBrickRect(index);
+      effects.push_back(new SpinSquareEffect(
+        r.left + (BRICK_WIDTH / 2),
+        r.top + (BRICK_HEIGHT / 2)));
+      it->second.clear();
+    }
   }
-
-  //Remove brick shield
+}
+void GameController::ClearBrickShield()
+{
   BrickMap::iterator it;
   for (it = bricks.begin(); it != bricks.end(); ++it)
   {
@@ -200,8 +201,30 @@ void GameController::Respawn()
 
     auto brick_it = (--it->second.end());
     if (brick_it->subtype == BrickType::NO_POINT)
+    {
       it->second.erase(brick_it);
+      RECT r = GetBrickRect(it->first);
+      effects.push_back(new SpinSquareEffect(
+        r.left + (BRICK_WIDTH / 2),
+        r.top + (BRICK_HEIGHT / 2)));
+    }
   }
+}
+void GameController::Respawn()
+{
+  GamePowerUpMap::iterator pwr_it = powerup_map.begin();
+  for (; pwr_it != powerup_map.end(); ++pwr_it)
+    pwr_it->second.SetActive(false, std::chrono::microseconds::zero());
+  ClearBrickShield();
+  ClearBarrierBricks();
+  powerups.clear();
+  droneLasers.clear();
+  balls.clear();
+  effects.clear();
+  laser.SetActive(false);
+  destroyBat = false;
+  //todo update
+  random_chance = 20;
 
   if (lives == 0)
   {
