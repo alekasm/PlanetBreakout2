@@ -48,6 +48,13 @@ void Ball::CollisionBrick(uint32_t index)
 }
 void Ball::CollisionBat(float x1, float x2)
 {
+  if (GameController::GetInstance()->IsPowerUpActive(PowerupType::GHOST))
+  {
+    float min = (M_PI / 6.f);
+    float max = ((5.f * M_PI) / 6.f);
+    RandomDirection(min, max);
+    return;
+  }
   //Prevent an immediate retrigger of collision
   real_y = BAT_Y - BALL_DIMENSION - 0.5f;
   float portion = std::clamp((x2 - real_x) / (BAT_WIDTH + BALL_DIMENSION), 0.0f, 1.0f);

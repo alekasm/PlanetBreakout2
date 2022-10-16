@@ -1,6 +1,6 @@
 #pragma once
 #include "DynamicEntity.h"
-
+#include "ResourceLoader.h"
 
 struct DynamicEffect : DynamicEntity
 {
@@ -31,7 +31,7 @@ private:
 
 struct SpinSquareEffect : DynamicEffect
 {
-  SpinSquareEffect(float x, float y);
+  SpinSquareEffect(float x, float y, ColorBrush);
   virtual void PostFrameUpdate(float elapsed) override;
 private:  
   float rotationDirection = 1.f;

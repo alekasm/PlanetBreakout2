@@ -148,7 +148,7 @@ private:
     {PowerupType::GHOST, GamePowerUp(L"ghost")},
     {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
     {PowerupType::PORTAL, GamePowerUp(L"portal", 10000)},
-    {PowerupType::DRONE, GamePowerUp(L"drone", 4000)},
+    {PowerupType::DRONE, GamePowerUp(L"drone", 3000)},
     {PowerupType::STRIKE, GamePowerUp(L"strike")},
     {PowerupType::EMP, GamePowerUp(L"emp")},
   };

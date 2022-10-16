@@ -17,8 +17,27 @@
 
 
 
-enum ColorBrush { GRAY, GREEN, RED_HALF, BLACK, ORANGE, DARK_GREEN, DARK_GRAY, WHITE, BLACK_HALF, RED,
-  GRADIENT_1, RADIAL_GRADIENT_1, GREEN_HALF, PURPLE };
+enum ColorBrush {
+  GRAY = 0x9A9FA8,
+  GREEN = 0x98DF50,
+
+  BLACK = 0x000000,
+  ORANGE = 0xdfa650,
+  DARK_GREEN = 0x679e2f,
+  DARK_GRAY = 0x121212,
+  WHITE = 0xFFFFFF,
+  RED = 0xFF0000,
+  BLUE = 0x4287f5,
+  PURPLE = 0xFF00FF,
+
+  GREEN_HALF,
+  RED_HALF,
+  BLACK_HALF,
+
+  GRADIENT_1,
+  RADIAL_GRADIENT_1,
+
+};
 enum TextFormat {
   LEFT_12F, CENTER_12F, LEFT_10F, LEFT_8F,
   CENTER_24F, CENTER_18F, CENTER_10F, LEFT_16F, CENTER_14F,
@@ -45,6 +64,7 @@ private:
   static ID2D1HwndRenderTarget* fullscreenTarget;
   static ID2D1Factory* factory;
   static IDWriteFactory* wfactory;
-  static ID2D1Brush* brushes[];
+  //static ID2D1Brush* brushes[];
+  static std::unordered_map<ColorBrush, ID2D1Brush*> brushes;
   static IDWriteTextFormat* formats[];
 };

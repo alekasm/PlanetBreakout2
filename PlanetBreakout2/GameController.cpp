@@ -132,6 +132,8 @@ void GameController::AddPowerup()
             continue;
           bricks[index].push_back(brick);
         }
+        if (IsPowerUpActive(PowerupType::EMP))
+          ClearBrickShield();
       }
       break;
       case BRICK_SHIELD:
@@ -149,6 +151,8 @@ void GameController::AddPowerup()
             Brick brick(BrickType::NO_POINT, L"nopoint", col, row);
             bricks[index].push_back(brick);
           }
+          if (IsPowerUpActive(PowerupType::EMP))
+            ClearBrickShield();
         }
         break;
       case STRIKE:
@@ -169,7 +173,7 @@ void GameController::AddPowerup()
       }
       break;
       }
-      break;
+      return;
     }
   }
 }
@@ -186,7 +190,8 @@ void GameController::ClearBarrierBricks()
       RECT r = GetBrickRect(index);
       effects.push_back(new SpinSquareEffect(
         r.left + (BRICK_WIDTH / 2),
-        r.top + (BRICK_HEIGHT / 2)));
+        r.top + (BRICK_HEIGHT / 2),
+        ColorBrush::BLUE));
       it->second.clear();
     }
   }
@@ -206,7 +211,8 @@ void GameController::ClearBrickShield()
       RECT r = GetBrickRect(it->first);
       effects.push_back(new SpinSquareEffect(
         r.left + (BRICK_WIDTH / 2),
-        r.top + (BRICK_HEIGHT / 2)));
+        r.top + (BRICK_HEIGHT / 2),
+        ColorBrush::BLUE));
     }
   }
 }
@@ -304,7 +310,8 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
     RECT r = GetBrickRect(index);
     effects.push_back(new SpinSquareEffect(
       r.left + (BRICK_WIDTH / 2),
-      r.top + (BRICK_HEIGHT / 2)));
+      r.top + (BRICK_HEIGHT / 2),
+      hyper_ball ?  ColorBrush::RED : ColorBrush::GREEN));
 
     if (ball != nullptr)
     {

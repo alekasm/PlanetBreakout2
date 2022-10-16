@@ -86,7 +86,7 @@ void RingEffect::PostFrameUpdate(float elapsed)
 }
 
 
-SpinSquareEffect::SpinSquareEffect(float x, float y) : DynamicEffect(x, y)
+SpinSquareEffect::SpinSquareEffect(float x, float y, ColorBrush colorBrush) : DynamicEffect(x, y)
 {
   ID2D1Factory* factory = ResourceLoader::GetFactory();
   ID2D1RectangleGeometry* pRectangleGeometry;
@@ -117,6 +117,14 @@ SpinSquareEffect::SpinSquareEffect(float x, float y) : DynamicEffect(x, y)
         D2D1::SizeF(1.f, 1.f),
         D2D1::Point2F(real_x, real_y)),
       &transformedGeometry);
+
+  if (brush != nullptr)
+    brush->Release();
+
+  ID2D1SolidColorBrush* solidBrush;
+  ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
+    D2D1::ColorF(colorBrush, 0.3f), &solidBrush);
+  brush = solidBrush;
   active = true;
 }
 
