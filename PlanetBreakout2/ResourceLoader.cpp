@@ -228,17 +228,35 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::PURPLE, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::PURPLE]);
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::BLUE, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::BLUE]);
 
-  D2D1_GRADIENT_STOP stops[] =
   {
-      { 0.0f, D2D1::ColorF(D2D1::ColorF::Cyan) },
-      { 1.0f, D2D1::ColorF(D2D1::ColorF::DarkBlue) }
-  };
+    D2D1_GRADIENT_STOP stops[] =
+    {
+        { 0.0f, D2D1::ColorF(D2D1::ColorF::Cyan) },
+        { 1.0f, D2D1::ColorF(D2D1::ColorF::DarkBlue) }
+    };
+    ID2D1GradientStopCollection* collection;
+    target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+    target->CreateLinearGradientBrush(props, collection,
+      (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_1]);
+  }
 
-  ID2D1GradientStopCollection* collection;
-  target->CreateGradientStopCollection(stops, _countof(stops), &collection);
-  D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
-  target->CreateLinearGradientBrush(props, collection,
-    (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_1]);
+  {
+    D2D1_GRADIENT_STOP stops[] =
+    {
+        { 0.0f, D2D1::ColorF(D2D1::ColorF::Gold) },
+         { 1.0f, D2D1::ColorF(D2D1::ColorF::Aquamarine) }
+    };
+    ID2D1GradientStopCollection* collection;
+    target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+
+    target->CreateLinearGradientBrush(D2D1::LinearGradientBrushProperties(
+      D2D1::Point2F(CLIENT_WIDTH / 2.f, 0.f),
+      D2D1::Point2F(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT)), collection,
+      (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_2]);
+  }
+
 
   /*
   ID2D1GradientStopCollection* pGradientStops = NULL;

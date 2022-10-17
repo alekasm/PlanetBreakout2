@@ -58,6 +58,9 @@ struct Campaign
   bool NewHighscore(uint16_t score);
   std::vector<Highscore>& GetHighscores();
   void SaveHighscores();
+  void SetTestMode();
+  bool IsTestMode();
 private:
   std::vector<Highscore> highscores;
+  bool test = false;
 };

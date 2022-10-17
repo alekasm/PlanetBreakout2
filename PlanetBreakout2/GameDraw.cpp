@@ -161,18 +161,18 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
 
 void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstring value, float y)
 {
-  ID2D1Brush* orangeBrush = ResourceLoader::GetBrush(ColorBrush::ORANGE);
   IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
   IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
-  ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
-  ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   ID2D1LinearGradientBrush* gradientBrush = (ID2D1LinearGradientBrush*)ResourceLoader::GetBrush(ColorBrush::GRADIENT_1);
 
 
   target->DrawText(header.c_str(), header.length(), formatMedium,
-    D2D1::RectF(GAME_WIDTH + 1, y, CLIENT_WIDTH - 1, y + 16.f), darkGrayBrush);
+    D2D1::RectF(GAME_WIDTH + 1, y, CLIENT_WIDTH - 1, y + 16.f),
+    ResourceLoader::GetBrush(ColorBrush::DARK_GREEN));
+  
   target->DrawText(header.c_str(), header.length(), formatMedium,
-    D2D1::RectF(GAME_WIDTH + 3, y + 2, CLIENT_WIDTH - 1, 2 + y + 16.f), greenBrush);
+    D2D1::RectF(GAME_WIDTH + 1 + 1, y + 1, CLIENT_WIDTH - 1, 2 + y + 16.f),
+    ResourceLoader::GetBrush(ColorBrush::GREEN));
 
   gradientBrush->SetStartPoint(D2D1::Point2F(GAME_WIDTH + 1, y + 24.f));
   gradientBrush->SetEndPoint(D2D1::Point2F(CLIENT_WIDTH - 1, (y + 24.f) + 16.f));
@@ -231,11 +231,10 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 
   if (mainMenu.GetState() == MainMenuState::CAMPAIGN_SELECT)
   {
+    ID2D1Brush* gradientBrush2 = ResourceLoader::GetBrush(ColorBrush::GRADIENT_2);
     CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
     std::advance(it, mainMenu.GetCampaignPage());
-
     Campaign& campaign = it->second;
-
     unsigned i = 1;
     std::wstring name_string;
     std::wstring score_string;
@@ -266,14 +265,14 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
 
     float y = (CLIENT_HEIGHT / 2.f) - 64;
     target->DrawText(name_string.c_str(), name_string.length(), formatBig,
-      D2D1::RectF(32.f, y, CLIENT_WIDTH - 32.f, y + 32.f), greenBrush);
+      D2D1::RectF(32.f, y, CLIENT_WIDTH - 32.f, y + 32.f), gradientBrush2);
 
     target->DrawText(score_string.c_str(), score_string.length(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_24F),
-      D2D1::RectF(0.f, y, CLIENT_WIDTH, y + 32.f), greenBrush);
+      D2D1::RectF(0.f, y, CLIENT_WIDTH, y + 32.f), gradientBrush2);
 
     target->DrawText(date_string.c_str(), date_string.length(), formatBig,
-      D2D1::RectF(CLIENT_WIDTH - 256.f, y, CLIENT_WIDTH - 32.f, y + 32.f), greenBrush);
+      D2D1::RectF(CLIENT_WIDTH - 256.f, y, CLIENT_WIDTH - 32.f, y + 32.f), gradientBrush2);
   }
   else if (mainMenu.GetState() == MainMenuState::INFO)
   {
@@ -574,7 +573,12 @@ void DrawGame(ClientMenu* menu)
     std::wstring text = L"Game Over";
     target->DrawText(text.c_str(), text.length(), formatBig,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
-      ResourceLoader::GetBrush(ColorBrush::GREEN));
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
+
+    std::wstring text2 = L"Left-Click to Exit";
+    target->DrawText(text2.c_str(), text2.length(), formatMedium2,
+      D2D1::RectF(64.f, (GAME_HEIGHT / 2) + 26.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 46.f),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
   }
   else if (GameController::GetInstance()->GetLevelState() == LevelState::START)
   {
@@ -606,7 +610,7 @@ void DrawGame(ClientMenu* menu)
     std::wstring text = L"New Highscore!";
     target->DrawText(text.c_str(), text.length(), formatBig,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 64.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 32.f),
-      ResourceLoader::GetBrush(ColorBrush::GREEN));
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
 
     std::wstring name = GameController::GetInstance()->GetHighscoreText().GetString();
     target->DrawText(name.c_str(), name.length(), formatBig,
@@ -616,7 +620,7 @@ void DrawGame(ClientMenu* menu)
     std::wstring text2 = L"Press Enter to Accept!";
     target->DrawText(text2.c_str(), text2.length(), formatMedium2,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) + 26.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 46.f),
-      ResourceLoader::GetBrush(ColorBrush::GREEN));
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
   }
 
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);

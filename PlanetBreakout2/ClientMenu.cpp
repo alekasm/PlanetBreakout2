@@ -216,6 +216,10 @@ void ClientMenu::LeftClickLevel()
     case LevelState::ACTIVE:
       GameController::GetInstance()->ShootLaser();
       break;
+    case LevelState::GAME_OVER:
+      GameController::GetInstance()->EndGame();
+      SetClientFocus(false);
+      break;
   }
 }
 

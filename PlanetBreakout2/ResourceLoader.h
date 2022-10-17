@@ -36,6 +36,7 @@ enum ColorBrush {
 
   GRADIENT_1,
   RADIAL_GRADIENT_1,
+  GRADIENT_2
 
 };
 enum TextFormat {

@@ -79,6 +79,7 @@ void GameController::SetHighscoreName(std::wstring name)
   level_state = LevelState::GAME_OVER;
   game_type = GameType::MAIN_MENU;
 }
+
 const GamePowerUpMap& GameController::GetGamePowerUpMap() const
 {
   return powerup_map;
@@ -176,6 +177,8 @@ void GameController::AddPowerup()
       return;
     }
   }
+  //All powerups are active, just add score
+  AddScore(100);
 }
 void GameController::ClearBarrierBricks()
 {
@@ -235,7 +238,7 @@ void GameController::Respawn()
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
-    if (campaign.NewHighscore(score))
+    if (!campaign.IsTestMode() && campaign.NewHighscore(score))
     {
       level_state = LevelState::HIGHSCORE;
     }
@@ -318,8 +321,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
       float multiplier = 10.f;
       if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
         multiplier = 12.f;
-      GameController::GetInstance()->AddScore(
-        (uint16_t)(ball->GetSpeed() * multiplier * erased));
+      AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
       if ((rand() % random_chance) == 0)
       {
         Powerup p;

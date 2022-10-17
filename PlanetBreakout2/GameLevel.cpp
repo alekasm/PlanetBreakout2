@@ -153,6 +153,16 @@ Campaign::Campaign()
   std::sort(highscores.begin(), highscores.end());
 }
 
+void Campaign::SetTestMode()
+{
+  test = true;
+}
+
+bool Campaign::IsTestMode()
+{
+  return test;
+}
+
 std::vector<Highscore>& Campaign::GetHighscores()
 {
   return highscores;

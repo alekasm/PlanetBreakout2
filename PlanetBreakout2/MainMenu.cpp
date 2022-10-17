@@ -48,7 +48,7 @@ void MainMenu::initialize(ClientMenu* client)
    {PowerupType::BONUS_POINTS, L"Rare Gems: Increases the point multiplier"},
    {PowerupType::BARRIER, L"Barrier: Creates an energy barrier under your bat for protection"},
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
-   {PowerupType::GHOST, L"Ghost: A mean space ghost absorbs the light which radiates from balls"},
+   {PowerupType::GHOST, L"Ghost: Space ghosts possess the balls, making them bound randomly off the bat"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a plasma shield, they don't give points"},
    {PowerupType::PORTAL, L"Time Portal: All balls travel back in time to the start position"},
    {PowerupType::DRONE, L"Drone: Transforms balls into drones that shoot lasers, which can also kill you"},

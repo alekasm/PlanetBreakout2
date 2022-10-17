@@ -145,6 +145,7 @@ void LevelEditor::initialize(ClientMenu* client)
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this, button0, client]() {
       Campaign campaign;
+      campaign.SetTestMode();
       GameLevel level = editorLevel;
       if (level.author.empty())
         level.author = L"Unknown";
