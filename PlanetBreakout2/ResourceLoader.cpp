@@ -245,7 +245,7 @@ void ResourceLoader::InitializeClient(HWND hWnd)
     D2D1_GRADIENT_STOP stops[] =
     {
         { 0.0f, D2D1::ColorF(D2D1::ColorF::Gold) },
-         { 1.0f, D2D1::ColorF(D2D1::ColorF::Aquamarine) }
+        { 1.0f, D2D1::ColorF(D2D1::ColorF::Aquamarine) }
     };
     ID2D1GradientStopCollection* collection;
     target->CreateGradientStopCollection(stops, _countof(stops), &collection);

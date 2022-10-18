@@ -257,7 +257,7 @@ void LevelEditor::initialize(ClientMenu* client)
       (FLOAT)button1->y,
       (FLOAT)button1->x + BRICK_WIDTH,
       (FLOAT)button1->y + BRICK_HEIGHT),
-      brick.sprite);
+      brick.GetSprite());
     button1icon.CenterX(button1->d2d1Rect);
     button1icon.AlignIcon(0.f, 1.0f);
     button1->SetIcon(button1icon);

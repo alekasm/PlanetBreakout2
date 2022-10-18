@@ -391,7 +391,7 @@ bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
     {
       output << L"brick:";
       output << std::to_wstring(brick.subtype) + L",";
-      output << brick.sprite + L",";
+      output << brick.GetSprite() + L",";
       output << std::to_wstring(brick.col) + L",";
       output << std::to_wstring(brick.row) << L"\n";
     }

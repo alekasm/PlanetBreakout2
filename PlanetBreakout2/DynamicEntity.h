@@ -5,9 +5,9 @@
 
 struct DynamicEntity : Entity
 {
-  DynamicEntity(EntityType type, std::wstring sprite,
+  DynamicEntity(EntityType type, //std::wstring sprite,
     unsigned width, unsigned height) :
-    Entity(type, sprite, width, height)
+    Entity(type, width, height)
   {
   }
   void UpdateFrame(int64_t elapsed);

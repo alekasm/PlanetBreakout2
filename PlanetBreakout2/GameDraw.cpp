@@ -82,7 +82,7 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   {
     if (map_it->second.empty()) continue;
     const Brick& brick = *(--map_it->second.cend());
-    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.sprite), brick.d2d1Rect, 1.0f);
+    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.GetSprite()), brick.d2d1Rect, 1.0f);
     if (levelEditor.showGrid)
     {
       std::wstring count = std::to_wstring(map_it->second.size());
@@ -109,7 +109,7 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
       }
       else
       {
-        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->sprite),
+        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->GetSprite()),
           GetBrickRectF(x, y), 0.5f);
       }
     }
@@ -206,7 +206,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   for (const Star& star : GameController::GetInstance()->GetStars())
   {
     target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
+      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.d2d1Rect, star.GetOpacity());
   }
 
   target->FillEllipse(D2D1::Ellipse(D2D1::Point2F(
@@ -408,7 +408,7 @@ void DrawGame(ClientMenu* menu)
     float col = (i % 3);
     float x = 12.f + (col * 20.f) + (col * BAT_WIDTH);
     target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->sprite),
+      ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->GetSprite()),
       D2D1::RectF(GAME_WIDTH + x, y, GAME_WIDTH + x + BAT_WIDTH, y + BAT_HEIGHT), 1.0f);
   }
 
@@ -455,7 +455,7 @@ void DrawGame(ClientMenu* menu)
   for (const Star& star : GameController::GetInstance()->GetStars())
   {
     target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(star.sprite), star.d2d1Rect, star.GetOpacity());
+      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.d2d1Rect, star.GetOpacity());
   }
 
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
@@ -467,12 +467,12 @@ void DrawGame(ClientMenu* menu)
     if (brick_it->subtype == BrickType::NO_POINT && map_it->second.size() > 1)
     {
       auto prev_brick_it = std::prev(brick_it);
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(prev_brick_it->sprite), prev_brick_it->d2d1Rect, 1.0f);
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->sprite), brick_it->d2d1Rect, 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(prev_brick_it->GetSprite()), prev_brick_it->d2d1Rect, 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->GetSprite()), brick_it->d2d1Rect, 1.0f);
     }
     else
     {
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->sprite), brick_it->d2d1Rect, 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->GetSprite()), brick_it->d2d1Rect, 1.0f);
     }
   }
 
@@ -487,7 +487,7 @@ void DrawGame(ClientMenu* menu)
     if (powerup.IsActive())
     {
       target->DrawBitmap(
-        ResourceLoader::GetSpriteMap().at(powerup.sprite), powerup.d2d1Rect, 1.0f);
+        ResourceLoader::GetSpriteMap().at(powerup.GetSprite()), powerup.d2d1Rect, 1.0f);
     }
   }
 

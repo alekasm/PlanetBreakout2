@@ -23,13 +23,39 @@ enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL,
 
 struct Entity :  Drawable
 {
-  EntityType type;
-  std::wstring sprite;
-  Entity(EntityType type, std::wstring sprite, unsigned width, unsigned height) :
+  EntityType type;  
+  Entity(EntityType type,
+    unsigned width, unsigned height) :
     Drawable(width, height),
-    type(type), sprite(sprite)
+    type(type)
   {
   }
+
+  /*
+  Entity(EntityType type, std::wstring sprite,
+    unsigned width, unsigned height) :
+    Drawable(width, height),
+    type(type)
+  {
+    SetSprite(sprite);
+  }
+  */
+
+  void SetSprite(std::wstring sprite)
+  {
+    this->sprite = sprite;
+  }
+
+  bool HasSprite()
+  {
+    return !sprite.empty();
+  }
+
+  const std::wstring& GetSprite() const
+  {
+    return sprite;
+  }
+
   void MoveCenterX(unsigned cx)
   {
     Update(cx - (width / 2), y);
@@ -44,15 +70,18 @@ struct Entity :  Drawable
   {
     Update(cx - (width / 2), cy - (height / 2));
   }
+private:
+  std::wstring sprite;
 };
 
 struct Bat : Entity
 {
   BatType subtype;
   Bat(std::wstring sprite) :
-    Entity(EntityType::BAT, sprite, BAT_WIDTH, BAT_HEIGHT),
+    Entity(EntityType::BAT, BAT_WIDTH, BAT_HEIGHT),
     subtype(BatType::NORMAL_BAT)
   {
+    SetSprite(sprite);
   }
   void UpdateType(BatType subtype)
   {
@@ -65,16 +94,18 @@ struct Brick : Entity
   BrickType subtype;
   Brick() = default;
   Brick(BrickType subtype, std::wstring sprite, uint32_t x, uint32_t y) :
-    Entity(EntityType::BRICK, sprite, BRICK_WIDTH, BRICK_HEIGHT),
+    Entity(EntityType::BRICK, BRICK_WIDTH, BRICK_HEIGHT),
     subtype(subtype), col(x), row(y)
   {
     Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
+    SetSprite(sprite);
   }
 
   Brick(const Brick& other, uint32_t x, uint32_t y) :
-    Entity(EntityType::BRICK, other.sprite, BRICK_WIDTH, BRICK_HEIGHT),
+    Entity(EntityType::BRICK, BRICK_WIDTH, BRICK_HEIGHT),
     subtype(other.subtype), col(x), row(y)
   {
     Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
+    SetSprite(other.GetSprite());
   }
 };

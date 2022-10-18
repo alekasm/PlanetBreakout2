@@ -14,7 +14,7 @@ void DynamicEffect::Start()
 }
 
 DynamicEffect::DynamicEffect(float x, float y) :
-  DynamicEntity(EntityType::VISUAL, STAR_SPRITE, 1, 1)
+  DynamicEntity(EntityType::VISUAL, 1, 1)
 {
   ID2D1SolidColorBrush* solidBrush;
   ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(
@@ -92,7 +92,7 @@ SpinSquareEffect::SpinSquareEffect(float x, float y, ColorBrush colorBrush) : Dy
   ID2D1RectangleGeometry* pRectangleGeometry;
   speed = 3.f;
   maxUpdates = 250;
-  RandomDirection(0, 2.f * M_PI);
+  RandomDirection(0.f, 2.f * M_PI);
   int min_size = 4;
   int max_size = 12;
   int size_int = rand() % (max_size - min_size + 1) + min_size;

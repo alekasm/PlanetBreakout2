@@ -6,9 +6,9 @@ enum CollisionType { WALL_VERT = 1, WALL_HOR = 2, BRICK = 4, BAT = 8 };
 //typedef std::unordered_map<CollisionType, CollisionFunc> CollisionMap;
 struct DynamicCollider : DynamicEntity
 {
-  DynamicCollider(EntityType type, std::wstring sprite,
+  DynamicCollider(EntityType type,
     unsigned width, unsigned height) :
-    DynamicEntity(type, sprite, width, height)
+    DynamicEntity(type, width, height)
   {
   }
   void PreFrameUpdate() override;

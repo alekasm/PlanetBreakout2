@@ -4,9 +4,10 @@
 struct Powerup : DynamicCollider
 {
   Powerup() :
-    DynamicCollider(EntityType::POWERUP, POWERUP_SPRITE,
+    DynamicCollider(EntityType::POWERUP,
       POWERUP_DIMENSION, POWERUP_DIMENSION)
   {
+    SetSprite(POWERUP_SPRITE);
     RegisterCollision(CollisionType::BAT);
   }
   void Start() override;

@@ -4,7 +4,7 @@
 struct Laser : DynamicCollider
 {
   Laser() :
-    DynamicCollider(EntityType::POWERUP, POWERUP_SPRITE, 2, 1)
+    DynamicCollider(EntityType::POWERUP, 2, 1)
   {
     active = false;
     RegisterCollision(CollisionType::BRICK);
