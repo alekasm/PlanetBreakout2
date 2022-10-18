@@ -59,7 +59,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 100, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Play");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Play");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -72,7 +72,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 50, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Info");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Info");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -85,7 +85,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 0, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Fullscreen");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Fullscreen");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -101,7 +101,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 50, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Level Editor");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Level Editor");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -114,7 +114,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 100, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Exit");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Exit");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -127,7 +127,7 @@ void MainMenu::initialize(ClientMenu* client)
   {
     Drawable button0draw(10, CLIENT_HEIGHT - 40, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Back");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Back");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -143,7 +143,7 @@ void MainMenu::initialize(ClientMenu* client)
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 160, 300, 30);
     Button* button0 = new Button(button0draw);
     std::wstring name = GameLoader::GetCampaigns().begin()->second.name;
-    Text button0Text(button0draw.d2d1Rect, name);
+    Text button0Text(button0draw.GetD2D1Rect(), name);
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -162,9 +162,9 @@ void MainMenu::initialize(ClientMenu* client)
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button0);
 
-    Drawable button1draw(button0draw.d2d1Rect.right + 2.f, button0draw.d2d1Rect.top, 30.f, 30.f);
+    Drawable button1draw((unsigned)button0draw.GetRect().right + 2, (unsigned)button0draw.GetRect().top, 30, 30);
     Button* button1 = new Button(button1draw);
-    Text button1Text(button1draw.d2d1Rect, L">");
+    Text button1Text(button1draw.GetD2D1Rect(), L">");
     button1Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button1->SetText(button1Text);
     button1->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -181,9 +181,9 @@ void MainMenu::initialize(ClientMenu* client)
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button1);
 
-    Drawable button2draw(button0draw.d2d1Rect.left - 32.f, button0draw.d2d1Rect.top, 30.f, 30.f);
+    Drawable button2draw((unsigned)button0draw.GetRect().left - 32, (unsigned)button0draw.GetRect().top, 30, 30);
     Button* button2 = new Button(button2draw);
-    Text button2Text(button2draw.d2d1Rect, L"<");
+    Text button2Text(button2draw.GetD2D1Rect(), L"<");
     button2Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button2->SetText(button2Text);
     button2->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);

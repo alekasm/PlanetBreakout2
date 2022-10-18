@@ -67,8 +67,8 @@ D2D1_RECT_F AdjustRect(const D2D1_RECT_F& rect, float offsetX, float offsetY)
 float normalize(float angle)
 {
   if (angle < 0)
-    return atan2(sin(angle), cos(angle)) + (2.f * M_PI);
-  return atan2(sin(angle), cos(angle)) + M_PI;
+    return (float)atan2(sin(angle), cos(angle)) + (2.f * M_PI);
+  return (float)atan2(sin(angle), cos(angle)) + M_PI;
 }
 
 float Random(float a, float b)

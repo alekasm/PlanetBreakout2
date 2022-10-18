@@ -47,7 +47,7 @@ const std::wstring Powerup::GetCountString() const
 void Powerup::Start()
 {
   speed = 1.f;
-  real_x = x;
-  real_y = y;
+  real_x = (float)x;
+  real_y = (float)y;
   direction = M_PI / 2.f;
 }

@@ -16,12 +16,12 @@ Star::Star(unsigned max_x, unsigned max_y) :
   UpdateSize(size_int, size_int);
   int x_int = rand() % (max_x - size_int);
   int y_int = rand() % (max_y - size_int);
-  SetPosition(x_int, y_int);
+  SetPosition((float)x_int, (float)y_int);
 
   minOpacity = float(min_int) * 0.01f;
   maxOpacity = float(max_int) * 0.01f;
   currentOpacity = float(curr_int) * 0.01f;
-  opacityRate = float(rate_int) * 1e-6;
+  opacityRate = float(rate_int) * (float)1e-6;
   starDirection = (StarDirection)dir_int;
   active = true;
 }

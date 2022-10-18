@@ -22,11 +22,11 @@ void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
   if (button->type == ButtonType::PRIMITIVE)
   {
     if (button->highlighted)
-      target->FillRectangle(button->d2d1Rect, button->primitiveFill);
+      target->FillRectangle(button->GetD2D1Rect(), button->primitiveFill);
     if (button->selected)
-      target->DrawRectangle(button->d2d1Rect, button->primitiveFill, button->primitiveStroke);
+      target->DrawRectangle(button->GetD2D1Rect(), button->primitiveFill, button->primitiveStroke);
     else
-      target->DrawRectangle(button->d2d1Rect, button->primitiveOutline, button->primitiveStroke);
+      target->DrawRectangle(button->GetD2D1Rect(), button->primitiveOutline, button->primitiveStroke);
 
     if (button->hasText)
     {
@@ -82,16 +82,16 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   {
     if (map_it->second.empty()) continue;
     const Brick& brick = *(--map_it->second.cend());
-    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.GetSprite()), brick.d2d1Rect, 1.0f);
+    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick.GetSprite()), brick.GetD2D1Rect(), 1.0f);
     if (levelEditor.showGrid)
     {
       std::wstring count = std::to_wstring(map_it->second.size());
       target->DrawTextA(count.c_str(), count.length(),
         ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-        map_it->second.at(0).d2d1Rect, blackBrush);
+        map_it->second.at(0).GetD2D1Rect(), blackBrush);
       target->DrawTextA(count.c_str(), count.length(),
         ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-        AdjustRect(map_it->second.at(0).d2d1Rect, 1.f, 1.f), greenBrush);
+        AdjustRect(map_it->second.at(0).GetD2D1Rect(), 1.f, 1.f), greenBrush);
     }
   }
 
@@ -206,7 +206,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   for (const Star& star : GameController::GetInstance()->GetStars())
   {
     target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.d2d1Rect, star.GetOpacity());
+      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.GetD2D1Rect(), star.GetOpacity());
   }
 
   target->FillEllipse(D2D1::Ellipse(D2D1::Point2F(
@@ -243,7 +243,6 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
     {
       wchar_t buffer_score[64];
       wchar_t buffer_name[64];
-      wchar_t buffer_date[64];
       std::swprintf(buffer_name,
         sizeof(buffer_name) / sizeof(wchar_t),
         L"%d. %s\n", i, h.name.c_str());
@@ -456,7 +455,7 @@ void DrawGame(ClientMenu* menu)
   for (const Star& star : GameController::GetInstance()->GetStars())
   {
     target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.d2d1Rect, star.GetOpacity());
+      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.GetD2D1Rect(), star.GetOpacity());
   }
 
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
@@ -468,12 +467,12 @@ void DrawGame(ClientMenu* menu)
     if (brick_it->subtype == BrickType::NO_POINT && map_it->second.size() > 1)
     {
       auto prev_brick_it = std::prev(brick_it);
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(prev_brick_it->GetSprite()), prev_brick_it->d2d1Rect, 1.0f);
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->GetSprite()), brick_it->d2d1Rect, 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(prev_brick_it->GetSprite()), prev_brick_it->GetD2D1Rect(), 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->GetSprite()), brick_it->GetD2D1Rect(), 1.0f);
     }
     else
     {
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->GetSprite()), brick_it->d2d1Rect, 1.0f);
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(brick_it->GetSprite()), brick_it->GetD2D1Rect(), 1.0f);
     }
   }
 
@@ -488,7 +487,7 @@ void DrawGame(ClientMenu* menu)
     if (powerup.IsActive())
     {
       target->DrawBitmap(
-        ResourceLoader::GetSpriteMap().at(powerup.GetSprite()), powerup.d2d1Rect, 1.0f);
+        ResourceLoader::GetSpriteMap().at(powerup.GetSprite()), powerup.GetD2D1Rect(), 1.0f);
       target->DrawText(powerup.GetCountString().c_str(),
         powerup.GetCountString().size(), formatSmallCenter,
         powerup.GetCountRect(),
@@ -499,10 +498,9 @@ void DrawGame(ClientMenu* menu)
   for (const DroneLaser& droneLaser : GameController::GetInstance()->GetDroneLasers())
   {
     D2D1_ELLIPSE ellipse_radius = D2D1::Ellipse(
-      D2D1::Point2F(droneLaser.d2d1Rect.left + 4.f,
-        droneLaser.d2d1Rect.top + 4.f), 4.f, 4.f);
+      D2D1::Point2F(droneLaser.GetD2D1Rect().left + 4.f,
+        droneLaser.GetD2D1Rect().top + 4.f), 4.f, 4.f);
     target->FillEllipse(ellipse_radius, ResourceLoader::GetBrush(ColorBrush::PURPLE));
-    //target->DrawRectangle(droneLaser.d2d1Rect, greenBrush, 1.f);
   }
 
   bool creator_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::CREATOR_BALL);
@@ -524,18 +522,18 @@ void DrawGame(ClientMenu* menu)
         target->DrawBitmap(
           ResourceLoader::GetSpriteMap().at(
             GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BALL)),
-          ball.d2d1Rect, 1.0f);
+          ball.GetD2D1Rect(), 1.0f);
       }
 
       D2D1_ELLIPSE ellipse_radius = D2D1::Ellipse(
-        D2D1::Point2F(ball.d2d1Rect.left + 8.f,
-          ball.d2d1Rect.top + 8.f), 10.f, 10.f);
+        D2D1::Point2F(ball.GetD2D1Rect().left + 8.f,
+          ball.GetD2D1Rect().top + 8.f), 10.f, 10.f);
       target->DrawEllipse(ellipse_radius, ellipse_brush, radius);
       if (creator_ball)
       {
         D2D1_ELLIPSE ellipse_center = D2D1::Ellipse(
-          D2D1::Point2F(ball.d2d1Rect.left + 8.f,
-            ball.d2d1Rect.top + 8.f), 4.f, 3.f);
+          D2D1::Point2F(ball.GetD2D1Rect().left + 8.f,
+            ball.GetD2D1Rect().top + 8.f), 4.f, 3.f);
         target->FillEllipse(ellipse_center, ellipse_brush);
       }
     }
@@ -544,7 +542,7 @@ void DrawGame(ClientMenu* menu)
   Laser laser = GameController::GetInstance()->GetLaser();
   if (laser.IsActive())
   {
-    target->FillRectangle(laser.d2d1Rect, hyper_ball ?
+    target->FillRectangle(laser.GetD2D1Rect(), hyper_ball ?
       ResourceLoader::GetBrush(ColorBrush::RED) :
       ResourceLoader::GetBrush(ColorBrush::GRADIENT_1));
   }
@@ -552,7 +550,7 @@ void DrawGame(ClientMenu* menu)
   target->DrawBitmap(
     ResourceLoader::GetSpriteMap().at(
       GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BAT)),
-    GameController::GetInstance()->GetBat()->d2d1Rect, 1.0f);
+    GameController::GetInstance()->GetBat()->GetD2D1Rect(), 1.0f);
 
 
   if (GameController::GetInstance()->GetLevelState() == LevelState::PAUSED)

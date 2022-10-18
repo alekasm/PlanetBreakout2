@@ -4,8 +4,7 @@
 
 struct Drawable
 {
-  D2D1_RECT_F d2d1Rect;
-  RECT win32Rect;
+
   unsigned x, y, width, height;
   Drawable(unsigned x, unsigned y, unsigned width, unsigned height) :
     x(x), y(y), width(width), height(height)
@@ -51,5 +50,19 @@ struct Drawable
     this->height = height;
     RecalculateBounds();
   }
+
+  const D2D1_RECT_F GetD2D1Rect() const
+  {
+    return d2d1Rect;
+  }
+
+  const RECT& GetRect() const
+  {
+    return win32Rect;
+  }
+
+protected:
+  D2D1_RECT_F d2d1Rect;
+  RECT win32Rect;
 
 };

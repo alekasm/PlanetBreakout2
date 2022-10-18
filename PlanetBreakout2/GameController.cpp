@@ -338,7 +338,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
         for (Powerup& powerup : powerups)
         {
           RECT dummy;
-          if (IntersectRect(&dummy, &powerup.win32Rect, &p.win32Rect) != 0)
+          if (IntersectRect(&dummy, &(powerup.GetRect()), &(p.GetRect())) != 0)
           {
             powerup.AddCount();
             spawn_new = false;

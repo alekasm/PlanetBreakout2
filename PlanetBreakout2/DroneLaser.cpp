@@ -7,8 +7,8 @@
 void DroneLaser::Start()
 {
   speed = 2.f;
-  real_x = x;
-  real_y = y;
+  real_x = (float)x;
+  real_y = (float)y;
   RandomDirection(0, 2.f * M_PI);
   active = true;
 }

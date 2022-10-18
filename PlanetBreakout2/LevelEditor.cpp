@@ -64,7 +64,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"New");
+    Text button0Text(button0draw.GetD2D1Rect(), L"New");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
@@ -78,7 +78,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 3, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Save");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Save");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
@@ -95,7 +95,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 4, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Load");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Load");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
@@ -115,7 +115,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 4, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Toggle Grid");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Toggle Grid");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() { showGrid ^= true; };
@@ -126,7 +126,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 1, 210, 22);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Main Menu");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Main Menu");
     button0->SetText(button0Text);
     buttonMapName = button0;
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -139,7 +139,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 2, 210, 22);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Test Level");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Test Level");
     button0->SetText(button0Text);
     buttonMapName = button0;
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
@@ -163,7 +163,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 5, 210, 22);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"");
+    Text button0Text(button0draw.GetD2D1Rect(), L"");
     button0->id = MAP_NAME;
     button0->SetText(button0Text);
     buttonMapName = button0;
@@ -188,7 +188,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 6, 210, 22);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"");
+    Text button0Text(button0draw.GetD2D1Rect(), L"");
     button0->id = AUTHOR_NAME;
     button0->SetText(button0Text);
     buttonAuthorName = button0;
@@ -213,7 +213,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(GAME_WIDTH + 10, 720, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Previous");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Previous");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
@@ -226,7 +226,7 @@ void LevelEditor::initialize(ClientMenu* client)
   {
     Drawable button0draw(CLIENT_WIDTH - 110, 720, 100, 14);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.d2d1Rect, L"Next");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Next");
     button0->SetText(button0Text);
     button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
     button0->action = [this]() {
@@ -248,7 +248,7 @@ void LevelEditor::initialize(ClientMenu* client)
       BrickType::INVINCIBLE_BRICK ?
       L"Breakable" : L"Invincible";
 
-    Text button1Text(button1->d2d1Rect, desc);
+    Text button1Text(button1->GetD2D1Rect(), desc);
     button1Text.AlignText(0.f, BRICK_HEIGHT + 2);
     button1->SetText(button1Text);
 
@@ -258,7 +258,7 @@ void LevelEditor::initialize(ClientMenu* client)
       (FLOAT)button1->x + BRICK_WIDTH,
       (FLOAT)button1->y + BRICK_HEIGHT),
       brick.GetSprite());
-    button1icon.CenterX(button1->d2d1Rect);
+    button1icon.CenterX(button1->GetD2D1Rect());
     button1icon.AlignIcon(0.f, 1.0f);
     button1->SetIcon(button1icon);
     button1->action = [this](void) {

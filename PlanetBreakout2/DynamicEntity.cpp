@@ -45,11 +45,11 @@ void DynamicEntity::SetPosition(float x, float y)
   Update(real_x, real_y);
 }
 
-void DynamicEntity::RandomDirection(float min, float max)
+void DynamicEntity::RandomDirection(double min, double max)
 {
   std::mt19937 generator(rand() % (std::numeric_limits<uint64_t>::max)());
   //Allows me to use real math where y pos is up
-  std::uniform_real_distribution<float> distribution(-max, -min);
+  std::uniform_real_distribution<double> distribution(-max, -min);
   direction = distribution(generator);
 }
 

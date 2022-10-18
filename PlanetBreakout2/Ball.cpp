@@ -50,27 +50,27 @@ void Ball::CollisionBat(float x1, float x2)
 {
   if (GameController::GetInstance()->IsPowerUpActive(PowerupType::GHOST))
   {
-    float min = (M_PI / 6.f);
-    float max = ((5.f * M_PI) / 6.f);
+    double min = (M_PI / 6.f);
+    double max = ((5.f * M_PI) / 6.f);
     RandomDirection(min, max);
     return;
   }
   //Prevent an immediate retrigger of collision
   real_y = BAT_Y - BALL_DIMENSION - 0.5f;
-  float portion = std::clamp((x2 - real_x) / (BAT_WIDTH + BALL_DIMENSION), 0.0f, 1.0f);
+  double portion = std::clamp((x2 - real_x) / (BAT_WIDTH + BALL_DIMENSION), 0.0f, 1.0f);
   //float dir = M_PI / 6.f + ((4.f * portion) * M_PI / 6.f); //pi/7  - 5pi/6
   //float dir = M_PI / 8.f + ((6.f * portion) * M_PI / 8.f); //pi/8  - 7pi/8
-  float dir = M_PI / 10.f + ((8.f * portion) * M_PI / 10.f); //pi/10 - 9pi/10
+  double dir = M_PI / 10.f + ((8.f * portion) * M_PI / 10.f); //pi/10 - 9pi/10
   direction = -dir;
 }
 
 void Ball::Start()
 {
   speed = 3.f;
-  real_x = x;
-  real_y = y;
-  float min = (M_PI / 4.f);
-  float max = ((3.f * M_PI) / 4.f);
+  real_x = (float)x;
+  real_y = (float)y;
+  double min = (M_PI / 4.f);
+  double max = ((3.f * M_PI) / 4.f);
   RandomDirection(min, max);
   //direction = -(3*M_PI / 4);
 } 

@@ -20,12 +20,12 @@ struct DynamicEntity : Entity
   virtual void PostFrameUpdate(float elapsed = 0.f);
   void SetActive(bool);
   void SetPosition(float x, float y);
-  void RandomDirection(float min, float max);
+  void RandomDirection(double min, double max);
   void Reset();
 protected:
   bool active = true;
   float speed = 0.0f;
-  float direction = 0.f;
+  double direction = 0.f;
   float real_x = 0.f;
   float real_y = 0.f;
   float old_x = 0.f;
