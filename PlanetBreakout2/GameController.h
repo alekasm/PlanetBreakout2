@@ -77,7 +77,6 @@ struct GameController
   bool BreakBrick(DynamicCollider*, uint32_t);
   static GameController* GetInstance();
   POINT mousePos;
-  Bat* bat = nullptr;
   uint16_t GetScore();
   void AddScore(uint16_t);
   Campaign campaign;
@@ -111,6 +110,7 @@ struct GameController
   PlanetEffect* GetPlanetEffect();
   void DestroyBat();
 private:
+  Bat* bat = nullptr;
   void ClearBarrierBricks();
   void ClearBrickShield();
   Laser laser;

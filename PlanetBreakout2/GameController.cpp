@@ -310,7 +310,9 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
 
   if (erased > 0)
   {
-    RECT r = GetBrickRect(index);
+    unsigned col = index % GRID_COLUMNS;
+    unsigned row = index / GRID_COLUMNS;
+    RECT r = GetBrickRect(col, row);
     effects.push_back(new SpinSquareEffect(
       r.left + (BRICK_WIDTH / 2),
       r.top + (BRICK_HEIGHT / 2),
@@ -322,6 +324,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
       if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
         multiplier = 12.f;
       AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
+
       if ((rand() % random_chance) == 0)
       {
         Powerup p;
@@ -330,8 +333,23 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
         if (x + POWERUP_DIMENSION > GAME_WIDTH)
           x = GAME_WIDTH - POWERUP_DIMENSION;
         p.Update(ball->x, ball->y);
-        p.Start();
-        powerups.push_back(p);
+
+        bool spawn_new = true;
+        for (Powerup& powerup : powerups)
+        {
+          RECT dummy;
+          if (IntersectRect(&dummy, &powerup.win32Rect, &p.win32Rect) != 0)
+          {
+            powerup.AddCount();
+            spawn_new = false;
+            break;
+          }
+        }
+        if (spawn_new)
+        {
+          p.Start();
+          powerups.push_back(p);
+        }
       }
     }
 

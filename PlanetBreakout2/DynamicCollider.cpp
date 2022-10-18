@@ -60,7 +60,7 @@ void DynamicCollider::PreFrameUpdate()
     collision = true;
     if(collision_mask & CollisionType::BAT)
     {
-      float bat_x = GameController::GetInstance()->bat->x;
+      float bat_x = GameController::GetInstance()->GetBat()->x;
       //Add a little forgiveness to the bat dimension
       float x1 = bat_x - width - 2.5f;
       float x2 = bat_x + BAT_WIDTH + 2.5f;

@@ -328,6 +328,7 @@ void DrawGame(ClientMenu* menu)
   IDWriteTextFormat* formatleft16 = ResourceLoader::GetTextFormat(TextFormat::LEFT_16F);
   IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
   IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
+  IDWriteTextFormat* formatSmallCenter = ResourceLoader::GetTextFormat(TextFormat::CENTER_10F);
   ID2D1Brush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
   ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
@@ -408,7 +409,7 @@ void DrawGame(ClientMenu* menu)
     float col = (i % 3);
     float x = 12.f + (col * 20.f) + (col * BAT_WIDTH);
     target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->bat->GetSprite()),
+      ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->GetBat()->GetSprite()),
       D2D1::RectF(GAME_WIDTH + x, y, GAME_WIDTH + x + BAT_WIDTH, y + BAT_HEIGHT), 1.0f);
   }
 
@@ -488,6 +489,10 @@ void DrawGame(ClientMenu* menu)
     {
       target->DrawBitmap(
         ResourceLoader::GetSpriteMap().at(powerup.GetSprite()), powerup.d2d1Rect, 1.0f);
+      target->DrawText(powerup.GetCountString().c_str(),
+        powerup.GetCountString().size(), formatSmallCenter,
+        powerup.GetCountRect(),
+        ResourceLoader::GetBrush((ColorBrush)powerup.GetCountColor()));
     }
   }
 
@@ -547,7 +552,7 @@ void DrawGame(ClientMenu* menu)
   target->DrawBitmap(
     ResourceLoader::GetSpriteMap().at(
       GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BAT)),
-    GameController::GetInstance()->bat->d2d1Rect, 1.0f);
+    GameController::GetInstance()->GetBat()->d2d1Rect, 1.0f);
 
 
   if (GameController::GetInstance()->GetLevelState() == LevelState::PAUSED)
