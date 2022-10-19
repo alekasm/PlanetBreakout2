@@ -152,9 +152,12 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
     }
   }
 
-  //POINT p = GameController::GetInstance()->mousePos;
-  //target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"cursor"),
-  //  D2D1::RectF(p.x, p.y, p.x + 24, p.y + 24), 1.0f);
+  if (menu->GetShowCursor())
+  {
+    POINT p = GameController::GetInstance()->GetMousePos();
+    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"mouse"),
+      D2D1::RectF(p.x, p.y, p.x + 16, p.y + 16), 1.0f);
+  }
 
   target->EndDraw();
 }
@@ -314,6 +317,13 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
       D2D1::RectF(0.f, 0.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::WHITE));
+  }
+
+  if (menu->GetShowCursor())
+  {
+    POINT p = GameController::GetInstance()->GetMousePos();
+    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"mouse"),
+      D2D1::RectF(p.x, p.y, p.x + 16, p.y + 16), 1.0f);
   }
   target->EndDraw();
 }
@@ -628,5 +638,13 @@ void DrawGame(Client* menu)
 
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), brushes);
+
+  if (menu->GetShowCursor())
+  {
+    POINT p = GameController::GetInstance()->GetMousePos();
+    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"mouse"),
+      D2D1::RectF(p.x, p.y, p.x + 16, p.y + 16), 1.0f);
+  }
+
   target->EndDraw();
 }

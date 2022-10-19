@@ -21,7 +21,10 @@ struct Client
   void ToggleFullScreen();
   float GetFullScreenScale();
   HWND GetHWND();
+  void SetShowCursor(bool);
+  bool GetShowCursor();
 private:
+  bool showCursor = false;
   HWND hWnd;
   RECT WindowRect;
   DWORD grfStyle, grfExStyle;

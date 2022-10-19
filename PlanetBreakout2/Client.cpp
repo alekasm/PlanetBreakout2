@@ -51,6 +51,16 @@ namespace
   RECT desktop;
 }
 
+void Client::SetShowCursor(bool value)
+{
+  showCursor = value;
+}
+
+bool Client::GetShowCursor()
+{
+  return showCursor;
+}
+
 HWND Client::GetHWND()
 {
   return hWnd;
@@ -76,7 +86,6 @@ void Client::PostInitialize()
   mainMenu.initialize(this);
   levelEditor.initialize(this);
   initialized = true;
-  cursor = LoadCursor(NULL, IDC_ARROW);
   UpdateClientWindow();
   window_center = POINT();
 }
@@ -140,11 +149,12 @@ void Client::SetWindowedBorderless()
 void Client::SetClientFocus(bool value)
 {
   focused = value;
-  //SetCursor(NULL);
-  SetCursor(focused ? NULL : cursor);
+  SetShowCursor(!focused);
+  //If the cursor stuff doesnt work, use below
+  //SetShowCursor(false);
+  //SetCursor(focused ? NULL : cursor);
   if (focused)
   {
-    //GameController::GetInstance()->MouseUpdate(mouse_pos, true);
     ClipCursor(&GameClipRect);
   }
   else
@@ -341,6 +351,12 @@ LRESULT CALLBACK ContainerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
   case WM_KEYDOWN:
     pWnd->ProcessWM_KEYDOWN(wParam);
     break;
+  case WM_SETCURSOR:
+    if (LOWORD(lParam) == HTCLIENT)
+      SetCursor(NULL);
+    else
+      SetCursor(cursor);
+    break;
   case WM_CHAR:
     pWnd->ProcessWM_CHAR(wParam);
     break;
@@ -360,8 +376,14 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lParam)->lpCreateParams);
     break;
   case WM_SETCURSOR: //Patches an unsolved edge case with ShowCursor(FALSE)
+  {
     pWnd->SetClientFocus(focused);
-    break;
+    if (LOWORD(lParam) == HTCLIENT)
+      SetCursor(NULL);
+    else
+      SetCursor(cursor);
+  }
+  break;
 
   case WM_PAINT:
   {
@@ -445,6 +467,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
 void Client::Initialize(HINSTANCE hInstance)
 {
+  cursor = LoadCursor(NULL, IDC_ARROW);
   grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   grfExStyle = WS_EX_STATICEDGE;
   WindowRect = { 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
@@ -456,6 +479,7 @@ void Client::Initialize(HINSTANCE hInstance)
   BaseClass.cbSize = sizeof(WNDCLASSEX);
   BaseClass.hInstance = hInstance;
   BaseClass.style = CS_HREDRAW | CS_VREDRAW;
+  //BaseClass.hCursor = (HCURSOR)IDB_PNG1;
 
   WNDCLASSEX MainClass = BaseClass;
   MainClass.lpfnWndProc = ContainerWndProc;
