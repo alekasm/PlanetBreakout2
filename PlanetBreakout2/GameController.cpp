@@ -51,6 +51,11 @@ void GameController::MouseUpdate(const POINT& mouse)
   mousePos = mouse;
 }
 
+POINT GameController::GetMousePos()
+{
+  return mousePos;
+}
+
 const std::vector<DynamicEffect*> GameController::GetEffects() const
 {
   return effects;

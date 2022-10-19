@@ -3,18 +3,18 @@
 #include "Constants.h"
 #include "Button.h"
 #include "ResourceLoader.h"
-#include "Menu.h"
+#include "Client.h"
 #include "Star.h"
 
 enum class MainMenuState {MAIN, INFO, HIGHSCORE, CAMPAIGN_SELECT};
 struct MainMenu
 {
-  void initialize(ClientMenu*);
+  void initialize(Client*);
   //std::vector<Button*>& GetButtons(MainMenuState);
   std::vector<Button*>& GetButtons();
   MainMenuState GetState();
   uint32_t GetCampaignPage();
-  void RefreshFullscreenButton(ClientMenu* client);
+  void RefreshFullscreenButton(Client* client);
   const std::wstring& GetDescription(PowerupType) const;
   const std::wstring& GetInfoDescription() const;
 private:

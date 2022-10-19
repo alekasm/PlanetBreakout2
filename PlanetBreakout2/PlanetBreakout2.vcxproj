@@ -154,7 +154,7 @@
     <ClCompile Include="DynamicEffect.cpp" />
     <ClCompile Include="DynamicEntity.cpp" />
     <ClCompile Include="GameDraw.cpp" />
-    <ClCompile Include="ClientMenu.cpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameLoader.cpp" />
@@ -184,7 +184,7 @@
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="LogicHelper.h" />
     <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Client.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="Powerup.h" />
     <ClInclude Include="PrimitiveText.h" />

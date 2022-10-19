@@ -1,4 +1,4 @@
-#include "Menu.h"
+#include "Client.h"
 #include <d2d1_1.h>
 #include <Dwmapi.h>
 #include <dwrite.h>
@@ -51,7 +51,7 @@ void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
   }
 }
 
-void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
+void DrawEditor(Client* menu, LevelEditor& levelEditor)
 {
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
   IDWriteTextFormat* format = ResourceLoader::GetTextFormat(TextFormat::LEFT_12F);
@@ -98,7 +98,7 @@ void DrawEditor(ClientMenu* menu, LevelEditor& levelEditor)
   Brick* currentBrick = levelEditor.currentBrick;
   if (currentBrick != nullptr)
   {
-    POINT p = GameController::GetInstance()->mousePos;
+    POINT p = GameController::GetInstance()->GetMousePos();
     unsigned x = p.x / BRICK_WIDTH;
     unsigned y = p.y / BRICK_HEIGHT;
     if (IsInGameSceen(x, y))
@@ -181,7 +181,7 @@ void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstr
     D2D1::RectF(GAME_WIDTH + 1, y + 24.f, CLIENT_WIDTH - 1, (y + 24.f) + 16.f), gradientBrush);
 }
 
-void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
+void DrawMainMenu(Client* menu, MainMenu& mainMenu)
 {
   GameController::GetInstance()->GameUpdate();
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();
@@ -318,7 +318,7 @@ void DrawMainMenu(ClientMenu* menu, MainMenu& mainMenu)
   target->EndDraw();
 }
 
-void DrawGame(ClientMenu* menu)
+void DrawGame(Client* menu)
 {
   GameController::GetInstance()->GameUpdate();
   ID2D1HwndRenderTarget* target = ResourceLoader::GetHwndRenderTarget();

@@ -1,8 +1,8 @@
 #pragma once
-#include "Menu.h"
+#include "Client.h"
 #include "LevelEditor.h"
 #include "MainMenu.h"
 
-inline void DrawEditor(ClientMenu*, LevelEditor&);
-inline void DrawMainMenu(ClientMenu*, MainMenu&);
-inline void DrawGame(ClientMenu*);
+inline void DrawEditor(Client*, LevelEditor&);
+inline void DrawMainMenu(Client*, MainMenu&);
+inline void DrawGame(Client*);

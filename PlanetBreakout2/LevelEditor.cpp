@@ -1,6 +1,7 @@
 #include "LevelEditor.h"
 #include "GameLoader.h"
 #include "GameController.h"
+#include "Client.h"
 
 Button* CreateButton(size_t index)
 {
@@ -58,7 +59,7 @@ const unsigned LevelEditor::BrickIndexEnd()
   return end;
 }
 
-void LevelEditor::initialize(ClientMenu* client)
+void LevelEditor::initialize(Client* client)
 {
 
   {

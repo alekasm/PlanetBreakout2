@@ -17,7 +17,6 @@ ID2D1HwndRenderTarget* ResourceLoader::fullscreenTarget;
 ID2D1Factory* ResourceLoader::factory;
 IDWriteFactory* ResourceLoader::wfactory;
 std::unordered_map<ColorBrush, ID2D1Brush*> ResourceLoader::brushes;
-//ID2D1Brush* ResourceLoader::brushes[16];
 
 IDWriteTextFormat* ResourceLoader::formats[16];
 std::filesystem::path ResourceLoader::runpath;

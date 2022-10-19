@@ -9,7 +9,7 @@
 #include "ResourceLoader.h"
 #include "GameLoader.h"
 #include "GameController.h"
-#include "Menu.h"
+#include "Client.h"
 
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
@@ -17,7 +17,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 {
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
-  CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
   AllocConsole();
   FILE* p_file;
@@ -26,12 +25,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
   freopen_s(&p_file, "CONOUT$", "w", stderr);
 
   ResourceLoader::Initialize();
-  InitializeMenus(hInstance);
-  ResourceLoader::InitializeClient(Menus[MenuType::MENU_CLIENT]->hWnd);
+  Client* client = new Client();
+  client->Initialize(hInstance);
+  ResourceLoader::InitializeClient(client->GetHWND());
   GameLoader::LoadAssets(L"assets/assets.cfg");
   GameLoader::LoadCampaigns();
-
-  Menus[MenuType::MENU_CLIENT]->PostInitialize();
+  client->PostInitialize();
 
   MSG msg;
   clock_t KeyTimer = clock();
@@ -40,5 +39,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
+  delete client;
   return (int)msg.wParam;
 }

@@ -5,7 +5,7 @@
 #include <filesystem>
 #include "Constants.h"
 #include "ResourceLoader.h"
-#include "Menu.h"
+#include "Client.h"
 #include "LogicHelper.h"
 
 std::vector<Brick> GameLoader::assetBricks;

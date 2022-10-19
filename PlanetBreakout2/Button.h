@@ -125,7 +125,7 @@ struct Button : Drawable
   {
     if (primitiveFill)
     {
-      highlighted = PtInRect(&win32Rect, GameController::GetInstance()->mousePos);
+      highlighted = PtInRect(&win32Rect, GameController::GetInstance()->GetMousePos());
     }
   }
 

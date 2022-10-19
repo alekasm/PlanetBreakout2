@@ -75,8 +75,7 @@ typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
 struct GameController
 {
   bool BreakBrick(DynamicCollider*, uint32_t);
-  static GameController* GetInstance();
-  POINT mousePos;
+  static GameController* GetInstance(); 
   uint16_t GetScore();
   void AddScore(uint16_t);
   Campaign campaign;
@@ -109,7 +108,9 @@ struct GameController
   const std::vector<DynamicEffect*> GetEffects() const;
   PlanetEffect* GetPlanetEffect();
   void DestroyBat();
+  POINT GetMousePos();
 private:
+  POINT mousePos;
   Bat* bat = nullptr;
   void ClearBarrierBricks();
   void ClearBrickShield();
@@ -127,7 +128,7 @@ private:
   LevelState level_state;
   GameType game_type;
   void Respawn();
-  void UpdateBalls();
+  //void UpdateBalls();
   float game_speed = 5.f;
   uint16_t score = 0;
   size_t random_chance = 20;

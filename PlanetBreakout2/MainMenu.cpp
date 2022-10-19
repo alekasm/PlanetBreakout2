@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 #include "GameController.h"
 #include "GameLoader.h"
+#include "Client.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -29,7 +30,7 @@ const std::wstring& MainMenu::GetInfoDescription() const
   return infoDescription;
 }
 
-void MainMenu::RefreshFullscreenButton(ClientMenu* client)
+void MainMenu::RefreshFullscreenButton(Client* client)
 {
   if (fullscreenButton == nullptr)
     return;
@@ -39,7 +40,7 @@ void MainMenu::RefreshFullscreenButton(ClientMenu* client)
     fullscreenButton->text.Update(L"Fullscreen");
 }
 
-void MainMenu::initialize(ClientMenu* client)
+void MainMenu::initialize(Client* client)
 {
   powerupDescriptions = {
    {PowerupType::HYPER_BALL, L"Hyper Energy: Balls and lasers destroy everything in their path"},

@@ -1,4 +1,4 @@
-#include "Menu.h"
+#include "Client.h"
 #include "GameDraw.h"
 #include <d2d1_1.h>
 #include <Dwmapi.h>
@@ -51,22 +51,27 @@ namespace
   RECT desktop;
 }
 
-bool ClientMenu::IsFullScreen()
+HWND Client::GetHWND()
+{
+  return hWnd;
+}
+
+bool Client::IsFullScreen()
 {
   return fullscreen;
 }
 
-bool ClientMenu::IsFocused()
+bool Client::IsFocused()
 {
   return focused;
 }
 
-float ClientMenu::GetFullScreenScale()
+float Client::GetFullScreenScale()
 {
   return fs_scale_factor;
 }
 
-void ClientMenu::PostInitialize()
+void Client::PostInitialize()
 {
   mainMenu.initialize(this);
   levelEditor.initialize(this);
@@ -76,7 +81,7 @@ void ClientMenu::PostInitialize()
   window_center = POINT();
 }
 
-void ClientMenu::UpdateClientWindow()
+void Client::UpdateClientWindow()
 {
   if (!fullscreen)
   {
@@ -90,7 +95,7 @@ void ClientMenu::UpdateClientWindow()
   }
 }
 
-void ClientMenu::SetWindowed()
+void Client::SetWindowed()
 {
   HRESULT hr_resized = ResourceLoader::GetHwndRenderTarget()->Resize(
     D2D1::SizeU(CLIENT_WIDTH, CLIENT_HEIGHT));
@@ -112,7 +117,7 @@ void ClientMenu::SetWindowed()
   mouse_scale = 1.f;
 }
 
-void ClientMenu::SetWindowedBorderless()
+void Client::SetWindowedBorderless()
 {
   HRESULT hr_resized = ResourceLoader::GetHwndRenderTarget()->Resize(FullScreenDimension);
   if (hr_resized != S_OK)
@@ -132,7 +137,7 @@ void ClientMenu::SetWindowedBorderless()
   mouse_scale = fs_scale_factor_rel;
 }
 
-void ClientMenu::SetClientFocus(bool value)
+void Client::SetClientFocus(bool value)
 {
   focused = value;
   //SetCursor(NULL);
@@ -174,7 +179,7 @@ void LeftClickLevelEditor()
   Brick* currentBrick = levelEditor.currentBrick;
   if (currentBrick != nullptr)
   {
-    POINT p = GameController::GetInstance()->mousePos;
+    POINT p = GameController::GetInstance()->GetMousePos();
     unsigned x = p.x / BRICK_WIDTH;
     unsigned y = p.y / BRICK_HEIGHT;
     if (IsInGameSceen(x, y))
@@ -187,7 +192,7 @@ void LeftClickLevelEditor()
 
 void RightClickLevelEditor()
 {
-  POINT p = GameController::GetInstance()->mousePos;
+  POINT p = GameController::GetInstance()->GetMousePos();
   unsigned x = p.x / BRICK_WIDTH;
   unsigned y = p.y / BRICK_HEIGHT;
   if (IsInGameSceen(x, y))
@@ -200,7 +205,7 @@ void RightClickLevelEditor()
   }
 }
 
-void ClientMenu::LeftClickLevel()
+void Client::LeftClickLevel()
 {
   switch (GameController::GetInstance()->GetLevelState())
   {
@@ -223,7 +228,7 @@ void ClientMenu::LeftClickLevel()
   }
 }
 
-void ClientMenu::RightClickLevel()
+void Client::RightClickLevel()
 {
   switch (GameController::GetInstance()->GetLevelState())
   {
@@ -247,7 +252,7 @@ void ClientMenu::RightClickLevel()
   }
 }
 
-void ClientMenu::ProcessWM_CHAR(WPARAM wParam)
+void Client::ProcessWM_CHAR(WPARAM wParam)
 {
   if (!IsCharAlphaNumeric(wParam)) return;
   GameType game_type = GameController::GetInstance()->GetGameType();
@@ -266,7 +271,7 @@ void ClientMenu::ProcessWM_CHAR(WPARAM wParam)
   }
 }
 
-void ClientMenu::ToggleFullScreen()
+void Client::ToggleFullScreen()
 {
   if (fullscreen ^= true)
     SetWindowedBorderless();
@@ -274,7 +279,7 @@ void ClientMenu::ToggleFullScreen()
     SetWindowed();
 }
 
-void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
+void Client::ProcessWM_KEYDOWN(WPARAM wParam)
 {
   if (wParam == VK_F11)
   {
@@ -320,7 +325,7 @@ void ClientMenu::ProcessWM_KEYDOWN(WPARAM wParam)
 
 LRESULT CALLBACK ContainerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
+  Client* pWnd = (Client*)GetWindowLongPtr(hWnd, GWL_USERDATA);
 
   switch (message)
   {
@@ -347,7 +352,7 @@ LRESULT CALLBACK ContainerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  ClientMenu* pWnd = (ClientMenu*)GetWindowLongPtr(hWnd, GWL_USERDATA);
+  Client* pWnd = (Client*)GetWindowLongPtr(hWnd, GWL_USERDATA);
 
   switch (message)
   {
@@ -438,7 +443,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
   return pWnd == nullptr ? DefWindowProc(hWnd, message, wParam, lParam) : 0;
 }
 
-void ClientMenu::Initialize(HINSTANCE hInstance)
+void Client::Initialize(HINSTANCE hInstance)
 {
   grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   grfExStyle = WS_EX_STATICEDGE;
