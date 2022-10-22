@@ -188,8 +188,15 @@
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="Powerup.h" />
     <ClInclude Include="PrimitiveText.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Star.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PlanetBreakout2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\sprites\icon2.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

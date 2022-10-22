@@ -13,6 +13,7 @@
 #include "LevelEditor.h"
 #include "LogicHelper.h"
 #include "MainMenu.h"
+#include "resource.h"
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "Dwmapi")
@@ -479,11 +480,12 @@ void Client::Initialize(HINSTANCE hInstance)
   BaseClass.cbSize = sizeof(WNDCLASSEX);
   BaseClass.hInstance = hInstance;
   BaseClass.style = CS_HREDRAW | CS_VREDRAW;
-  //BaseClass.hCursor = (HCURSOR)IDB_PNG1;
 
   WNDCLASSEX MainClass = BaseClass;
   MainClass.lpfnWndProc = ContainerWndProc;
   MainClass.lpszClassName = "PB2ContainerClass";
+  MainClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+  MainClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
   RegisterClassEx(&MainClass);
   
   WNDCLASSEX MainClass2 = BaseClass;
