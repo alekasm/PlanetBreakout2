@@ -2,7 +2,7 @@
 
 
 Star::Star(unsigned max_x, unsigned max_y) :
-  DynamicEntity(EntityType::VISUAL, 4, 4)
+  DynamicEntity(EntityType::VISUAL_EFFECT, 4, 4)
 {
   SetSprite(STAR_SPRITE);
   direction = 0.f;

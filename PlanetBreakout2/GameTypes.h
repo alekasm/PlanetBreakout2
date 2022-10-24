@@ -5,69 +5,30 @@
 #include "Constants.h"
 #include "Drawable.h"
 
-typedef int EntityId;
-enum class EntityType { BAT, BALL, BRICK, POWERUP, VISUAL, TILE };
-enum class BatType { SHORT_BAT, NORMAL_BAT, LONG_BAT, LASER_BAT };
+enum class EntityType { SPRITE, VISUAL, VISUAL_EFFECT };
 enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK, NO_POINT };
-enum TileType { NONE_TILE };
-
 //Used for loading types, user cannot specify a no-point brick
 #define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
-#define ISVALID_TILETYPE(v) (v == NONE_TILE)
-
 
 #define POWERUP_SIZE 12
-enum PowerupType { LASER_BAT, BONUS_POINTS, CREATOR_BALL,
+enum PowerupType {
+  LASER_BAT, BONUS_POINTS, CREATOR_BALL,
   HYPER_BALL, BARRIER, EXTRA_LIFE, BRICK_SHIELD, GHOST,
-  PORTAL, DRONE, STRIKE, EMP };
+  PORTAL, DRONE, STRIKE, EMP
+};
 
 struct Entity :  Drawable
 {
-  EntityType type;  
-  Entity(EntityType type,
-    unsigned width, unsigned height) :
-    Drawable(width, height),
-    type(type)
-  {
-  }
-
-  void SetSprite(std::wstring sprite)
-  {
-    this->sprite = sprite;
-  }
-
-  bool HasSprite()
-  {
-    return !sprite.empty();
-  }
-
-  const std::wstring& GetSprite() const
-  {
-    return sprite;
-  }
-
-  void MoveCenterX(unsigned cx)
-  {
-    Update(cx - (width / 2), y);
-  }
-
-  void MoveCenterY(unsigned cy)
-  {
-    Update(x, cy - (height / 2));
-  }
-
-  void MoveCenter(unsigned cx, unsigned cy)
-  {
-    Update(cx - (width / 2), cy - (height / 2));
-  }
-  void SetActive(bool value)
-  {
-    active = value;
-  }
-  const bool IsActive() const
-  {
-    return active;
-  }
+  EntityType type;
+  Entity(EntityType type, unsigned width, unsigned height);
+  void SetSprite(std::wstring sprite);
+  bool HasSprite();
+  const std::wstring& GetSprite() const;
+  void MoveCenterX(unsigned cx);
+  void MoveCenterY(unsigned cy);
+  void MoveCenter(unsigned cx, unsigned cy);
+  void SetActive(bool value);
+  const bool IsActive() const;
 protected:
   std::wstring sprite;
   bool active = true;
@@ -75,10 +36,8 @@ protected:
 
 struct Bat : Entity
 {
-  BatType subtype;
   Bat(std::wstring sprite) :
-    Entity(EntityType::BAT, BAT_WIDTH, BAT_HEIGHT),
-    subtype(BatType::NORMAL_BAT)
+    Entity(EntityType::SPRITE, BAT_WIDTH, BAT_HEIGHT)
   {
     SetSprite(sprite);
   }
@@ -90,7 +49,7 @@ struct Brick : Entity
   BrickType subtype;
   Brick() = default;
   Brick(BrickType subtype, std::wstring sprite, uint32_t x, uint32_t y) :
-    Entity(EntityType::BRICK, BRICK_WIDTH, BRICK_HEIGHT),
+    Entity(EntityType::SPRITE, BRICK_WIDTH, BRICK_HEIGHT),
     subtype(subtype), col(x), row(y)
   {
     Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
@@ -98,7 +57,7 @@ struct Brick : Entity
   }
 
   Brick(const Brick& other, uint32_t x, uint32_t y) :
-    Entity(EntityType::BRICK, BRICK_WIDTH, BRICK_HEIGHT),
+    Entity(EntityType::SPRITE, BRICK_WIDTH, BRICK_HEIGHT),
     subtype(other.subtype), col(x), row(y)
   {
     Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);

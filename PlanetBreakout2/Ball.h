@@ -3,7 +3,7 @@
 struct Ball : DynamicCollider
 {
   Ball(std::wstring sprite) :
-    DynamicCollider(EntityType::BALL, BALL_DIMENSION, BALL_DIMENSION)
+    DynamicCollider(EntityType::SPRITE, BALL_DIMENSION, BALL_DIMENSION)
   {
     SetSprite(sprite);
     RegisterCollision(CollisionType::WALL_VERT);

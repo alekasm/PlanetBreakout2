@@ -4,7 +4,7 @@
 struct Powerup : DynamicCollider
 {
   Powerup() :
-    DynamicCollider(EntityType::POWERUP,
+    DynamicCollider(EntityType::SPRITE,
       POWERUP_DIMENSION, POWERUP_DIMENSION)
   {
     SetSprite(POWERUP_SPRITE);

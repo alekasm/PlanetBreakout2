@@ -11,65 +11,11 @@
 #include "Star.h"
 #include "DynamicEffect.h"
 #include "DroneLaser.h"
+#include "GamePowerUp.h"
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
 enum class DynamicSpriteType { BAT, BALL};
-
-struct GamePowerUp
-{
-  //The tile is 32x32, expected icon size is 16x16
-  GamePowerUp(std::wstring icon, uint32_t timeMS = 0)
-  {
-    this->icon = icon;
-    this->timeMS = timeMS * 1000;
-    timer = std::chrono::microseconds::zero();
-  }
-  GamePowerUp() = default;
-  const bool IsActive() const
-  {
-    return active;
-  }
-  const std::wstring& GetIcon() const
-  {
-    return icon;
-  }
-  void SetActive(bool value, std::chrono::microseconds current)
-  {
-    active = value;
-    timer = current;
-  }
-  void ResumeTime(std::chrono::microseconds offset)
-  {
-    timer += offset;
-  }
-  const bool HasTime() const
-  {
-    return timeMS > 0;
-  }
-  const float GetPercentRemaining() const
-  {
-    return percent;
-  }
-  bool ShouldTrigger(std::chrono::microseconds current)
-  {
-    std::chrono::microseconds delta = (current - timer);
-    bool shouldTrigger = active &&
-      (time == 0 || delta.count() > timeMS);
-    if (shouldTrigger)
-      timer = current;
-    else
-      percent = (float)delta.count() / timeMS;
-    return shouldTrigger;
-  }
-private:
-  bool active = false;
-  std::wstring icon;
-  std::chrono::microseconds timer;
-  uint32_t timeMS = 0;
-  float percent = 0.f;
-};
-
 typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
 
 struct GameController

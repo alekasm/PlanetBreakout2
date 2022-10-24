@@ -153,6 +153,7 @@
     <ClCompile Include="DynamicCollider.cpp" />
     <ClCompile Include="DynamicEffect.cpp" />
     <ClCompile Include="DynamicEntity.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameDraw.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="GameController.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="DynamicEffect.h" />
     <ClInclude Include="DynamicEntity.h" />
     <ClInclude Include="GameDraw.h" />
+    <ClInclude Include="GamePowerUp.h" />
     <ClInclude Include="Laser.h" />
     <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="Constants.h" />

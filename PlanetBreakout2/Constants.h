@@ -30,6 +30,9 @@
 #define POWERUP_SPRITE L"powerup"
 #define STAR_SPRITE L"star"
 #define HYPERBALL_SPRITE L"hyperball"
+#define BARRIER_SPRITE L"barrier"
+#define NOPOINT_SPRITE L"nopoint"
+#define LASERBAT_SPRITE L"laserbat"
 #define EDITOR_BUTTONS_PER_PAGE 16
 #define EDITOR_BUTTON_HEIGHT 36
 #define EDITOR_BUTTON_WIDTH 110

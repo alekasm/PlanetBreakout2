@@ -4,7 +4,7 @@
 struct DroneLaser : DynamicCollider
 {
   DroneLaser() :
-    DynamicCollider(EntityType::POWERUP, 8, 8)
+    DynamicCollider(EntityType::VISUAL, 8, 8)
   {
     active = false;
     RegisterCollision(CollisionType::BRICK);

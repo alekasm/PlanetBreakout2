@@ -96,11 +96,11 @@ std::wstring GameController::GetSpriteForEntity(DynamicSpriteType type)
   {
   case DynamicSpriteType::BAT:
     if (IsPowerUpActive(PowerupType::LASER_BAT))
-      return L"laserbat";
+      return LASERBAT_SPRITE;
     return campaign.bat_sprite;
   case DynamicSpriteType::BALL:
     if (IsPowerUpActive(PowerupType::HYPER_BALL))
-      return L"hyperball";
+      return HYPERBALL_SPRITE;
     return campaign.ball_sprite;
   }
   return L"";//not reachable
@@ -132,7 +132,7 @@ void GameController::AddPowerup()
       { //TODO ball in brick when spawning?
         for (int col = 0; col < GRID_COLUMNS; ++col)
         {
-          Brick brick(BrickType::NORMAL_BRICK, L"barrier", col, GRID_ROWS - 1);
+          Brick brick(BrickType::NORMAL_BRICK, BARRIER_SPRITE, col, GRID_ROWS - 1);
           uint32_t index;
           if (!GetBrickIndex(col, GRID_ROWS - 1, index))
             continue;
@@ -154,7 +154,7 @@ void GameController::AddPowerup()
           const Brick& last = *(--it->second.end());
           if (last.subtype != BrickType::NO_POINT)
           {
-            Brick brick(BrickType::NO_POINT, L"nopoint", col, row);
+            Brick brick(BrickType::NO_POINT, NOPOINT_SPRITE, col, row);
             bricks[index].push_back(brick);
           }
           if (IsPowerUpActive(PowerupType::EMP))
@@ -456,6 +456,7 @@ void GameController::GameUpdate()
   if (level_state == LevelState::START)
     return;
 
+  //vector<Base*> v2(v1.begin(), v1.end());
   std::vector<DynamicEffect*>::iterator effects_it;
   for (effects_it = effects.begin(); effects_it != effects.end();)
   {

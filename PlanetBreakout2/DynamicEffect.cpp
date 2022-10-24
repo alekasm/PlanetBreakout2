@@ -19,7 +19,7 @@ void DynamicEffect::SetMaxUpdates(size_t value)
 }
 
 DynamicEffect::DynamicEffect(float x, float y) :
-  DynamicEntity(EntityType::VISUAL, 1, 1)
+  DynamicEntity(EntityType::VISUAL_EFFECT, 1, 1)
 {
   ID2D1SolidColorBrush* solidBrush;
   ResourceLoader::GetHwndRenderTarget()->CreateSolidColorBrush(

@@ -2,7 +2,6 @@
 #include "GameTypes.h"
 #include <unordered_map>
 
-
 struct DynamicEntity : Entity
 {
   DynamicEntity(EntityType type, //std::wstring sprite,

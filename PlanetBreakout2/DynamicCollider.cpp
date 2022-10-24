@@ -18,7 +18,7 @@ void DynamicCollider::RegisterCollision(CollisionType type)
 
 void DynamicCollider::PreFrameUpdate()
 {
-  if (type == EntityType::VISUAL)
+  if (type == EntityType::VISUAL_EFFECT)
     return;
 
   float y_new_bottom = real_y + height;

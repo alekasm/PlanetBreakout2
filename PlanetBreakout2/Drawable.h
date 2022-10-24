@@ -4,7 +4,6 @@
 
 struct Drawable
 {
-
   unsigned x, y, width, height;
   Drawable(unsigned x, unsigned y, unsigned width, unsigned height) :
     x(x), y(y), width(width), height(height)
@@ -17,17 +16,6 @@ struct Drawable
   {
     RecalculateBounds();
   }
-
-  /*
-  Drawable(D2D1_RECT_F rect)
-  {
-    x = rect.left;
-    y = rect.top;
-    width = rect.right - rect.left;
-    height = rect.bottom - rect.top;
-    RecalculateBounds();
-  }
-  */
 
   Drawable(const Drawable& other) :
     x(other.x), y(other.y), width(other.width), height(other.height)
