@@ -6,10 +6,7 @@
 void DynamicEntity::PreFrameUpdate() {}
 void DynamicEntity::PostFrameUpdate(float elapsed) {}
 
-const bool DynamicEntity::IsActive() const
-{
-  return active;
-}
+
 float DynamicEntity::GetSpeed()
 {
   return speed;
@@ -31,11 +28,6 @@ void DynamicEntity::Reset()
   real_y = 0.f;
   old_x = 0.f;
   old_y = 0.f;
-}
-
-void DynamicEntity::SetActive(bool value)
-{
-  active = value;
 }
 
 void DynamicEntity::SetPosition(float x, float y)

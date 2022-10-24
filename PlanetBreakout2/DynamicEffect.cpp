@@ -13,6 +13,11 @@ void DynamicEffect::Start()
   active = true;
 }
 
+void DynamicEffect::SetMaxUpdates(size_t value)
+{
+  maxUpdates = value;
+}
+
 DynamicEffect::DynamicEffect(float x, float y) :
   DynamicEntity(EntityType::VISUAL, 1, 1)
 {
@@ -86,7 +91,8 @@ void RingEffect::PostFrameUpdate(float elapsed)
 }
 
 
-SpinSquareEffect::SpinSquareEffect(float x, float y, ColorBrush colorBrush) : DynamicEffect(x, y)
+SpinSquareEffect::SpinSquareEffect(D2D1_RECT_F rect, ColorBrush colorBrush) :
+  DynamicEffect(rect.left, rect.top)
 {
   ID2D1Factory* factory = ResourceLoader::GetFactory();
   ID2D1RectangleGeometry* pRectangleGeometry;
@@ -99,8 +105,10 @@ SpinSquareEffect::SpinSquareEffect(float x, float y, ColorBrush colorBrush) : Dy
   float half_size = (float)size_int / 2.f;
   if ((rand() % 2) == 1)
     rotationDirection = -1.f;
-  float half_wsize = BRICK_WIDTH / 2.5f;
-  float half_hsize = BRICK_HEIGHT / 2.5f;
+  width = rect.right - rect.left;
+  height = rect.bottom - rect.top;
+  float half_wsize = width / 2.5f;
+  float half_hsize = height / 2.5f;
   HRESULT hrCreateRectangle =
     factory->CreateRectangleGeometry(
       D2D1::RectF(

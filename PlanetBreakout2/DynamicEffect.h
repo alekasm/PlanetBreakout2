@@ -9,6 +9,7 @@ struct DynamicEffect : DynamicEntity
   ID2D1Brush* GetBrush();
   ~DynamicEffect();
   virtual void Start() override;
+  void SetMaxUpdates(size_t);
 protected:
   //float currentOpacity = 1.f;
   //float minOpacity = 0.f;
@@ -31,7 +32,7 @@ private:
 
 struct SpinSquareEffect : DynamicEffect
 {
-  SpinSquareEffect(float x, float y, ColorBrush);
+  SpinSquareEffect(D2D1_RECT_F, ColorBrush);
   virtual void PostFrameUpdate(float elapsed) override;
 private:  
   float rotationDirection = 1.f;

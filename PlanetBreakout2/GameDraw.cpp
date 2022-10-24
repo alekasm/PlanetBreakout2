@@ -557,10 +557,13 @@ void DrawGame(Client* menu)
       ResourceLoader::GetBrush(ColorBrush::GRADIENT_1));
   }
 
-  target->DrawBitmap(
-    ResourceLoader::GetSpriteMap().at(
-      GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BAT)),
-    GameController::GetInstance()->GetBat()->GetD2D1Rect(), 1.0f);
+  if (GameController::GetInstance()->GetBat()->IsActive())
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(
+        GameController::GetInstance()->GetSpriteForEntity(DynamicSpriteType::BAT)),
+      GameController::GetInstance()->GetBat()->GetD2D1Rect(), 1.0f);
+  }
 
 
   if (GameController::GetInstance()->GetLevelState() == LevelState::PAUSED)

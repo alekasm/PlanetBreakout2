@@ -137,7 +137,7 @@ private:
   POINT mousePosPrev;
   BrickMap bricks;
   GameType old_type = GameType::MAIN_MENU;
-  bool destroyBat = false;
+  //bool destroyBat = false;
   std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},

@@ -31,16 +31,6 @@ struct Entity :  Drawable
   {
   }
 
-  /*
-  Entity(EntityType type, std::wstring sprite,
-    unsigned width, unsigned height) :
-    Drawable(width, height),
-    type(type)
-  {
-    SetSprite(sprite);
-  }
-  */
-
   void SetSprite(std::wstring sprite)
   {
     this->sprite = sprite;
@@ -70,8 +60,17 @@ struct Entity :  Drawable
   {
     Update(cx - (width / 2), cy - (height / 2));
   }
-private:
+  void SetActive(bool value)
+  {
+    active = value;
+  }
+  const bool IsActive() const
+  {
+    return active;
+  }
+protected:
   std::wstring sprite;
+  bool active = true;
 };
 
 struct Bat : Entity
@@ -82,9 +81,6 @@ struct Bat : Entity
     subtype(BatType::NORMAL_BAT)
   {
     SetSprite(sprite);
-  }
-  void UpdateType(BatType subtype)
-  {
   }
 };
 

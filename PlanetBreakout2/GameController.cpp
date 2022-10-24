@@ -195,10 +195,8 @@ void GameController::ClearBarrierBricks()
     BrickMap::iterator it = bricks.find(index);
     if (it != bricks.end() && !it->second.empty())
     {
-      RECT r = GetBrickRect(index);
       effects.push_back(new SpinSquareEffect(
-        r.left + (BRICK_WIDTH / 2),
-        r.top + (BRICK_HEIGHT / 2),
+        GetBrickRectF(index),
         ColorBrush::BLUE));
       it->second.clear();
     }
@@ -216,10 +214,8 @@ void GameController::ClearBrickShield()
     if (brick_it->subtype == BrickType::NO_POINT)
     {
       it->second.erase(brick_it);
-      RECT r = GetBrickRect(it->first);
       effects.push_back(new SpinSquareEffect(
-        r.left + (BRICK_WIDTH / 2),
-        r.top + (BRICK_HEIGHT / 2),
+        GetBrickRectF(it->first),
         ColorBrush::BLUE));
     }
   }
@@ -236,10 +232,10 @@ void GameController::Respawn()
   balls.clear();
   effects.clear();
   laser.SetActive(false);
-  destroyBat = false;
+  //destroyBat = false;
   //todo update
   random_chance = 20;
-
+  bat->SetActive(true);
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
@@ -317,10 +313,8 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
   {
     unsigned col = index % GRID_COLUMNS;
     unsigned row = index / GRID_COLUMNS;
-    RECT r = GetBrickRect(col, row);
     effects.push_back(new SpinSquareEffect(
-      r.left + (BRICK_WIDTH / 2),
-      r.top + (BRICK_HEIGHT / 2),
+      GetBrickRectF(col, row),
       hyper_ball ?  ColorBrush::RED : ColorBrush::GREEN));
 
     if (ball != nullptr)
@@ -462,6 +456,34 @@ void GameController::GameUpdate()
   if (level_state == LevelState::START)
     return;
 
+  std::vector<DynamicEffect*>::iterator effects_it;
+  for (effects_it = effects.begin(); effects_it != effects.end();)
+  {
+    DynamicEffect* effect = (*effects_it);
+    if (!effect->IsActive())
+    {
+      effects_it = effects.erase(effects_it);
+      delete effect;
+    }
+    else
+    {
+      effect->UpdateFrame(delta.count());
+      ++effects_it;
+    }
+  }
+
+  if (!bat->IsActive())
+  {
+    if (!effects.empty())
+      return;
+    if (!powerup_map.at(PowerupType::EXTRA_LIFE).IsActive())
+    {
+      lives--;
+    }
+    Respawn();
+    return;
+  }
+
   bool spawn_creator = false;
   bool spawn_portal = false;
   bool spawn_drone = false;
@@ -486,23 +508,6 @@ void GameController::GameUpdate()
   {
     laser.UpdateFrame(delta.count());
   }
-
-  std::vector<DynamicEffect*>::iterator effects_it;
-  for (effects_it = effects.begin(); effects_it != effects.end();)
-  {
-    DynamicEffect* effect = (*effects_it);
-    if (!effect->IsActive())
-    {
-      effects_it = effects.erase(effects_it);
-      delete effect;
-    }
-    else
-    {
-      effect->UpdateFrame(delta.count());
-      ++effects_it;
-    }
-  }
-
 
   bool any_ball_active = false;
   std::vector<Ball> new_balls;
@@ -585,21 +590,24 @@ void GameController::GameUpdate()
       powerup.UpdateFrame(delta.count());
   }
 
-  //TODO have a mark for bat getting destroyed, add a new dynamic effect
-  //switch to next level when all the dynamic effects are finished
-  if (!any_ball_active || destroyBat)
+  if (!any_ball_active)
   {
-    if (!powerup_map.at(PowerupType::EXTRA_LIFE).IsActive())
-    {
-      lives--;
-    }
-    Respawn();
+    DestroyBat();
   }
 }
 
 void GameController::DestroyBat()
 {
-  destroyBat = true;
+  if (bat == nullptr)
+    return;
+  bat->SetActive(false);
+  for (int i = 0; i < 10; ++i)
+  {
+    SpinSquareEffect* effect = new SpinSquareEffect(
+      bat->GetD2D1Rect(), ColorBrush::GREEN);
+    effect->SetMaxUpdates(750);
+    effects.push_back(effect);
+  }
 }
 
 BrickMap& GameController::GetBrickMap()
@@ -637,7 +645,6 @@ void GameController::CreateGame(Campaign& campaign)
   lives = 6;
   current_level = 0;
   score = 0;
-  destroyBat = false;
   bricks = campaign.levels.at(current_level).GetBrickMap();
   stars.clear();
   for (int i = 0; i < 200; ++i)

@@ -14,6 +14,13 @@ bool GetBrickIndex(uint32_t col, uint32_t row, uint32_t& index)
   return true;
 }
 
+D2D1_RECT_F GetBrickRectF(uint32_t index)
+{
+  unsigned col = index % GRID_COLUMNS;
+  unsigned row = index / GRID_COLUMNS;
+  return GetBrickRectF(col, row);
+}
+
 D2D1_RECT_F GetBrickRectF(uint32_t col, uint32_t row)
 {
   return D2D1::RectF(
