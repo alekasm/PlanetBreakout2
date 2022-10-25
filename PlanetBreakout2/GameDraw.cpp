@@ -177,6 +177,7 @@ void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstr
     D2D1::RectF(GAME_WIDTH + 1 + 1, y + 1, CLIENT_WIDTH - 1, 2 + y + 16.f),
     ResourceLoader::GetBrush(ColorBrush::GREEN));
 
+
   gradientBrush->SetStartPoint(D2D1::Point2F(GAME_WIDTH + 1, y + 24.f));
   gradientBrush->SetEndPoint(D2D1::Point2F(CLIENT_WIDTH - 1, (y + 24.f) + 16.f));
 
@@ -361,39 +362,18 @@ void DrawGame(Client* menu)
   }
   target->Clear();
 
-  for (int y = 0; y < CLIENT_HEIGHT; y += 64)
-    for (int x = GAME_WIDTH; x < CLIENT_WIDTH; x += 64)
-    {
-      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"bg1"),
-        D2D1::RectF(x, y, x + 64, y + 64), 1.0f);
-    }
+  for (const Star& star : GameController::GetInstance()->GetStars())
+  {
+    target->DrawBitmap(
+      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.GetD2D1Rect(), star.GetOpacity());
+  }
 
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 5.f, CLIENT_WIDTH - 5.f, CLIENT_HEIGHT - 5.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 5.f, CLIENT_WIDTH - 5.f, 40.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 5.f, CLIENT_WIDTH - 5.f, 40.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 60.f, CLIENT_WIDTH - 5.f, 230.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 60.f, CLIENT_WIDTH - 5.f, 230.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 300.f, CLIENT_WIDTH - 5.f, 460.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 300.f, CLIENT_WIDTH - 5.f, 460.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 740.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
-  target->FillRectangle(D2D1::RectF(GAME_WIDTH + 5.f, 530.f, CLIENT_WIDTH - 5.f, 740.f),
-    ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+  target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"sidebar"),
+    D2D1::RectF(GAME_WIDTH + 1, 0.f, GAME_WIDTH + 1 + 255, 768.f), 1.f);
 
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatBig,
-    D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), darkGrayBrush);
+    D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), darkGreenBrush);
   target->DrawText(text.c_str(), text.length(), formatBig,
     D2D1::RectF(GAME_WIDTH + 2, 1 + 10, CLIENT_WIDTH - 1, 1 + 10 + 24), greenBrush);
 
@@ -416,7 +396,7 @@ void DrawGame(Client* menu)
     float row = (i / 3) == 0 ? 0.0 : (BAT_HEIGHT * 2.f);
     float y = 360.f + 36.f + row;
     float col = (i % 3);
-    float x = 12.f + (col * 20.f) + (col * BAT_WIDTH);
+    float x = 16.f + (col * 16.f) + (col * BAT_WIDTH);
     target->DrawBitmap(
       ResourceLoader::GetSpriteMap().at(GameController::GetInstance()->GetBat()->GetSprite()),
       D2D1::RectF(GAME_WIDTH + x, y, GAME_WIDTH + x + BAT_WIDTH, y + BAT_HEIGHT), 1.0f);
@@ -427,45 +407,43 @@ void DrawGame(Client* menu)
   size_t index = 0;
   for (; pwr_it != pwr_map.end(); ++pwr_it)
   {
-    float row = (index / 4) * (POWERUP_DIMENSION * 2.f);
-    float y = 530.f + 36.f + row;
+    float row = (index / 4);
+    float y = 566.f + (row * 45.f);
     float col = (index % 4);
-    float x = 32.f + (col * 20.f) + (col * POWERUP_DIMENSION);
+    float x = 35.f + (col * 20.f) + (col * POWERUP_DIMENSION);
 
-    target->DrawRectangle(
-      D2D1::RectF(GAME_WIDTH + x, y,
-        GAME_WIDTH + x + POWERUP_DIMENSION,
-        y + POWERUP_DIMENSION),
-      pwr_it->second.IsActive() ? greenBrush : darkGrayBrush, 2.0f);
+
+    if (pwr_it->second.IsActive())
+    {
+      target->DrawRectangle(
+        D2D1::RectF(GAME_WIDTH + x + 2, y + 2,
+          GAME_WIDTH + x + POWERUP_DIMENSION - 2,
+          y + POWERUP_DIMENSION - 2),
+        pwr_it->second.IsActive() ? greenBrush : darkGrayBrush, 2.0f);
+    }
 
     if (!pwr_it->second.GetIcon().empty())
     {
-      x += 8.f;
-      y += 8.f;
       target->DrawBitmap(
         ResourceLoader::GetSpriteMap().at(pwr_it->second.GetIcon()),
-        D2D1::RectF(GAME_WIDTH + x, y,
-          GAME_WIDTH + x + POWERUP_ICON,
-          y + POWERUP_ICON), 1.0f);
+        D2D1::RectF(GAME_WIDTH + x + 8.f, y + 8.f,
+          GAME_WIDTH + x + POWERUP_ICON + 8.f,
+          y + POWERUP_ICON + 8.f), 1.0f);
 
+      //TODO Fix
       if (pwr_it->second.HasTime() && pwr_it->second.IsActive())
       {
-        float height_percentage = pwr_it->second.GetPercentRemaining() * POWERUP_DIMENSION;
+        float height_percentage = pwr_it->second.GetPercentRemaining();
+        height_percentage *= 26.f; //interior black space
         target->FillRectangle(D2D1::RectF(
-          GAME_WIDTH + x - 8 + 1,
-          y - 8 + 1,
-          GAME_WIDTH + x + POWERUP_DIMENSION - 8 - 1,
-          y + height_percentage - 8 - 1),
+          GAME_WIDTH + x + 1 + 2,
+          y + 3,
+          GAME_WIDTH + x + POWERUP_DIMENSION - 1 - 2,
+          y + 3 + height_percentage),
           ResourceLoader::GetBrush(ColorBrush::GREEN_HALF));
       }
     }
     ++index;
-  }
-
-  for (const Star& star : GameController::GetInstance()->GetStars())
-  {
-    target->DrawBitmap(
-      ResourceLoader::GetSpriteMap().at(star.GetSprite()), star.GetD2D1Rect(), star.GetOpacity());
   }
 
   const BrickMap& brickMap = GameController::GetInstance()->GetBrickMap();
@@ -639,8 +617,8 @@ void DrawGame(Client* menu)
       ResourceLoader::GetBrush(ColorBrush::WHITE));
   }
 
-  target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
-  target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), brushes);
+  target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), ResourceLoader::GetBrush(ColorBrush::WHITE));
+  target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), ResourceLoader::GetBrush(ColorBrush::WHITE));
 
   if (menu->GetShowCursor())
   {

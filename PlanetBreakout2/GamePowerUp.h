@@ -24,6 +24,7 @@ struct GamePowerUp
   {
     active = value;
     timer = current;
+    percent = 0.f;
   }
   void ResumeTime(std::chrono::microseconds offset)
   {
@@ -36,17 +37,16 @@ struct GamePowerUp
   #
   const float GetPercentRemaining() const
   {
-    return percent;
+    return std::clamp(percent, 0.f, 1.f);
   }
   bool ShouldTrigger(std::chrono::microseconds current)
   {
     std::chrono::microseconds delta = (current - timer);
     bool shouldTrigger = active &&
-      (time == 0 || delta.count() > timeMS);
+      (timeMS == 0 || delta.count() > timeMS);
     if (shouldTrigger)
       timer = current;
-    else
-      percent = (float)delta.count() / timeMS;
+    percent = (float)delta.count() / timeMS;
     return shouldTrigger;
   }
 private:

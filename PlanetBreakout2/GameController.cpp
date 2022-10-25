@@ -491,6 +491,8 @@ void GameController::GameUpdate()
   GamePowerUpMap::iterator it = powerup_map.begin();
   for (; it != powerup_map.end(); ++it)
   {
+    if (!it->second.IsActive())
+      continue;
     switch (it->first)
     {
     case PowerupType::CREATOR_BALL:
@@ -648,9 +650,9 @@ void GameController::CreateGame(Campaign& campaign)
   score = 0;
   bricks = campaign.levels.at(current_level).GetBrickMap();
   stars.clear();
-  for (int i = 0; i < 200; ++i)
+  for (int i = 0; i < 300; ++i)
   {
-    stars.push_back(Star(GAME_WIDTH, GAME_HEIGHT));
+    stars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
   }
   Respawn();
 }
