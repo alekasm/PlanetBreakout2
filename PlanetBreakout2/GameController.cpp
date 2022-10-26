@@ -16,11 +16,9 @@ GameController::GameController()
   timer = std::chrono::microseconds(0);
   level_state = LevelState::START;
   planetEffect = new PlanetEffect(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT / 2.f);
-
-  menuStars.clear();
   for (int i = 0; i < 300; ++i)
   {
-    menuStars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
+    stars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
   }
 }
 
@@ -202,6 +200,7 @@ void GameController::ClearBarrierBricks()
     }
   }
 }
+
 void GameController::ClearBrickShield()
 {
   BrickMap::iterator it;
@@ -420,10 +419,11 @@ void GameController::GameUpdate()
   std::chrono::microseconds delta = now - timer;
   timer = now;
 
+  for (Star& star : stars)
+    star.UpdateFrame(delta.count());
+
   if (game_type == GameType::MAIN_MENU)
   {
-    for (Star& star : menuStars)
-      star.UpdateFrame(delta.count());
     planetEffect->UpdateFrame(delta.count());
     return;
   }
@@ -449,9 +449,6 @@ void GameController::GameUpdate()
   else if (dx + bat->width > GAME_WIDTH)
     dx = GAME_WIDTH - bat->width;
   bat->Update(dx, bat->y);
-
-  for (Star& star : stars)
-    star.UpdateFrame(delta.count());
 
   if (level_state == LevelState::START)
     return;
@@ -634,8 +631,6 @@ void GameController::AddScore(uint16_t amount)
 
 const std::vector<Star>& GameController::GetStars() const
 {
-  if (game_type == GameType::MAIN_MENU)
-    return menuStars;
   return stars;
 }
 
@@ -649,11 +644,6 @@ void GameController::CreateGame(Campaign& campaign)
   current_level = 0;
   score = 0;
   bricks = campaign.levels.at(current_level).GetBrickMap();
-  stars.clear();
-  for (int i = 0; i < 300; ++i)
-  {
-    stars.push_back(Star(CLIENT_WIDTH, CLIENT_HEIGHT));
-  }
   Respawn();
 }
 

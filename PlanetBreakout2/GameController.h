@@ -67,14 +67,12 @@ private:
   std::vector<Ball> balls;
   std::vector<Powerup> powerups;
   std::vector<Star> stars;
-  std::vector<Star> menuStars;
   std::vector<DroneLaser> droneLasers;
   std::vector<DynamicEffect*> effects;
   PrimitiveText highscore_text;
   LevelState level_state;
   GameType game_type;
   void Respawn();
-  //void UpdateBalls();
   float game_speed = 5.f;
   uint16_t score = 0;
   size_t random_chance = 20;
@@ -83,7 +81,6 @@ private:
   POINT mousePosPrev;
   BrickMap bricks;
   GameType old_type = GameType::MAIN_MENU;
-  //bool destroyBat = false;
   std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
     {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
