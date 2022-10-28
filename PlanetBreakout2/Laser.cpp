@@ -7,7 +7,7 @@ void Laser::Start()
 {
   active = true;
   height = 1;
-  speed = 9.f;
+  speed = 10.f;
   real_x = x;
   real_y = y;
   direction = -(M_PI / 2.f);

@@ -373,9 +373,9 @@ void DrawGame(Client* menu)
 
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatBig,
-    D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 24 + 10), darkGreenBrush);
+    D2D1::RectF(GAME_WIDTH + 1, 15, CLIENT_WIDTH - 1, 15 + 24 + 10), blackBrush);
   target->DrawText(text.c_str(), text.length(), formatBig,
-    D2D1::RectF(GAME_WIDTH + 2, 1 + 10, CLIENT_WIDTH - 1, 1 + 10 + 24), greenBrush);
+    D2D1::RectF(GAME_WIDTH + 2, 2 + 15, CLIENT_WIDTH - 1, 2 + 15 + 24), ResourceLoader::GetBrush(ColorBrush::GRAY));
 
   size_t current_level = GameController::GetInstance()->GetCurrentLevel();
   const GameLevel& level = GameController::GetInstance()->campaign.levels.at(current_level);
@@ -410,7 +410,7 @@ void DrawGame(Client* menu)
     float row = (index / 4);
     float y = 566.f + (row * 45.f);
     float col = (index % 4);
-    float x = 35.f + (col * 20.f) + (col * POWERUP_DIMENSION);
+    float x = 34.f + (col * 20.f) + (col * POWERUP_DIMENSION);
 
 
     if (pwr_it->second.IsActive())
@@ -532,7 +532,7 @@ void DrawGame(Client* menu)
   {
     target->FillRectangle(laser.GetD2D1Rect(), hyper_ball ?
       ResourceLoader::GetBrush(ColorBrush::RED) :
-      ResourceLoader::GetBrush(ColorBrush::GRADIENT_1));
+      ResourceLoader::GetBrush(ColorBrush::PURPLE));
   }
 
   if (GameController::GetInstance()->GetBat()->IsActive())
