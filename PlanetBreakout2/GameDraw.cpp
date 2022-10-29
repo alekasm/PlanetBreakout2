@@ -19,36 +19,42 @@
 
 void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
 {
-  if (button->type == ButtonType::PRIMITIVE)
+
+  if (button->IsHighlighted() && button->GetButtonHighlightType() == ButtonHighlightType::FILL)
+    target->FillRectangle(button->GetD2D1Rect(), button->GetHighlightBrush());
+  else if (button->GetButtonFillType() == ButtonFillType::FILL)
+    target->FillRectangle(button->GetD2D1Rect(), button->GetFillBrush());
+
+
+  if (button->IsHighlighted() && button->GetButtonHighlightType() == ButtonHighlightType::BORDER)
+    target->DrawRectangle(button->GetD2D1Rect(), button->GetHighlightBrush(), button->GetBorderStroke());
+  else
+    target->DrawRectangle(button->GetD2D1Rect(), button->GetBorderBrush(), button->GetBorderStroke());
+
+  if (button->HasText())
   {
-    if (button->highlighted)
-      target->FillRectangle(button->GetD2D1Rect(), button->primitiveFill);
-    if (button->selected)
-      target->DrawRectangle(button->GetD2D1Rect(), button->primitiveFill, button->primitiveStroke);
+    ID2D1Brush* textBrush;
+    if (button->IsHighlighted() && button->GetButtonHighlightType() == ButtonHighlightType::TEXT)
+      textBrush = button->GetHighlightBrush();
     else
-      target->DrawRectangle(button->GetD2D1Rect(), button->primitiveOutline, button->primitiveStroke);
-
-    if (button->hasText)
+      textBrush = button->text.textBrush;
+    std::wstring text = button->text.GetString();
+    if (text.empty())
     {
-      std::wstring text = button->text.GetString();
-      if (text.empty())
-      {
-        if (button->id == LevelEditorButton::AUTHOR_NAME)
-          text = L"Author Name";
-        else if (button->id == LevelEditorButton::MAP_NAME)
-          text = L"Map Name";
-      }
-      target->DrawText(
-        text.c_str(),
-        text.length(),
-        button->text.textFormat,
-        button->text.textRect,
-        button->text.textBrush);
+      if (button->GetId() == LevelEditorButton::AUTHOR_NAME)
+        text = L"Author Name";
+      else if (button->GetId() == LevelEditorButton::MAP_NAME)
+        text = L"Map Name";
     }
-
-    if (button->hasIcon)
-      target->DrawBitmap(button->icon.iconBitmap, button->icon.iconRect, 1.0f);
+    target->DrawText(
+      text.c_str(),
+      text.length(),
+      button->text.textFormat,
+      button->text.textRect,
+      button->text.textBrush);
   }
+  if (button->HasIcon())
+    target->DrawBitmap(button->icon.iconBitmap, button->icon.iconRect, 1.0f);
 }
 
 void DrawEditor(Client* menu, LevelEditor& levelEditor)
@@ -172,7 +178,7 @@ void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstr
   target->DrawText(header.c_str(), header.length(), formatMedium,
     D2D1::RectF(GAME_WIDTH + 1, y, CLIENT_WIDTH - 1, y + 16.f),
     ResourceLoader::GetBrush(ColorBrush::DARK_GREEN));
-  
+
   target->DrawText(header.c_str(), header.length(), formatMedium,
     D2D1::RectF(GAME_WIDTH + 1 + 1, y + 1, CLIENT_WIDTH - 1, 2 + y + 16.f),
     ResourceLoader::GetBrush(ColorBrush::GREEN));

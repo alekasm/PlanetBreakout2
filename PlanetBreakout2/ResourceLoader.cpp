@@ -142,7 +142,6 @@ IDWriteTextFormat* ResourceLoader::GetTextFormat(TextFormat format)
   return formats[format];
 }
 
-
 void ResourceLoader::InitializeClient(HWND hWnd)
 {
   DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&wfactory));
@@ -255,20 +254,6 @@ void ResourceLoader::InitializeClient(HWND hWnd)
       D2D1::Point2F(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT)), collection,
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_2]);
   }
-
-
-  /*
-  ID2D1GradientStopCollection* pGradientStops = NULL;
-  target->CreateGradientStopCollection(stops, _countof(stops), D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &pGradientStops);
-  D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES props2 = {};
-  ID2D1RadialGradientBrush* m_pRadialGradientBrush;
-  target->CreateRadialGradientBrush(
-    D2D1::RadialGradientBrushProperties(
-      //D2D1::Point2F(25.f, 108.f), D2D1::Point2F(22, 23), 44.f, 14.f),
-    D2D1::Point2F(128.f, 128.f), D2D1::Point2F(0, 0), 64.f, 64.f),
-    pGradientStops, &m_pRadialGradientBrush);
-  brushes[ColorBrush::RADIAL_GRADIENT_1] = m_pRadialGradientBrush;
-  */
 
 
   IWICImagingFactory* pIWICFactory = 0;

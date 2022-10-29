@@ -15,7 +15,9 @@ Button* CreateButton(size_t index)
   }
   Drawable button1draw(x, y, EDITOR_BUTTON_WIDTH, EDITOR_BUTTON_HEIGHT);
   Button* button = new Button(button1draw);
-  button->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+  button->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+  button->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    ResourceLoader::GetBrush(ColorBrush::GREEN));
   return button;
 }
 
@@ -41,7 +43,7 @@ void LevelEditor::ClearSelected()
 {
   if (buttonTextSelect != nullptr)
   {
-    buttonTextSelect->selected = false;
+    buttonTextSelect->SetSelected(false);
     buttonTextSelect = nullptr;
   }
   editorLevel.author = buttonAuthorName->text.GetString();
@@ -67,7 +69,9 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"New");
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       editorLevel.clear();
       buttonMapName->text.Clear();
@@ -81,7 +85,9 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Save");
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       ClearSelected();
       std::wstring mapname;
@@ -98,7 +104,9 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Load");
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       std::wstring loadmap;
       if (ResourceLoader::GetFile(loadmap))
@@ -118,7 +126,9 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Toggle Grid");
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() { showGrid ^= true; };
     primaryButtons.push_back(button0);
   }
@@ -130,7 +140,9 @@ void LevelEditor::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Main Menu");
     button0->SetText(button0Text);
     buttonMapName = button0;
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this, button0]() {
       GameController::GetInstance()->SetGameType(GameType::MAIN_MENU);
     };
@@ -143,7 +155,9 @@ void LevelEditor::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Test Level");
     button0->SetText(button0Text);
     buttonMapName = button0;
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this, button0, client]() {
       Campaign campaign;
       campaign.SetTestMode();
@@ -165,22 +179,24 @@ void LevelEditor::initialize(Client* client)
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 5, 210, 22);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"");
-    button0->id = MAP_NAME;
+    button0->SetId(MAP_NAME);
     button0->SetText(button0Text);
     buttonMapName = button0;
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this, button0]() {
       if (buttonTextSelect == button0)
       {
-        buttonTextSelect->selected = false;
+        buttonTextSelect->SetSelected(false);
         buttonTextSelect = nullptr;
       }
       else
       {
         if (buttonTextSelect != nullptr)
-          buttonTextSelect->selected = false;
+          buttonTextSelect->SetSelected(false);
         buttonTextSelect = button0;
-        buttonTextSelect->selected = true;
+        buttonTextSelect->SetSelected(true);
       }
     };
     primaryButtons.push_back(button0);
@@ -190,22 +206,24 @@ void LevelEditor::initialize(Client* client)
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 6, 210, 22);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"");
-    button0->id = AUTHOR_NAME;
+    button0->SetId(AUTHOR_NAME);
     button0->SetText(button0Text);
     buttonAuthorName = button0;
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this, button0]() {
       if (buttonTextSelect == button0)
       {
-        buttonTextSelect->selected = false;
+        buttonTextSelect->SetSelected(false);
         buttonTextSelect = nullptr;
       }
       else
       {
         if (buttonTextSelect != nullptr)
-          buttonTextSelect->selected = false;
+          buttonTextSelect->SetSelected(false);
         buttonTextSelect = button0;
-        buttonTextSelect->selected = true;
+        buttonTextSelect->SetSelected(true);
       }
     };
     primaryButtons.push_back(button0);
@@ -216,7 +234,9 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Previous");
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       if (currentBrickPage > 0)
         currentBrickPage--;
@@ -229,7 +249,9 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Next");
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       if (currentBrickPage < brickPages)
         currentBrickPage++;
@@ -265,14 +287,14 @@ void LevelEditor::initialize(Client* client)
     button1->action = [this](void) {
       for (size_t i = 0; i < brickButtons.size(); ++i)
       {
-        if (brickButtons.at(i)->highlighted)
+        if (brickButtons.at(i)->IsHighlighted())
         {
           currentBrick = &GameLoader::GetAssetBricks().at(i);
-          brickButtons.at(i)->selected = true;
+          brickButtons.at(i)->SetSelected(true);
         }
         else
         {
-          brickButtons.at(i)->selected = false;
+          brickButtons.at(i)->SetSelected(false);
         }
       }
     };

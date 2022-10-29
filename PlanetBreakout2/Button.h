@@ -61,82 +61,56 @@ struct Icon
   }
 };
 
+//enum class ButtonType { NONE, PRIMITIVE, IMAGE };
+enum class ButtonHighlightType {BORDER, FILL, TEXT};
+enum class ButtonFillType { EMPTY, FILL };
 
-//typedef void (*Action)(void);
-//typedef void (Drawable::* Action2)(void);
-enum class ButtonType { NONE, PRIMITIVE, IMAGE };
 struct Button : Drawable
 {
+private:
+  ButtonHighlightType highlightType = ButtonHighlightType::FILL;
+  ButtonFillType fillType = ButtonFillType::EMPTY;
+  float borderStroke = 1.f;
+  ID2D1Brush* fillBrush = nullptr;
+  ID2D1Brush* highlightBrush = nullptr;
+  ID2D1Brush* borderBrush = nullptr;
   bool hasIcon = false;
   bool hasText = false;
   bool highlighted = false;
   bool selected = false;
-  ButtonType type;
   int32_t id = -1;
+
+public:
+  void SetBorder(ID2D1Brush*, float);
+  void SetButtonFill(ID2D1Brush*);
+  void SetButtonFill(ID2D1LinearGradientBrush*);
+  void SetButtonHighlightType(ButtonHighlightType, ID2D1Brush*);
+  ButtonHighlightType GetButtonHighlightType();
+  ButtonFillType GetButtonFillType();
+  ID2D1Brush* GetFillBrush();
+  ID2D1Brush* GetHighlightBrush();
+  ID2D1Brush* GetBorderBrush();
+  float GetBorderStroke();
+  void SetId(int32_t);
+  int32_t GetId();
+  bool IsHighlighted();
+  void SetSelected(bool);
+  bool HasText();
+  bool HasIcon();
+  bool IsSelected();
+  void SetText(const Text& text);
+  void UpdateText(std::wstring string);
+  void SetIcon(const Icon& icon);
+  void Update();
+  bool Click();
+
   Icon icon;
   Text text;
-
-  float primitiveStroke;
-  ID2D1Brush* primitiveOutline = nullptr;
-  ID2D1Brush* primitiveFill = nullptr;
-  std::function<void()> action = [](){};
-
+  std::function<void()> action = []() {};
   Button(const Drawable& drawable) : Drawable(drawable),
-    type(ButtonType::NONE), hasIcon(false), hasText(false)
+    hasIcon(false), hasText(false)
   {
   }
 
-  void SetText(const Text& text)
-  {
-    this->text = text;
-    hasText = true;
-  }
 
-  void UpdateText(std::wstring string)
-  {
-    if (hasText)
-    {
-      text.Update(string);
-    }
-  }
-
-  void SetIcon(const Icon& icon)
-  {
-    this->icon = icon;
-    hasIcon = true;
-  }
-
-  void SetPrimitive(float stroke, ColorBrush outline)
-  {
-    this->primitiveStroke = stroke;
-    this->primitiveOutline = ResourceLoader::GetBrush(outline);
-    type = ButtonType::PRIMITIVE;
-  }
-
-  void SetPrimitive(float stroke, ColorBrush outline, ColorBrush fill)
-  {
-    this->primitiveStroke = stroke;
-    this->primitiveOutline = ResourceLoader::GetBrush(outline);
-    this->primitiveFill = ResourceLoader::GetBrush(fill);
-    type = ButtonType::PRIMITIVE;
-  }
-
-  void Update()
-  {
-    if (primitiveFill)
-    {
-      highlighted = PtInRect(&win32Rect, GameController::GetInstance()->GetMousePos());
-    }
-  }
-
-  bool Click()
-  {
-    if (highlighted)
-    {
-      action();
-      highlighted = false;
-      return true;
-    }
-    return false;
-  }
 };

@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="DroneLaser.cpp" />
     <ClCompile Include="DynamicCollider.cpp" />
     <ClCompile Include="DynamicEffect.cpp" />

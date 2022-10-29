@@ -57,14 +57,30 @@ void MainMenu::initialize(Client* client)
    {PowerupType::EMP, L"EMP Bomb: Clears an entire brick shield and barrier"},
   };
 
+  D2D1_GRADIENT_STOP stops[] =
+  {
+        { 0.0f, D2D1::ColorF(0x140394) },
+        { 1.0f, D2D1::ColorF(0xF07012E) }
+  };
+  ID2D1GradientStopCollection* collection;
+  ResourceLoader::GetHwndRenderTarget()->CreateGradientStopCollection(
+    stops, _countof(stops), &collection);
+  D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 100, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Play");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
-    button0->action = [this]() { 
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+    button0->action = [this]() {
       state = MainMenuState::CAMPAIGN_SELECT;
     };
     buttons[MainMenuState::MAIN].push_back(button0);
@@ -76,7 +92,13 @@ void MainMenu::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Info");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       state = MainMenuState::INFO;
     };
@@ -89,14 +111,20 @@ void MainMenu::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Fullscreen");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     fullscreenButton = button0;
     button0->action = [this, button0, client]() {
       client->ToggleFullScreen();
       RefreshFullscreenButton(client);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
-    
+
   }
 
   {
@@ -105,7 +133,13 @@ void MainMenu::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Level Editor");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       GameController::GetInstance()->SetGameType(GameType::GAME_EDITOR);
     };
@@ -118,7 +152,13 @@ void MainMenu::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Exit");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       PostQuitMessage(0);
     };
@@ -131,7 +171,9 @@ void MainMenu::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), L"Back");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this]() {
       state = MainMenuState::MAIN;
     };
@@ -139,7 +181,7 @@ void MainMenu::initialize(Client* client)
     buttons[MainMenuState::INFO].push_back(button0);
   }
 
-  if(!GameLoader::GetCampaigns().empty())
+  if (!GameLoader::GetCampaigns().empty())
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 160, 300, 30);
     Button* button0 = new Button(button0draw);
@@ -147,7 +189,13 @@ void MainMenu::initialize(Client* client)
     Text button0Text(button0draw.GetD2D1Rect(), name);
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->action = [this, client, button0]() {
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
@@ -163,12 +211,21 @@ void MainMenu::initialize(Client* client)
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button0);
 
-    Drawable button1draw((unsigned)button0draw.GetRect().right + 2, (unsigned)button0draw.GetRect().top, 30, 30);
+    Drawable button1draw((unsigned)button0draw.GetRect().right + 2,
+      (unsigned)button0draw.GetRect().top, 30, 30);
     Button* button1 = new Button(button1draw);
     Text button1Text(button1draw.GetD2D1Rect(), L">");
     button1Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button1->SetText(button1Text);
-    button1->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+
+    ID2D1LinearGradientBrush* fillBrusha;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrusha);
+    button1->SetButtonFill(fillBrusha);
+    button1->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button1->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+
     button1->action = [this, button0, button0draw]() {
       size_t campaign_count = GameLoader::GetCampaigns().size();
       if (campaign_count == 0) return;
@@ -182,12 +239,19 @@ void MainMenu::initialize(Client* client)
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button1);
 
-    Drawable button2draw((unsigned)button0draw.GetRect().left - 32, (unsigned)button0draw.GetRect().top, 30, 30);
+    Drawable button2draw((unsigned)button0draw.GetRect().left - 32,
+      (unsigned)button0draw.GetRect().top, 30, 30);
     Button* button2 = new Button(button2draw);
     Text button2Text(button2draw.GetD2D1Rect(), L"<");
     button2Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button2->SetText(button2Text);
-    button2->SetPrimitive(1.0f, ColorBrush::GRAY, ColorBrush::GREEN);
+    ID2D1LinearGradientBrush* fillBrushb;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrushb);
+    button2->SetButtonFill(fillBrushb);
+    button2->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button2->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
     button2->action = [this, button0, button0draw]() {
       size_t campaign_count = GameLoader::GetCampaigns().size();
       if (campaign_count == 0) return;
