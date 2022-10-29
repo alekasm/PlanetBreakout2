@@ -113,7 +113,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  v_powerups[0] = PowerupType::LASER_BAT;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -232,8 +231,6 @@ void GameController::Respawn()
   balls.clear();
   effects.clear();
   laser.SetActive(false);
-  //destroyBat = false;
-  //todo update
   random_chance = 20;
   bat->SetActive(true);
   if (lives == 0)
