@@ -45,6 +45,10 @@ struct Icon
   }
   Icon() = default;
 
+  void UpdateBitmap(std::wstring sprite)
+  {
+    iconBitmap = ResourceLoader::GetSpriteMap().at(sprite);
+  }
   void CenterX(const D2D1_RECT_F& parent)
   {
     float currentWidth = iconRect.right - iconRect.left;
@@ -54,6 +58,17 @@ struct Icon
     iconRect.left += offset;
     iconRect.right = iconRect.left + currentWidth;
   }
+
+  void CenterY(const D2D1_RECT_F& parent)
+  {
+    float currentHeight = iconRect.bottom - iconRect.top;
+    float parentHeight = parent.bottom - parent.top;
+    if (currentHeight >= parentHeight) return;
+    float offset = (parentHeight - currentHeight) / 2;
+    iconRect.top += offset;
+    iconRect.bottom = iconRect.top + currentHeight;
+  }
+
   void AlignIcon(float x_offset, float y_offset)
   {
     iconRect.left += x_offset;
@@ -61,10 +76,9 @@ struct Icon
   }
 };
 
-//enum class ButtonType { NONE, PRIMITIVE, IMAGE };
+
 enum class ButtonHighlightType {BORDER, FILL, TEXT};
 enum class ButtonFillType { EMPTY, FILL };
-
 struct Button : Drawable
 {
 private:
@@ -79,7 +93,6 @@ private:
   bool highlighted = false;
   bool selected = false;
   int32_t id = -1;
-
 public:
   void SetBorder(ID2D1Brush*, float);
   void SetButtonFill(ID2D1Brush*);
@@ -106,11 +119,9 @@ public:
 
   Icon icon;
   Text text;
-  std::function<void()> action = []() {};
+  std::function<void()> onClick = []() {};
   Button(const Drawable& drawable) : Drawable(drawable),
     hasIcon(false), hasText(false)
   {
   }
-
-
 };

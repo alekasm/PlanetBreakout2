@@ -72,7 +72,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       editorLevel.clear();
       buttonMapName->text.Clear();
       buttonAuthorName->text.Clear();
@@ -88,7 +88,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       ClearSelected();
       std::wstring mapname;
       if (GameLoader::SaveMap(editorLevel, mapname))
@@ -107,7 +107,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       std::wstring loadmap;
       if (ResourceLoader::GetFile(loadmap))
       {
@@ -129,7 +129,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() { showGrid ^= true; };
+    button0->onClick = [this]() { showGrid ^= true; };
     primaryButtons.push_back(button0);
   }
 
@@ -143,7 +143,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this, button0]() {
+    button0->onClick = [this, button0]() {
       GameController::GetInstance()->SetGameType(GameType::MAIN_MENU);
     };
     primaryButtons.push_back(button0);
@@ -158,7 +158,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this, button0, client]() {
+    button0->onClick = [this, button0, client]() {
       Campaign campaign;
       campaign.SetTestMode();
       GameLevel level = editorLevel;
@@ -185,7 +185,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this, button0]() {
+    button0->onClick = [this, button0]() {
       if (buttonTextSelect == button0)
       {
         buttonTextSelect->SetSelected(false);
@@ -212,7 +212,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this, button0]() {
+    button0->onClick = [this, button0]() {
       if (buttonTextSelect == button0)
       {
         buttonTextSelect->SetSelected(false);
@@ -237,7 +237,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       if (currentBrickPage > 0)
         currentBrickPage--;
     };
@@ -252,7 +252,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       if (currentBrickPage < brickPages)
         currentBrickPage++;
     };
@@ -284,7 +284,7 @@ void LevelEditor::initialize(Client* client)
     button1icon.CenterX(button1->GetD2D1Rect());
     button1icon.AlignIcon(0.f, 1.0f);
     button1->SetIcon(button1icon);
-    button1->action = [this](void) {
+    button1->onClick = [this](void) {
       for (size_t i = 0; i < brickButtons.size(); ++i)
       {
         if (brickButtons.at(i)->IsHighlighted())

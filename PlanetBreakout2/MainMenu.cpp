@@ -40,6 +40,11 @@ void MainMenu::RefreshFullscreenButton(Client* client)
     fullscreenButton->text.Update(L"Fullscreen");
 }
 
+PowerupType MainMenu::GetPowerUpSelection()
+{
+  return currentPowerupSelected;
+}
+
 void MainMenu::initialize(Client* client)
 {
   powerupDescriptions = {
@@ -49,7 +54,7 @@ void MainMenu::initialize(Client* client)
    {PowerupType::BONUS_POINTS, L"Rare Gems: Increases the point multiplier"},
    {PowerupType::BARRIER, L"Barrier: Creates an energy barrier under your bat for protection"},
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
-   {PowerupType::GHOST, L"Ghost: Space ghosts possess the balls, making them bound randomly off the bat"},
+   {PowerupType::GHOST, L"Ghost: Space ghosts possess the balls, making them bounce randomly off the bat"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a plasma shield, they don't give points"},
    {PowerupType::PORTAL, L"Time Portal: All balls travel back in time to the start position"},
    {PowerupType::DRONE, L"Drone: Transforms balls into drones that shoot lasers, which can also kill you"},
@@ -80,7 +85,7 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       state = MainMenuState::CAMPAIGN_SELECT;
     };
     buttons[MainMenuState::MAIN].push_back(button0);
@@ -99,7 +104,7 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       state = MainMenuState::INFO;
     };
     buttons[MainMenuState::MAIN].push_back(button0);
@@ -119,7 +124,7 @@ void MainMenu::initialize(Client* client)
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     fullscreenButton = button0;
-    button0->action = [this, button0, client]() {
+    button0->onClick = [this, button0, client]() {
       client->ToggleFullScreen();
       RefreshFullscreenButton(client);
     };
@@ -140,7 +145,7 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       GameController::GetInstance()->SetGameType(GameType::GAME_EDITOR);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
@@ -159,27 +164,121 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       PostQuitMessage(0);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
   }
 
   {
-    Drawable button0draw(10, CLIENT_HEIGHT - 40, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, CLIENT_HEIGHT - 40, 300, 30);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Back");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
-    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this]() {
+    button0->onClick = [this]() {
       state = MainMenuState::MAIN;
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button0);
     buttons[MainMenuState::INFO].push_back(button0);
   }
+
+  const GamePowerUpMap& pwr_map = GameController::GetInstance()->GetGamePowerUpMap();
+  GamePowerUpMap::const_iterator pwr_it = pwr_map.begin();
+  size_t index = 0;
+  for (; pwr_it != pwr_map.end(); ++pwr_it)
+  {
+    float row = (index / 6);
+    float col = (index % 6);
+
+    //(width / 2) - (row + padding / 2) = 343.f
+    float x = (343.f + (col * 48.f)) + (col * 12.f);
+    float y = (300.f + (row * 48.f)) + (row * 12.f);
+
+
+    Drawable button0draw(x, y, 48, 48);
+    Button* button0 = new Button(button0draw);
+    Icon button1icon(D2D1::RectF(
+      (FLOAT)button0->x,
+      (FLOAT)button0->y,
+      (FLOAT)button0->x + 16.f,
+      (FLOAT)button0->y + 16.f),
+      pwr_it->second.GetIcon());
+
+    button1icon.CenterX(button0->GetD2D1Rect());
+    button1icon.CenterY(button0->GetD2D1Rect());
+    button0->SetIcon(button1icon);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+    button0->onClick = [this, index]() {
+      for (size_t i = 0; i < powerupButtons.size(); ++i)
+      {
+        if (powerupButtons.at(i)->IsHighlighted())
+        {
+          const GamePowerUpMap& map = GameController::GetInstance()->GetGamePowerUpMap();
+          GamePowerUpMap::const_iterator it = map.cbegin();
+          std::advance(it, index);
+          currentPowerupSelected = it->first;
+          powerupButtons.at(i)->SetSelected(true);
+        }
+        else
+        {
+          powerupButtons.at(i)->SetSelected(false);
+        }
+      }
+    };
+    if (index == 0)
+    {
+      button0->SetSelected(true);
+      currentPowerupSelected = pwr_it->first;
+    }
+
+    ++index;
+    powerupButtons.push_back(button0);
+    buttons[MainMenuState::INFO].push_back(button0);
+  }
+
+  /*
+  {
+    Drawable button0draw(10, CLIENT_HEIGHT - 60, 42, 42);
+    Button* button0 = new Button(button0draw);
+    Icon button1icon(D2D1::RectF(
+      (FLOAT)button0->x,
+      (FLOAT)button0->y,
+      (FLOAT)button0->x + 32.f,
+      (FLOAT)button0->y + 32.f),
+      L"maximize");
+    button1icon.CenterX(button0->GetD2D1Rect());
+    button1icon.CenterY(button0->GetD2D1Rect());
+    button0->SetIcon(button1icon);
+
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+    button0->action = [this, button0, client]() {
+      client->ToggleFullScreen();
+      RefreshFullscreenButton(client);
+      if (client->IsFullScreen())
+        button0->icon.UpdateBitmap(L"minimize");
+      else
+        button0->icon.UpdateBitmap(L"maximize");
+    };
+    buttons[MainMenuState::MAIN].push_back(button0);
+  }
+  */
+
 
   if (!GameLoader::GetCampaigns().empty())
   {
@@ -196,7 +295,7 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
     button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this, client, button0]() {
+    button0->onClick = [this, client, button0]() {
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
         client->SetClientFocus(true);
@@ -226,7 +325,7 @@ void MainMenu::initialize(Client* client)
     button1->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
-    button1->action = [this, button0, button0draw]() {
+    button1->onClick = [this, button0, button0draw]() {
       size_t campaign_count = GameLoader::GetCampaigns().size();
       if (campaign_count == 0) return;
       if (campaign_page + 1 < campaign_count)
@@ -252,7 +351,7 @@ void MainMenu::initialize(Client* client)
     button2->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button2->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button2->action = [this, button0, button0draw]() {
+    button2->onClick = [this, button0, button0draw]() {
       size_t campaign_count = GameLoader::GetCampaigns().size();
       if (campaign_count == 0) return;
       if (campaign_page == 0)

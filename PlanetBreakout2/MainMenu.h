@@ -17,6 +17,7 @@ struct MainMenu
   void RefreshFullscreenButton(Client* client);
   const std::wstring& GetDescription(PowerupType) const;
   const std::wstring& GetInfoDescription() const;
+  PowerupType GetPowerUpSelection();
 private:
   std::unordered_map<MainMenuState, std::vector<Button*>> buttons;
   MainMenuState state = MainMenuState::MAIN;
@@ -24,6 +25,8 @@ private:
   ID2D1LinearGradientBrush* planetBrush = nullptr;
   Button* fullscreenButton;
   std::unordered_map<PowerupType, std::wstring> powerupDescriptions;
+  PowerupType currentPowerupSelected;
+  std::vector<Button*> powerupButtons;
   const std::wstring infoDescription =
     L"Version " + std::to_wstring(VERSION) + L"\n"
     L"Written by Aleksander Krimsky\n"

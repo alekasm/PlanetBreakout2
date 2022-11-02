@@ -45,7 +45,7 @@ bool Button::HasIcon()
 
 bool Button::IsSelected()
 {
-  return selected;
+  return selected || highlighted;
 }
 
 void Button::SetSelected(bool value)
@@ -109,14 +109,15 @@ void Button::SetIcon(const Icon& icon)
 
 void Button::Update()
 {
-  highlighted = PtInRect(&win32Rect, GameController::GetInstance()->GetMousePos());
+  highlighted = PtInRect(&win32Rect,
+    GameController::GetInstance()->GetMousePos());
 }
 
 bool Button::Click()
 {
   if (highlighted)
   {
-    action();
+    onClick();
     highlighted = false;
     return true;
   }

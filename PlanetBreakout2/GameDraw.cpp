@@ -20,13 +20,13 @@
 void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
 {
 
-  if (button->IsHighlighted() && button->GetButtonHighlightType() == ButtonHighlightType::FILL)
+  if (button->IsSelected() && button->GetButtonHighlightType() == ButtonHighlightType::FILL)
     target->FillRectangle(button->GetD2D1Rect(), button->GetHighlightBrush());
   else if (button->GetButtonFillType() == ButtonFillType::FILL)
     target->FillRectangle(button->GetD2D1Rect(), button->GetFillBrush());
 
 
-  if (button->IsHighlighted() && button->GetButtonHighlightType() == ButtonHighlightType::BORDER)
+  if (button->IsSelected() && button->GetButtonHighlightType() == ButtonHighlightType::BORDER)
     target->DrawRectangle(button->GetD2D1Rect(), button->GetHighlightBrush(), button->GetBorderStroke());
   else
     target->DrawRectangle(button->GetD2D1Rect(), button->GetBorderBrush(), button->GetBorderStroke());
@@ -34,7 +34,7 @@ void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
   if (button->HasText())
   {
     ID2D1Brush* textBrush;
-    if (button->IsHighlighted() && button->GetButtonHighlightType() == ButtonHighlightType::TEXT)
+    if (button->IsSelected() && button->GetButtonHighlightType() == ButtonHighlightType::TEXT)
       textBrush = button->GetHighlightBrush();
     else
       textBrush = button->text.textBrush;
@@ -285,33 +285,17 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
   }
   else if (mainMenu.GetState() == MainMenuState::INFO)
   {
-    const GamePowerUpMap& pwr_map = GameController::GetInstance()->GetGamePowerUpMap();
-    GamePowerUpMap::const_iterator pwr_it = pwr_map.begin();
-    size_t index = 0;
-    for (; pwr_it != pwr_map.end(); ++pwr_it)
-    {
-      float y = 210.f + (index * 36.f);
-      float x = 64.f;
+    std::wstring select_powerup = L"Select a PowerUp for more information";
+    target->DrawText(select_powerup.c_str(), select_powerup.size(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+      D2D1::RectF(0.f, 276.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
 
-      target->DrawRectangle(
-        D2D1::RectF(x, y,
-          x + POWERUP_DIMENSION,
-          y + POWERUP_DIMENSION),
-        darkGrayBrush, 1.0f);
-      x += 8.f;
-      y += 8.f;
-      target->DrawBitmap(
-        ResourceLoader::GetSpriteMap().at(pwr_it->second.GetIcon()),
-        D2D1::RectF(x, y,
-          x + POWERUP_ICON,
-          y + POWERUP_ICON), 1.0f);
-      std::wstring desc = mainMenu.GetDescription(pwr_it->first);
-      target->DrawText(desc.c_str(), desc.length(),
-        ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-        D2D1::RectF(x + 48.f, y, CLIENT_WIDTH, y + 64.f),
-        ResourceLoader::GetBrush(ColorBrush::GREEN));
-      ++index;
-    }
+    std::wstring info_text = mainMenu.GetDescription(mainMenu.GetPowerUpSelection());
+    target->DrawText(info_text.c_str(), info_text.size(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+      D2D1::RectF(0.f, 420.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
 
     std::wstring text_hotkey = L"Hotkeys\nESC = Return to Menu\nF11 = Toggle Fullscreen";
     target->DrawText(text_hotkey.c_str(), text_hotkey.size(),
