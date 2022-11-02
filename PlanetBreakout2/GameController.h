@@ -16,7 +16,24 @@
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
 enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
 enum class DynamicSpriteType { BAT, BALL};
+enum class DifficultyType {CASUAL, HARD};
 typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
+struct Difficulty
+{
+  Difficulty(float maxSpeed,
+    float incSpeed,
+    float startSpeed,
+    std::wstring name) :
+    maxSpeed(maxSpeed), incSpeed(incSpeed),
+    startSpeed(startSpeed), name(name)
+  {
+  }
+  const float maxSpeed;
+  const float incSpeed;
+  const float startSpeed;
+  const std::wstring name;
+};
+typedef std::unordered_map<DifficultyType, Difficulty> DifficultyMap;
 
 struct GameController
 {
@@ -55,6 +72,9 @@ struct GameController
   PlanetEffect* GetPlanetEffect();
   void DestroyBat();
   POINT GetMousePos();
+  void SetDifficulty(DifficultyType);
+  const Difficulty& GetDifficulty();
+  const DifficultyMap& GetDifficultyMap() const;
 private:
   POINT mousePos;
   Bat* bat = nullptr;
@@ -96,10 +116,13 @@ private:
     {PowerupType::STRIKE, GamePowerUp(L"strike")},
     {PowerupType::EMP, GamePowerUp(L"emp")},
   };
-  //std::chrono::microseconds timer_creator;
-  //std::chrono::microseconds timer_portal;
-  //const uint32_t time_creator_us = 5000 * 1000;
-  //const uint32_t time_portal_us = 10000 * 1000;
+
+  DifficultyMap difficultyMap = {
+    {DifficultyType::CASUAL, Difficulty(5.5f, 0.02f, 2.f, L"Casual")},
+    {DifficultyType::HARD, Difficulty(8.f, 0.05f, 3.5f, L"Hard")},
+  };
+  DifficultyType currentDifficulty = DifficultyType::CASUAL;
+
   POINTF menuLightOrigin;
   POINTF menuLightEnd;
   GameController();

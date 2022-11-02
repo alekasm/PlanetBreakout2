@@ -16,7 +16,8 @@ void Ball::Collision(BallCollisionType type)
   {
     direction = -(atan2(sin(direction), cos(direction)) + (2.f * M_PI));
   }
-  speed = std::clamp(speed + 0.05f, 1.0f, 8.0f);
+  const Difficulty& difficulty = GameController::GetInstance()->GetDifficulty();
+  speed = std::clamp(speed + difficulty.incSpeed, 1.0f, difficulty.maxSpeed);
 }
 
 void Ball::CollisionVerticalWall()
@@ -66,7 +67,7 @@ void Ball::CollisionBat(float x1, float x2)
 
 void Ball::Start()
 {
-  speed = 3.f;
+  speed = GameController::GetInstance()->GetDifficulty().startSpeed;
   real_x = (float)x;
   real_y = (float)y;
   double min = (M_PI / 4.f);

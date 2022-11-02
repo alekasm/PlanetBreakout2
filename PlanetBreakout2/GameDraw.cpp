@@ -272,7 +272,32 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       ++i;
     }
 
-    float y = (CLIENT_HEIGHT / 2.f) - 64;
+    std::wstring campaignName = mainMenu.GetCurrentCampaignNameSelection();
+    target->DrawText(campaignName.c_str(), campaignName.length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_24F),
+      D2D1::RectF(0.f, (CLIENT_HEIGHT / 2) - 160, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
+    target->DrawRectangle(D2D1::RectF(
+      (CLIENT_WIDTH / 2) - 140,
+      (CLIENT_HEIGHT / 2) - 160,
+      (CLIENT_WIDTH / 2) + 140,
+      (CLIENT_HEIGHT / 2) - 130),
+      ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+
+    std::wstring difficultyName = mainMenu.GetCurrentDifficultySelection();
+    target->DrawText(difficultyName.c_str(), difficultyName.length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_24F),
+      D2D1::RectF(0.f, (CLIENT_HEIGHT / 2) - 110, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
+
+    target->DrawRectangle(D2D1::RectF(
+      (CLIENT_WIDTH / 2) - 140,
+      (CLIENT_HEIGHT / 2) - 110,
+      (CLIENT_WIDTH / 2) + 140,
+      (CLIENT_HEIGHT / 2) - 80),
+      ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+
+    float y = (CLIENT_HEIGHT / 2.f) + 30.f;
     target->DrawText(name_string.c_str(), name_string.length(), formatBig,
       D2D1::RectF(32.f, y, CLIENT_WIDTH - 32.f, y + 32.f), gradientBrush2);
 

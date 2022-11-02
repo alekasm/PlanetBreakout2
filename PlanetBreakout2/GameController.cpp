@@ -68,6 +68,21 @@ void GameController::SetGameType(GameType type)
   game_type = type;
 }
 
+void GameController::SetDifficulty(DifficultyType difficulty)
+{
+  currentDifficulty = difficulty;
+}
+
+const Difficulty& GameController::GetDifficulty()
+{
+  return difficultyMap.at(currentDifficulty);
+}
+
+const DifficultyMap& GameController::GetDifficultyMap() const
+{
+  return difficultyMap;
+}
+
 void GameController::SetHighscoreName(std::wstring name)
 {
   if (level_state != LevelState::HIGHSCORE)

@@ -18,14 +18,19 @@ struct MainMenu
   const std::wstring& GetDescription(PowerupType) const;
   const std::wstring& GetInfoDescription() const;
   PowerupType GetPowerUpSelection();
+  const std::wstring& GetCurrentCampaignNameSelection() const;
+  const std::wstring& GetCurrentDifficultySelection() const;
 private:
   std::unordered_map<MainMenuState, std::vector<Button*>> buttons;
   MainMenuState state = MainMenuState::MAIN;
-  uint32_t campaign_page = 0;
+  size_t campaign_page = 0;
+  size_t difficulty_page = 0;
   ID2D1LinearGradientBrush* planetBrush = nullptr;
   Button* fullscreenButton;
   std::unordered_map<PowerupType, std::wstring> powerupDescriptions;
   PowerupType currentPowerupSelected;
+  std::wstring currentDifficultySelected;
+  std::wstring currentCampaignNameSelected;
   std::vector<Button*> powerupButtons;
   const std::wstring infoDescription =
     L"Version " + std::to_wstring(VERSION) + L"\n"

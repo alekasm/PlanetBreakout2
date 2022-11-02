@@ -30,6 +30,16 @@ const std::wstring& MainMenu::GetInfoDescription() const
   return infoDescription;
 }
 
+const std::wstring& MainMenu::GetCurrentCampaignNameSelection() const
+{
+  return currentCampaignNameSelected;
+}
+
+const std::wstring& MainMenu::GetCurrentDifficultySelection() const
+{
+  return currentDifficultySelected;
+}
+
 void MainMenu::RefreshFullscreenButton(Client* client)
 {
   if (fullscreenButton == nullptr)
@@ -282,10 +292,10 @@ void MainMenu::initialize(Client* client)
 
   if (!GameLoader::GetCampaigns().empty())
   {
-    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 160, 300, 30);
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 35, 300, 30);
     Button* button0 = new Button(button0draw);
-    std::wstring name = GameLoader::GetCampaigns().begin()->second.name;
-    Text button0Text(button0draw.GetD2D1Rect(), name);
+    currentCampaignNameSelected = GameLoader::GetCampaigns().begin()->second.name;
+    Text button0Text(button0draw.GetD2D1Rect(), L"Start Mission");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     ID2D1LinearGradientBrush* fillBrush;
@@ -295,7 +305,7 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
     button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->onClick = [this, client, button0]() {
+    button0->onClick = [this, client]() {
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
         client->SetClientFocus(true);
@@ -304,14 +314,14 @@ void MainMenu::initialize(Client* client)
         GameController::GetInstance()->CreateGame(it->second);
         state = MainMenuState::MAIN;
         campaign_page = 0;
-        it = GameLoader::GetCampaigns().begin();
-        button0->text.Update(it->second.name);
+        //it = GameLoader::GetCampaigns().begin();
+        //button0->text.Update(it->second.name);
       }
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button0);
 
     Drawable button1draw((unsigned)button0draw.GetRect().right + 2,
-      (unsigned)button0draw.GetRect().top, 30, 30);
+      (CLIENT_HEIGHT / 2) - 160, 30, 30);
     Button* button1 = new Button(button1draw);
     Text button1Text(button1draw.GetD2D1Rect(), L">");
     button1Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -325,7 +335,7 @@ void MainMenu::initialize(Client* client)
     button1->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
-    button1->onClick = [this, button0, button0draw]() {
+    button1->onClick = [this]() {
       size_t campaign_count = GameLoader::GetCampaigns().size();
       if (campaign_count == 0) return;
       if (campaign_page + 1 < campaign_count)
@@ -334,12 +344,13 @@ void MainMenu::initialize(Client* client)
         campaign_page = 0;
       CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
       std::advance(it, campaign_page);
-      button0->text.Update(it->second.name);
+      currentCampaignNameSelected = it->second.name;
+      //button0->text.Update(it->second.name);
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button1);
 
     Drawable button2draw((unsigned)button0draw.GetRect().left - 32,
-      (unsigned)button0draw.GetRect().top, 30, 30);
+      (CLIENT_HEIGHT / 2) - 160, 30, 30);
     Button* button2 = new Button(button2draw);
     Text button2Text(button2draw.GetD2D1Rect(), L"<");
     button2Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
@@ -351,7 +362,7 @@ void MainMenu::initialize(Client* client)
     button2->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
     button2->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button2->onClick = [this, button0, button0draw]() {
+    button2->onClick = [this]() {
       size_t campaign_count = GameLoader::GetCampaigns().size();
       if (campaign_count == 0) return;
       if (campaign_page == 0)
@@ -360,10 +371,71 @@ void MainMenu::initialize(Client* client)
         --campaign_page;
       CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
       std::advance(it, campaign_page);
-      button0->text.Update(it->second.name);
+      //button0->text.Update(it->second.name);
+      currentCampaignNameSelected = it->second.name;
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button2);
   }
 
+  {
+    currentDifficultySelected = GameController::GetInstance()->GetDifficulty().name;
+    Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 120, 300, 30);
+    Drawable button1draw((unsigned)button0draw.GetRect().right + 2,
+      (CLIENT_HEIGHT / 2) - 110, 30, 30);
+    Button* button1 = new Button(button1draw);
+    Text button1Text(button1draw.GetD2D1Rect(), L">");
+    button1Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
+    button1->SetText(button1Text);
+    ID2D1LinearGradientBrush* fillBrusha;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrusha);
+    button1->SetButtonFill(fillBrusha);
+    button1->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button1->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+
+    button1->onClick = [this]() {
+      size_t difficulty_count = GameController::GetInstance()->GetDifficultyMap().size();
+      if (difficulty_count == 0) return;
+      if (difficulty_page + 1 < difficulty_count)
+        ++difficulty_page;
+      else
+        difficulty_page = 0;
+      DifficultyMap::const_iterator it =
+        GameController::GetInstance()->GetDifficultyMap().begin();
+      std::advance(it, difficulty_page);
+      currentDifficultySelected = it->second.name;
+      GameController::GetInstance()->SetDifficulty(it->first);
+    };
+    buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button1);
+
+    Drawable button2draw((unsigned)button0draw.GetRect().left - 32,
+      (CLIENT_HEIGHT / 2) - 110, 30, 30);
+    Button* button2 = new Button(button2draw);
+    Text button2Text(button2draw.GetD2D1Rect(), L"<");
+    button2Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
+    button2->SetText(button2Text);
+    ID2D1LinearGradientBrush* fillBrushb;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrushb);
+    button2->SetButtonFill(fillBrushb);
+    button2->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button2->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+    button2->onClick = [this]() {
+      size_t difficulty_count = GameController::GetInstance()->GetDifficultyMap().size();
+      if (difficulty_count == 0) return;
+      if (difficulty_page == 0)
+        difficulty_page = difficulty_count - 1;
+      else
+        --difficulty_page;
+      DifficultyMap::const_iterator it =
+        GameController::GetInstance()->GetDifficultyMap().begin();
+      std::advance(it, difficulty_page);
+      currentDifficultySelected = it->second.name;
+      GameController::GetInstance()->SetDifficulty(it->first);
+    };
+    buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button2);
+  }
 
 }
