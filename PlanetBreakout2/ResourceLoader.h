@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <filesystem>
+#include <xaudio2.h>
 #include "Shlwapi.h"
 #include "Shellapi.h"
 
@@ -45,9 +46,16 @@ enum TextFormat {
   CENTER_24F, CENTER_18F, CENTER_10F, LEFT_16F, CENTER_14F,
   CENTER_72F, LEFT_24F};
 typedef std::unordered_map<std::wstring, ID2D1Bitmap*> SpriteMap;
+struct AudioData {
+  WAVEFORMATEXTENSIBLE wfx = { 0 };
+  XAUDIO2_BUFFER buffer = { 0 };
+};
+typedef std::unordered_map<std::wstring, AudioData> AudioMap;
 struct ResourceLoader
 {
   ResourceLoader() = delete;
+  static HRESULT LoadAudioFiles();
+  static void PlayAudio(std::wstring);
   static void Initialize();
   static void InitializeClient(HWND);
   static void FindFiles(std::wstring directory, std::vector<std::filesystem::path>& out);
@@ -69,4 +77,7 @@ private:
   //static ID2D1Brush* brushes[];
   static std::unordered_map<ColorBrush, ID2D1Brush*> brushes;
   static IDWriteTextFormat* formats[];
+  static AudioMap audioMap;
+  static IXAudio2* pXAudio2;
+  static IXAudio2MasteringVoice* pMasterVoice;
 };

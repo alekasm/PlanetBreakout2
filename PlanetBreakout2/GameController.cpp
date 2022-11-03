@@ -324,6 +324,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
 
   if (erased > 0)
   {
+    ResourceLoader::PlayAudio(L"brick.wav");
     unsigned col = index % GRID_COLUMNS;
     unsigned row = index / GRID_COLUMNS;
     effects.push_back(new SpinSquareEffect(
@@ -364,7 +365,10 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
         }
       }
     }
-
+  }
+  else
+  {
+    ResourceLoader::PlayAudio(L"brick2.wav");
   }
   if (!hyper_ball) return true;
   //Cannot to fast check because of no-point bricks
@@ -622,6 +626,7 @@ void GameController::DestroyBat()
     effect->SetMaxUpdates(750);
     effects.push_back(effect);
   }
+  ResourceLoader::PlayAudio(L"lost.wav");
 }
 
 BrickMap& GameController::GetBrickMap()
