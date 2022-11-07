@@ -36,6 +36,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
   GameLoader::LoadAssets(L"assets/assets.cfg");
   GameLoader::LoadCampaigns();
   client->PostInitialize();
+  //ResourceLoader::PlayAudio(L"moon.wav", true);
 
   MSG msg;
   clock_t KeyTimer = clock();

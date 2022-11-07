@@ -128,6 +128,7 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  v_powerups[0] = PowerupType::LASER_BAT;
   for (int i : v_powerups)
   {
     PowerupType type = (PowerupType)i;
@@ -312,6 +313,7 @@ void GameController::ShootLaser()
   int cx = bat->x + 30;
   laser.SetPosition(cx, BAT_Y + BRICK_HEIGHT);
   laser.Start();
+  ResourceLoader::PlayAudio(L"laser.wav");
 }
 
 //Returns true if the specified ball should bounce

@@ -64,14 +64,29 @@ const unsigned LevelEditor::BrickIndexEnd()
 void LevelEditor::initialize(Client* client)
 {
 
+  D2D1_GRADIENT_STOP stops[] =
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 100, 14);
+        { 0.0f, D2D1::ColorF(0x525557) },
+        { 1.0f, D2D1::ColorF(0x323436) }
+  };
+  ID2D1GradientStopCollection* collection;
+  ResourceLoader::GetHwndRenderTarget()->CreateGradientStopCollection(
+    stops, _countof(stops), &collection);
+  D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+
+  {
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 100, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"New");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this]() {
       editorLevel.clear();
       buttonMapName->text.Clear();
@@ -81,13 +96,18 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 3, 100, 14);
+    Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 3, 100, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Save");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this]() {
       ClearSelected();
       std::wstring mapname;
@@ -100,13 +120,18 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 4, 100, 14);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 4, 100, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Load");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this]() {
       std::wstring loadmap;
       if (ResourceLoader::GetFile(loadmap))
@@ -122,27 +147,37 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 4, 100, 14);
+    Drawable button0draw(GAME_WIDTH + 110 + 20, 20 + (14 + 22) * 4, 100, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Toggle Grid");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this]() { showGrid ^= true; };
     primaryButtons.push_back(button0);
   }
 
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 1, 210, 22);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 1, 210, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Main Menu");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     buttonMapName = button0;
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this, button0]() {
       GameController::GetInstance()->SetGameType(GameType::MAIN_MENU);
     };
@@ -150,14 +185,19 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 2, 210, 22);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 2, 210, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Test Level");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     buttonMapName = button0;
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this, button0, client]() {
       Campaign campaign;
       campaign.SetTestMode();
@@ -176,9 +216,10 @@ void LevelEditor::initialize(Client* client)
 
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 5, 210, 22);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 5, 210, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"");
+    button0Text.AlignCenter();
     button0->SetId(MAP_NAME);
     button0->SetText(button0Text);
     buttonMapName = button0;
@@ -203,9 +244,10 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 6, 210, 22);
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 6, 210, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"");
+    button0Text.AlignCenter();
     button0->SetId(AUTHOR_NAME);
     button0->SetText(button0Text);
     buttonAuthorName = button0;
@@ -230,13 +272,18 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(GAME_WIDTH + 10, 720, 100, 14);
+    Drawable button0draw(GAME_WIDTH + 10, 710, 100, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Previous");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this]() {
       if (currentBrickPage > 0)
         currentBrickPage--;
@@ -245,13 +292,18 @@ void LevelEditor::initialize(Client* client)
   }
 
   {
-    Drawable button0draw(CLIENT_WIDTH - 110, 720, 100, 14);
+    Drawable button0draw(CLIENT_WIDTH - 110, 710, 100, 24);
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"Next");
+    button0Text.AlignCenter();
     button0->SetText(button0Text);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
+    ID2D1LinearGradientBrush* fillBrush;
+    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
+      props, collection, &fillBrush);
+    button0->SetButtonFill(fillBrush);
     button0->onClick = [this]() {
       if (currentBrickPage < brickPages)
         currentBrickPage++;
@@ -272,7 +324,8 @@ void LevelEditor::initialize(Client* client)
       L"Breakable" : L"Invincible";
 
     Text button1Text(button1->GetD2D1Rect(), desc);
-    button1Text.AlignText(0.f, BRICK_HEIGHT + 2);
+    //button1Text.AlignText(0.f, BRICK_HEIGHT + 2);
+    button1Text.AlignBottom();
     button1->SetText(button1Text);
 
     Icon button1icon(D2D1::RectF(

@@ -79,7 +79,9 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
   }
   target->Clear();
   std::wstring text = L"Planet Breakout 2 - Level Editor";
-  target->DrawText(text.c_str(), text.length(), format2, D2D1::RectF(GAME_WIDTH + 1, 10, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
+  target->DrawText(text.c_str(), text.length(),
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+    D2D1::RectF(GAME_WIDTH + 1, 20, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
@@ -312,8 +314,8 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
   {
     std::wstring select_powerup = L"Select a PowerUp for more information";
     target->DrawText(select_powerup.c_str(), select_powerup.size(),
-      ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
-      D2D1::RectF(0.f, 276.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+      D2D1::RectF(0.f, 270.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::WHITE));
 
     std::wstring info_text = mainMenu.GetDescription(mainMenu.GetPowerUpSelection());
@@ -328,10 +330,16 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       D2D1::RectF(0.f, 660.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
-    target->DrawText(mainMenu.GetInfoDescription().c_str(),
-      mainMenu.GetInfoDescription().length(),
-      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-      D2D1::RectF(0.f, 0.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+    std::wstring author = L"Written by Aleksander Krimsky\nwww.krimsky.net";
+    target->DrawText(author.c_str(), author.length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+      D2D1::RectF(0.f, 190.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+
+    std::wstring version = mainMenu.GetVersion();
+    target->DrawText(version.c_str(), version.length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+      D2D1::RectF(0.f, 220.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::WHITE));
   }
 

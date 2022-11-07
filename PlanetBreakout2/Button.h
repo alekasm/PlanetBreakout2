@@ -10,11 +10,13 @@ struct Text : PrimitiveText
   IDWriteTextFormat* textFormat;
   ID2D1Brush* textBrush;
   D2D1_RECT_F textRect;
+  TextFormat type;
 
   Text(const D2D1_RECT_F& drawable, const std::wstring& text) :
     PrimitiveText(text), textRect(drawable)
   {
-    textFormat = ResourceLoader::GetTextFormat(TextFormat::CENTER_12F);
+    type = TextFormat::CENTER_12F;
+    textFormat = ResourceLoader::GetTextFormat(type);
     textBrush = ResourceLoader::GetBrush(ColorBrush::GRAY);
   }
 
@@ -26,10 +28,34 @@ struct Text : PrimitiveText
     textBrush = ResourceLoader::GetBrush(brush);
   }
 
+  /*
   void AlignText(float x_offset, float y_offset)
   {
     textRect.left += x_offset;
     textRect.top += y_offset;
+  }
+  */
+
+  void AlignCenter()
+  {
+    const TextFormatData& data = ResourceLoader::GetTextFormatData(type);
+    float currentHeight = data.size;
+    float parentHeight = textRect.bottom - textRect.top;
+    if (currentHeight >= parentHeight) return;
+    float offset = (parentHeight - currentHeight) / 2;
+    textRect.top += offset;
+    textRect.bottom = textRect.top + currentHeight;
+  }
+
+  void AlignBottom()
+  {
+    const TextFormatData& data = ResourceLoader::GetTextFormatData(type);
+    //2 padding is added so the text doesnt sit on the line
+    float currentHeight = data.size + 2.f;
+    float parentHeight = textRect.bottom - textRect.top;
+    if (currentHeight >= parentHeight) return;
+    textRect.top = textRect.bottom - currentHeight;
+    textRect.bottom = textRect.top + currentHeight;
   }
 
 };
@@ -108,6 +134,7 @@ public:
   int32_t GetId();
   bool IsHighlighted();
   void SetSelected(bool);
+  void SetHighlighted(bool);
   bool HasText();
   bool HasIcon();
   bool IsSelected();

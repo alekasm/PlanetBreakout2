@@ -16,10 +16,11 @@ struct MainMenu
   uint32_t GetCampaignPage();
   void RefreshFullscreenButton(Client* client);
   const std::wstring& GetDescription(PowerupType) const;
-  const std::wstring& GetInfoDescription() const;
+  const std::wstring& GetVersion() const;
   PowerupType GetPowerUpSelection();
   const std::wstring& GetCurrentCampaignNameSelection() const;
   const std::wstring& GetCurrentDifficultySelection() const;
+  void SwitchState(MainMenuState);
 private:
   std::unordered_map<MainMenuState, std::vector<Button*>> buttons;
   MainMenuState state = MainMenuState::MAIN;
@@ -32,10 +33,7 @@ private:
   std::wstring currentDifficultySelected;
   std::wstring currentCampaignNameSelected;
   std::vector<Button*> powerupButtons;
-  const std::wstring infoDescription =
-    L"Version " + std::to_wstring(VERSION) + L"\n"
-    L"Written by Aleksander Krimsky\n"
-    L"www.krimsky.net\n"
-    L"Made with C++17 and Direct2D\n";
+  const std::wstring versionString =
+    L"Version " + std::to_wstring(VERSION);
 
 };

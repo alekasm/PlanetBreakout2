@@ -63,7 +63,7 @@ void Ball::CollisionBat(float x1, float x2)
   //float dir = M_PI / 8.f + ((6.f * portion) * M_PI / 8.f); //pi/8  - 7pi/8
   double dir = M_PI / 10.f + ((8.f * portion) * M_PI / 10.f); //pi/10 - 9pi/10
   direction = -dir;
-  ResourceLoader::PlayAudio(L"bat.wav");
+  //ResourceLoader::PlayAudio(L"bat.wav");
 }
 
 void Ball::Start()

@@ -32,6 +32,6 @@ struct PrimitiveText
   {
     text.clear();
   }
-private:
+protected:
   std::wstring text;
 };

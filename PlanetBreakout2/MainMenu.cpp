@@ -25,9 +25,9 @@ const std::wstring& MainMenu::GetDescription(PowerupType type) const
   return powerupDescriptions.at(type);
 }
 
-const std::wstring& MainMenu::GetInfoDescription() const
+const std::wstring& MainMenu::GetVersion() const
 {
-  return infoDescription;
+  return versionString;
 }
 
 const std::wstring& MainMenu::GetCurrentCampaignNameSelection() const
@@ -53,6 +53,15 @@ void MainMenu::RefreshFullscreenButton(Client* client)
 PowerupType MainMenu::GetPowerUpSelection()
 {
   return currentPowerupSelected;
+}
+
+void MainMenu::SwitchState(MainMenuState newState)
+{
+  for (Button* b : buttons.at(state))
+  {
+    b->SetHighlighted(false);
+  }
+  state = newState;
 }
 
 void MainMenu::initialize(Client* client)
@@ -93,10 +102,10 @@ void MainMenu::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->onClick = [this]() {
-      state = MainMenuState::CAMPAIGN_SELECT;
+      SwitchState(MainMenuState::CAMPAIGN_SELECT);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
   }
@@ -112,10 +121,10 @@ void MainMenu::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->onClick = [this]() {
-      state = MainMenuState::INFO;
+      SwitchState(MainMenuState::INFO);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
   }
@@ -131,7 +140,7 @@ void MainMenu::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     fullscreenButton = button0;
     button0->onClick = [this, button0, client]() {
@@ -153,9 +162,10 @@ void MainMenu::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
-      ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->onClick = [this]() {
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));;
+    button0->onClick = [this, button0]() {
+      button0->SetHighlighted(false);
       GameController::GetInstance()->SetGameType(GameType::GAME_EDITOR);
     };
     buttons[MainMenuState::MAIN].push_back(button0);
@@ -172,7 +182,7 @@ void MainMenu::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->onClick = [this]() {
       PostQuitMessage(0);
@@ -191,10 +201,10 @@ void MainMenu::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
-    button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->onClick = [this]() {
-      state = MainMenuState::MAIN;
+      SwitchState(MainMenuState::MAIN);
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button0);
     buttons[MainMenuState::INFO].push_back(button0);
@@ -312,7 +322,7 @@ void MainMenu::initialize(Client* client)
         CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
         std::advance(it, campaign_page);
         GameController::GetInstance()->CreateGame(it->second);
-        state = MainMenuState::MAIN;
+        SwitchState(MainMenuState::MAIN);
         campaign_page = 0;
         //it = GameLoader::GetCampaigns().begin();
         //button0->text.Update(it->second.name);

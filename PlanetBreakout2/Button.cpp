@@ -53,6 +53,11 @@ void Button::SetSelected(bool value)
   selected = value;
 }
 
+void Button::SetHighlighted(bool value)
+{
+  highlighted = value;
+}
+
 void Button::SetButtonFill(ID2D1LinearGradientBrush* brush)
 {
   fillType = ButtonFillType::FILL;
@@ -109,16 +114,20 @@ void Button::SetIcon(const Icon& icon)
 
 void Button::Update()
 {
+  bool old = highlighted;
   highlighted = PtInRect(&win32Rect,
     GameController::GetInstance()->GetMousePos());
+  //if(!old && highlighted)
+  //  ResourceLoader::PlayAudio(L"click.wav");
 }
 
 bool Button::Click()
 {
   if (highlighted)
   {
+    ResourceLoader::PlayAudio(L"click.wav");
     onClick();
-    highlighted = false;
+    //highlighted = false;
     return true;
   }
   return false;

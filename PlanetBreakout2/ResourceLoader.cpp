@@ -17,14 +17,29 @@ ID2D1HwndRenderTarget* ResourceLoader::fullscreenTarget;
 ID2D1Factory* ResourceLoader::factory;
 IDWriteFactory* ResourceLoader::wfactory;
 std::unordered_map<ColorBrush, ID2D1Brush*> ResourceLoader::brushes;
-IDWriteTextFormat* ResourceLoader::formats[16];
+//IDWriteTextFormat* ResourceLoader::formats[16];
 std::filesystem::path ResourceLoader::runpath;
 IXAudio2* ResourceLoader::pXAudio2;
 IXAudio2MasteringVoice* ResourceLoader::pMasterVoice;
+TextFormatMap ResourceLoader::textFormatMap = {
+  {TextFormat::LEFT_8F, TextFormatData(8.f, false) },
+  {TextFormat::LEFT_10F, TextFormatData(10.f, false) },
+  {TextFormat::LEFT_12F, TextFormatData(12.f, false) },
+  {TextFormat::LEFT_16F, TextFormatData(16.f, false) },
+  {TextFormat::LEFT_24F, TextFormatData(24.f, false) },
+  {TextFormat::CENTER_10F, TextFormatData(10.f, true) },
+  {TextFormat::CENTER_12F, TextFormatData(12.f, true) },
+  {TextFormat::CENTER_14F, TextFormatData(14.f, true) },
+  {TextFormat::CENTER_18F, TextFormatData(18.f, true) },
+  {TextFormat::CENTER_24F, TextFormatData(24.f, true) },
+  {TextFormat::CENTER_72F, TextFormatData(72.f, true) }
+};
 AudioMap ResourceLoader::audioMap = {
   {L"brick.wav", {}},
   {L"brick2.wav", {}},
   {L"lost.wav", {}},
+  {L"laser.wav", {}},
+  {L"click.wav", {}},
   {L"bat.wav", {}}
 };
 
@@ -146,62 +161,28 @@ ID2D1Brush* ResourceLoader::GetBrush(ColorBrush brush)
 
 IDWriteTextFormat* ResourceLoader::GetTextFormat(TextFormat format)
 {
-  return formats[format];
+  return textFormatMap.at(format).format;
+}
+
+const TextFormatData& ResourceLoader::GetTextFormatData(TextFormat format)
+{
+  return textFormatMap.at(format);
 }
 
 void ResourceLoader::InitializeClient(HWND hWnd)
 {
   DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&wfactory));
 
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    12.0f, L"en-us", &formats[TextFormat::LEFT_12F]);
 
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    12.0f, L"en-us", &formats[TextFormat::CENTER_12F]);
-  formats[TextFormat::CENTER_12F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    24.0f, L"en-us", &formats[TextFormat::CENTER_24F]);
-  formats[TextFormat::CENTER_24F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    24.0f, L"en-us", &formats[TextFormat::LEFT_24F]);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    18.0f, L"en-us", &formats[TextFormat::CENTER_18F]);
-  formats[TextFormat::CENTER_18F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    14.0f, L"en-us", &formats[TextFormat::CENTER_14F]);
-  formats[TextFormat::CENTER_14F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    72.0f, L"en-us", &formats[TextFormat::CENTER_72F]);
-  formats[TextFormat::CENTER_72F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    10.0f, L"en-us", &formats[TextFormat::CENTER_10F]);
-  formats[TextFormat::CENTER_10F]->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_NORMAL,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    10.0f, L"en-us", &formats[TextFormat::LEFT_10F]);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    8.0f, L"en-us", &formats[TextFormat::LEFT_8F]);
-
-  wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
-    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-    16.0f, L"en-us", &formats[TextFormat::LEFT_16F]);
+  TextFormatMap::iterator it = textFormatMap.begin();
+  for (; it != textFormatMap.end(); ++it)
+  {
+    wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
+      DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+      it->second.size, L"en-us", &it->second.format);
+    if(it->second.centerAlignment)
+      it->second.format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+  }
 
   D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &factory);
   factory->CreateHwndRenderTarget(
@@ -400,7 +381,7 @@ HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD buffer
   return hr;
 }
 
-void ResourceLoader::PlayAudio(std::wstring audio)
+void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
 {
   AudioMap::iterator it = audioMap.find(audio);
   if (it == audioMap.end())
@@ -414,12 +395,12 @@ void ResourceLoader::PlayAudio(std::wstring audio)
     return;
   }
 
+  it->second.buffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
   if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&it->second.buffer)))
     return;
 
   pSourceVoice->SetVolume(0.5f);
   pSourceVoice->Start(0);
-
 }
 
 HRESULT ResourceLoader::LoadAudioFiles()
@@ -448,7 +429,7 @@ HRESULT ResourceLoader::LoadAudioFiles()
       NULL);
     
     if (INVALID_HANDLE_VALUE == hFile)
-      return HRESULT_FROM_WIN32(GetLastError());  
+      return HRESULT_FROM_WIN32(GetLastError());
 
 
     if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
@@ -472,7 +453,7 @@ HRESULT ResourceLoader::LoadAudioFiles()
     ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
 
     it->second.buffer.AudioBytes = dwChunkSize;  //size of the audio buffer in bytes
-    it->second.buffer.pAudioData = pDataBuffer;  //buffer containing audio data
+    it->second.buffer.pAudioData = pDataBuffer;  //buffer containing audio data    
     // tell the source voice not to expect any data after this buffer
     it->second.buffer.Flags = XAUDIO2_END_OF_STREAM;
     wprintf(L"Loaded audio file: %s\n", it->first.c_str());
