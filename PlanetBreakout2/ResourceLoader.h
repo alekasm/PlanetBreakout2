@@ -96,5 +96,6 @@ private:
   static IXAudio2* pXAudio2;
   static IXAudio2MasteringVoice* pMasterVoice;
   static TextFormatMap textFormatMap;
+  static IXAudio2SourceVoice* pSourceVoice;
 
 };

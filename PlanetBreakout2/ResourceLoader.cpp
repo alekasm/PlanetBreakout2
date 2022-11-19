@@ -21,6 +21,7 @@ std::unordered_map<ColorBrush, ID2D1Brush*> ResourceLoader::brushes;
 std::filesystem::path ResourceLoader::runpath;
 IXAudio2* ResourceLoader::pXAudio2;
 IXAudio2MasteringVoice* ResourceLoader::pMasterVoice;
+IXAudio2SourceVoice* ResourceLoader::pSourceVoice = nullptr;
 TextFormatMap ResourceLoader::textFormatMap = {
   {TextFormat::LEFT_8F, TextFormatData(8.f, false) },
   {TextFormat::LEFT_10F, TextFormatData(10.f, false) },
@@ -36,11 +37,10 @@ TextFormatMap ResourceLoader::textFormatMap = {
 };
 AudioMap ResourceLoader::audioMap = {
   {L"brick.wav", {}},
-  {L"brick2.wav", {}},
   {L"lost.wav", {}},
   {L"laser.wav", {}},
   {L"click.wav", {}},
-  {L"bat.wav", {}}
+  {L"powerup.wav", {}}
 };
 
 ID2D1Factory* ResourceLoader::GetFactory()
@@ -93,6 +93,7 @@ HRESULT LoadBitmapFromFile(
   IWICBitmapFrameDecode* pSource = NULL;
   IWICStream* pStream = NULL;
   IWICFormatConverter* pConverter = NULL;
+
 
   HRESULT hr = pIWICFactory->CreateDecoderFromFilename(
     uri,
@@ -388,7 +389,8 @@ void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
     return;
 
   HRESULT hr;
-  IXAudio2SourceVoice* pSourceVoice;
+  if (pSourceVoice != nullptr)
+    pSourceVoice->DestroyVoice();
   if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice,
     (WAVEFORMATEX*)&it->second.wfx)))
   {
@@ -399,7 +401,7 @@ void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
   if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&it->second.buffer)))
     return;
 
-  pSourceVoice->SetVolume(0.5f);
+  pSourceVoice->SetVolume(1.f);
   pSourceVoice->Start(0);
 }
 
@@ -429,7 +431,10 @@ HRESULT ResourceLoader::LoadAudioFiles()
       NULL);
     
     if (INVALID_HANDLE_VALUE == hFile)
+    {
+      wprintf(L"Failed to load audio file: %s\n", filename.c_str());
       return HRESULT_FROM_WIN32(GetLastError());
+    }
 
 
     if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))

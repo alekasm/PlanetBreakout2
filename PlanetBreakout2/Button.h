@@ -28,14 +28,6 @@ struct Text : PrimitiveText
     textBrush = ResourceLoader::GetBrush(brush);
   }
 
-  /*
-  void AlignText(float x_offset, float y_offset)
-  {
-    textRect.left += x_offset;
-    textRect.top += y_offset;
-  }
-  */
-
   void AlignCenter()
   {
     const TextFormatData& data = ResourceLoader::GetTextFormatData(type);
