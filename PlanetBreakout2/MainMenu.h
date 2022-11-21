@@ -15,6 +15,7 @@ struct MainMenu
   MainMenuState GetState();
   uint32_t GetCampaignPage();
   void RefreshFullscreenButton(Client* client);
+  void RefreshAudioButton();
   const std::wstring& GetDescription(PowerupType) const;
   const std::wstring& GetVersion() const;
   PowerupType GetPowerUpSelection();
@@ -28,6 +29,7 @@ private:
   size_t difficulty_page = 0;
   ID2D1LinearGradientBrush* planetBrush = nullptr;
   Button* fullscreenButton;
+  Button* audioButton;
   std::unordered_map<PowerupType, std::wstring> powerupDescriptions;
   PowerupType currentPowerupSelected;
   std::wstring currentDifficultySelected;

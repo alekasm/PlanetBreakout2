@@ -325,7 +325,7 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       D2D1::RectF(0.f, 420.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
-    std::wstring text_hotkey = L"Hotkeys\nESC = Return to Menu\nF11 = Toggle Fullscreen";
+    std::wstring text_hotkey = L"Hotkeys\nESC = Return to Menu\nF9 = Toggle Audio\nF11 = Toggle Fullscreen";
     target->DrawText(text_hotkey.c_str(), text_hotkey.size(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
       D2D1::RectF(0.f, 660.f, CLIENT_WIDTH, CLIENT_HEIGHT),

@@ -50,6 +50,17 @@ void MainMenu::RefreshFullscreenButton(Client* client)
     fullscreenButton->text.Update(L"Windowed");
 }
 
+void MainMenu::RefreshAudioButton()
+{
+  if (audioButton == nullptr)
+    return;
+  AudioState state = ResourceLoader::GetAudioState();
+  if (state == AudioState::ON)
+    audioButton->icon.UpdateBitmap(L"audioon");
+  else
+    audioButton->icon.UpdateBitmap(L"audiooff");
+}
+
 PowerupType MainMenu::GetPowerUpSelection()
 {
   return currentPowerupSelected;
@@ -285,17 +296,13 @@ void MainMenu::initialize(Client* client)
     button0->onClick = [this, button0, client]() {
       AudioState state = ResourceLoader::GetAudioState();
       if (state == AudioState::ON)
-      {
         state = AudioState::OFF;
-        button0->icon.UpdateBitmap(L"audiooff");
-      }
       else
-      {
         state = AudioState::ON;
-        button0->icon.UpdateBitmap(L"audioon");
-      }
-      ResourceLoader::SetAudioState(state); 
+      ResourceLoader::SetAudioState(state);
+      RefreshAudioButton();
     };
+    audioButton = button0;
     buttons[MainMenuState::MAIN].push_back(button0);
     buttons[MainMenuState::INFO].push_back(button0);
   }

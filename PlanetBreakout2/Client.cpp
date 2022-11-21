@@ -298,7 +298,15 @@ void Client::ProcessWM_KEYDOWN(WPARAM wParam)
     ToggleFullScreen();
     mainMenu.RefreshFullscreenButton(this);
   }
-  if (wParam == VK_ESCAPE)
+  else if (wParam == VK_F9)
+  {
+    if(ResourceLoader::GetAudioState() == AudioState::ON)
+      ResourceLoader::SetAudioState(AudioState::OFF);
+    else
+      ResourceLoader::SetAudioState(AudioState::ON);
+    mainMenu.RefreshAudioButton();
+  }
+  else if (wParam == VK_ESCAPE)
   {
     GameController::GetInstance()->EndGame();
     SetClientFocus(false);
