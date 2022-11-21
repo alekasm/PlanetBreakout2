@@ -39,13 +39,30 @@ struct Highscore
   std::wstring name;
   uint16_t score = 0;
   time_t date;
+  DifficultyType difficulty;
   bool pseudo = false;
   bool operator<(const Highscore& other) const
   {
     return score > other.score;
   }
+  const uint64_t CalculateChecksum() const
+  {
+    uint64_t count = 0;
+    for (wchar_t w : name)
+      count += w;
+    count += score;
+    count += date;
+    count += (int)difficulty;
+    return UINT64_MAX - count;
+  }
+
+  const bool IsValid(uint64_t checksum) const
+  {
+    return checksum == CalculateChecksum();
+  }
 };
 
+typedef std::unordered_map<DifficultyType, std::vector<Highscore>> HighscoreMap;
 struct Campaign
 {
   Campaign();
@@ -55,12 +72,16 @@ struct Campaign
   std::vector<GameLevel> levels;
   std::wstring path;
   void AddHighscore(Highscore&);
-  bool NewHighscore(uint16_t score);
-  std::vector<Highscore>& GetHighscores();
-  void SaveHighscores();
+  bool NewHighscore(DifficultyType, uint16_t score);
+  std::vector<Highscore>& GetHighscores(DifficultyType);
   void SetTestMode();
   bool IsTestMode();
+  HighscoreMap& GetHighscores();
 private:
-  std::vector<Highscore> highscores;
+  HighscoreMap highscores{
+    {DifficultyType::EASY, {}},
+    {DifficultyType::MEDIUM, {}},
+    {DifficultyType::HARD, {}}
+  };
   bool test = false;
 };

@@ -39,6 +39,7 @@ enum ColorBrush {
   GRADIENT_BUTTON
 };
 
+enum AudioState {ON, OFF};
 
 enum TextFormat {
   LEFT_8F, LEFT_10F, LEFT_12F,
@@ -63,6 +64,7 @@ typedef std::unordered_map<std::wstring, ID2D1Bitmap*> SpriteMap;
 struct AudioData {
   WAVEFORMATEXTENSIBLE wfx = { 0 };
   XAUDIO2_BUFFER buffer = { 0 };
+  IXAudio2SourceVoice* pSourceVoice = nullptr;
 };
 typedef std::unordered_map<std::wstring, AudioData> AudioMap;
 struct ResourceLoader
@@ -82,6 +84,8 @@ struct ResourceLoader
   static const TextFormatData& GetTextFormatData(TextFormat);
   static ID2D1Factory* GetFactory();
   static std::filesystem::path GetLevelPath();
+  static void SetAudioState(AudioState);
+  static AudioState GetAudioState();
 private:
   static std::filesystem::path runpath;
   static SpriteMap sprite_map;
@@ -96,6 +100,5 @@ private:
   static IXAudio2* pXAudio2;
   static IXAudio2MasteringVoice* pMasterVoice;
   static TextFormatMap textFormatMap;
-  static IXAudio2SourceVoice* pSourceVoice;
-
+  static AudioState audioState;
 };

@@ -251,7 +251,8 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
     std::wstring name_string;
     std::wstring score_string;
     std::wstring date_string;
-    for (const Highscore& h : campaign.GetHighscores())
+    const DifficultyType difficulty = GameController::GetInstance()->GetDifficultyType();
+    for (const Highscore& h : campaign.GetHighscores(difficulty))
     {
       wchar_t buffer_score[64];
       wchar_t buffer_name[64];

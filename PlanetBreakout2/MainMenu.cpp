@@ -45,9 +45,9 @@ void MainMenu::RefreshFullscreenButton(Client* client)
   if (fullscreenButton == nullptr)
     return;
   if (client->IsFullScreen())
-    fullscreenButton->text.Update(L"Windowed");
-  else
     fullscreenButton->text.Update(L"Fullscreen");
+  else
+    fullscreenButton->text.Update(L"Windowed");
 }
 
 PowerupType MainMenu::GetPowerUpSelection()
@@ -132,7 +132,7 @@ void MainMenu::initialize(Client* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) + 0, 300, 30);
     Button* button0 = new Button(button0draw);
-    Text button0Text(button0draw.GetD2D1Rect(), L"Fullscreen");
+    Text button0Text(button0draw.GetD2D1Rect(), L"Windowed");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
     ID2D1LinearGradientBrush* fillBrush;
@@ -266,7 +266,7 @@ void MainMenu::initialize(Client* client)
     buttons[MainMenuState::INFO].push_back(button0);
   }
 
-  /*
+  
   {
     Drawable button0draw(10, CLIENT_HEIGHT - 60, 42, 42);
     Button* button0 = new Button(button0draw);
@@ -275,29 +275,31 @@ void MainMenu::initialize(Client* client)
       (FLOAT)button0->y,
       (FLOAT)button0->x + 32.f,
       (FLOAT)button0->y + 32.f),
-      L"maximize");
+      L"audioon");
     button1icon.CenterX(button0->GetD2D1Rect());
     button1icon.CenterY(button0->GetD2D1Rect());
     button0->SetIcon(button1icon);
-
-    ID2D1LinearGradientBrush* fillBrush;
-    ResourceLoader::GetHwndRenderTarget()->CreateLinearGradientBrush(
-      props, collection, &fillBrush);
-    button0->SetButtonFill(fillBrush);
-    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::BLUE), 1.5f);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::DARK_GRAY), 1.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->action = [this, button0, client]() {
-      client->ToggleFullScreen();
-      RefreshFullscreenButton(client);
-      if (client->IsFullScreen())
-        button0->icon.UpdateBitmap(L"minimize");
+    button0->onClick = [this, button0, client]() {
+      AudioState state = ResourceLoader::GetAudioState();
+      if (state == AudioState::ON)
+      {
+        state = AudioState::OFF;
+        button0->icon.UpdateBitmap(L"audiooff");
+      }
       else
-        button0->icon.UpdateBitmap(L"maximize");
+      {
+        state = AudioState::ON;
+        button0->icon.UpdateBitmap(L"audioon");
+      }
+      ResourceLoader::SetAudioState(state); 
     };
     buttons[MainMenuState::MAIN].push_back(button0);
+    buttons[MainMenuState::INFO].push_back(button0);
   }
-  */
+  
 
 
   if (!GameLoader::GetCampaigns().empty())

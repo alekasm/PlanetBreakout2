@@ -198,13 +198,20 @@ bool GameLoader::SaveCampaign(Campaign& campaign)
   output << L"name:" << campaign.name << L"\n";
   output << L"bat:" << campaign.bat_sprite << L"\n";
   output << L"ball:" << campaign.ball_sprite << L"\n";
-  for (const Highscore& h : campaign.GetHighscores())
+  HighscoreMap::const_iterator h_it;
+  for (h_it = campaign.GetHighscores().begin();
+    h_it != campaign.GetHighscores().end(); ++h_it)
   {
-    if (h.pseudo) continue;
-    output << L"highscore:";
-    output << h.name << L",";
-    output << std::to_wstring(h.score) << L",";
-    output << std::to_wstring(h.date) << L"\n";
+    for (const Highscore& h : h_it->second)
+    {
+      if (h.pseudo) continue;
+      output << L"highscore:";
+      output << h.name << L",";
+      output << std::to_wstring(h.score) << L",";
+      output << std::to_wstring(h.difficulty) << L",";
+      output << std::to_wstring(h.date) << L",";
+      output << std::to_wstring(h.CalculateChecksum()) << L"\n";
+    }
   }
   output.close();
   CampaignMap::iterator it = campaignMap.find(campaign.name);
@@ -237,12 +244,17 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
       campaign.name = first_value;
     else if (t.key == L"highscore")
     {
-      if (t.values.size() != 3) continue;
+      if (t.values.size() != 5) continue;
       Highscore highscore;
       highscore.name = first_value;
       highscore.score = (uint16_t)std::stoi(t.values.at(1).c_str());
-      highscore.date = std::stoll(t.values.at(2).c_str());
-      campaign.AddHighscore(highscore);
+      highscore.difficulty = (DifficultyType)std::stoi(t.values.at(2).c_str());
+      wchar_t* end1;
+      highscore.date = std::wcstoll(t.values.at(3).c_str(), &end1, 10);
+      wchar_t* end2;
+      uint64_t checksum = std::wcstoull(t.values.at(4).c_str(), &end2, 10);
+      if(highscore.IsValid(checksum))
+        campaign.AddHighscore(highscore);
     }
   }
   return true;

@@ -14,9 +14,8 @@
 #include "GamePowerUp.h"
 
 enum class GameType {GAME_NORMAL, GAME_CUSTOM, GAME_EDITOR, MAIN_MENU};
-enum class LevelState {START, ACTIVE, PAUSED, END, GAME_OVER, HIGHSCORE};
+enum class LevelState {START, ACTIVE, PAUSED, ENDING, END, GAME_OVER, HIGHSCORE};
 enum class DynamicSpriteType { BAT, BALL};
-enum class DifficultyType {CASUAL, HARD};
 typedef std::unordered_map<PowerupType, GamePowerUp> GamePowerUpMap;
 struct Difficulty
 {
@@ -74,12 +73,14 @@ struct GameController
   POINT GetMousePos();
   void SetDifficulty(DifficultyType);
   const Difficulty& GetDifficulty();
+  const DifficultyType GetDifficultyType() const;
   const DifficultyMap& GetDifficultyMap() const;
 private:
   POINT mousePos;
   Bat* bat = nullptr;
   void ClearBarrierBricks();
   void ClearBrickShield();
+  void CalculateBonus();
   Laser laser;
   size_t current_level = 0;
   uint32_t lives = 0;
@@ -95,6 +96,7 @@ private:
   void Respawn();
   float game_speed = 5.f;
   uint16_t score = 0;
+  uint16_t levelEndBonusCount = 0;
   size_t random_chance = 20;
   std::chrono::microseconds timer;
   static GameController* instance;
@@ -118,10 +120,11 @@ private:
   };
 
   DifficultyMap difficultyMap = {
-    {DifficultyType::CASUAL, Difficulty(5.5f, 0.02f, 2.f, L"Casual")},
-    {DifficultyType::HARD, Difficulty(8.f, 0.05f, 3.5f, L"Hard")},
+    {DifficultyType::EASY, Difficulty(5.5f, 0.02f, 2.f, L"Space Cadet")},
+    {DifficultyType::MEDIUM, Difficulty(8.f, 0.05f, 3.5f, L"Lunar Captain")},
+    {DifficultyType::HARD, Difficulty(8.f, 0.1f, 4.5f, L"Galaxy Commander")},
   };
-  DifficultyType currentDifficulty = DifficultyType::CASUAL;
+  DifficultyType currentDifficulty = DifficultyType::EASY;
 
   POINTF menuLightOrigin;
   POINTF menuLightEnd;

@@ -73,6 +73,10 @@ void GameController::SetDifficulty(DifficultyType difficulty)
   currentDifficulty = difficulty;
 }
 
+const DifficultyType GameController::GetDifficultyType() const
+{
+  return currentDifficulty;
+}
 const Difficulty& GameController::GetDifficulty()
 {
   return difficultyMap.at(currentDifficulty);
@@ -91,6 +95,7 @@ void GameController::SetHighscoreName(std::wstring name)
   highscore.date = time(NULL);
   highscore.score = score;
   highscore.name = name;
+  highscore.difficulty = currentDifficulty;
   campaign.AddHighscore(highscore);
 
   //Needs to write back to gameloader...
@@ -253,7 +258,7 @@ void GameController::Respawn()
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
-    if (!campaign.IsTestMode() && campaign.NewHighscore(score))
+    if (!campaign.IsTestMode() && campaign.NewHighscore(currentDifficulty, score))
     {
       level_state = LevelState::HIGHSCORE;
     }
@@ -416,6 +421,7 @@ void GameController::NextLevel()
     ++current_level;
   bricks = campaign.levels.at(current_level).GetBrickMap();
   Respawn();
+  CalculateBonus();
   level_state = LevelState::START;
 }
 
@@ -443,7 +449,20 @@ void GameController::GameUpdate()
     planetEffect->UpdateFrame(delta.count());
     return;
   }
-
+  if (level_state == LevelState::ENDING)
+  {
+    if (levelEndBonusCount == 0)
+    {
+      level_state = LevelState::END;
+    }
+    else
+    {
+      levelEndBonusCount--;
+      ResourceLoader::PlayAudio(L"brick.wav");
+      AddScore(10);
+      Sleep(35);
+    }
+  }
   if (level_state == LevelState::PAUSED)
     return;
   if (level_state == LevelState::GAME_OVER)
@@ -453,8 +472,8 @@ void GameController::GameUpdate()
   if (level_state == LevelState::HIGHSCORE)
     return;
   if (bricks.Empty())
-  {
-    level_state = LevelState::END;
+  {  
+    level_state = LevelState::ENDING;
     return;
   }
 
@@ -469,7 +488,6 @@ void GameController::GameUpdate()
   if (level_state == LevelState::START)
     return;
 
-  //vector<Base*> v2(v1.begin(), v1.end());
   std::vector<DynamicEffect*>::iterator effects_it;
   for (effects_it = effects.begin(); effects_it != effects.end();)
   {
@@ -651,6 +669,13 @@ const std::vector<Star>& GameController::GetStars() const
   return stars;
 }
 
+void GameController::CalculateBonus()
+{
+  levelEndBonusCount = 0;
+  const BrickMap& brickmap = campaign.levels.at(current_level).GetBrickMap();
+  levelEndBonusCount = brickmap.size() / 2;
+}
+
 void GameController::CreateGame(Campaign& campaign)
 {
   this->campaign = campaign;
@@ -662,6 +687,7 @@ void GameController::CreateGame(Campaign& campaign)
   score = 0;
   bricks = campaign.levels.at(current_level).GetBrickMap();
   Respawn();
+  CalculateBonus();
 }
 
 void GameController::EndGame()

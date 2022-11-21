@@ -7,6 +7,7 @@
 
 enum class EntityType { SPRITE, VISUAL, VISUAL_EFFECT };
 enum BrickType { NORMAL_BRICK, INVINCIBLE_BRICK, NO_POINT };
+enum DifficultyType { EASY = 0, MEDIUM = 1, HARD = 2 };
 //Used for loading types, user cannot specify a no-point brick
 #define ISVALID_BRICKTYPE(v) (v >= NORMAL_BRICK && v <= INVINCIBLE_BRICK)
 

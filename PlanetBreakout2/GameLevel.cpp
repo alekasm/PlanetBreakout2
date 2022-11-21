@@ -120,17 +120,17 @@ namespace
   };
 }
 
-
 void Campaign::AddHighscore(Highscore& highscore)
 {
-  highscores.push_back(highscore);
-  std::sort(highscores.begin(), highscores.end());
-  highscores.erase(highscores.begin() + HIGHSCORE_SIZE, highscores.end());
+  std::vector<Highscore>& vscore = highscores.at(highscore.difficulty);
+  vscore.push_back(highscore);
+  std::sort(vscore.begin(), vscore.end());
+  vscore.erase(vscore.begin() + HIGHSCORE_SIZE, vscore.end());
 }
 
-bool Campaign::NewHighscore(uint16_t score)
+bool Campaign::NewHighscore(DifficultyType difficulty, uint16_t score)
 {
-  for (Highscore& h : highscores)
+  for (const Highscore& h : highscores.at(difficulty))
   {
     if (score > h.score)
       return true;
@@ -140,17 +140,23 @@ bool Campaign::NewHighscore(uint16_t score)
 
 Campaign::Campaign()
 {
-  for (unsigned i = 0; i < HIGHSCORE_SIZE; ++i)
+  HighscoreMap::iterator it;
+  int16_t multiplier = 100;
+  for (it = highscores.begin(); it != highscores.end(); ++it)
   {
-    Highscore h;
-    h.name = HighscoreNames[rand() % HIGHSCORE_SIZE];
-    h.score = (i + 1) * 100;
-    time_t now = time(NULL);
-    h.date = now - (rand() % 365 + 1) * 24 * 60 * 60;
-    h.pseudo = true;
-    highscores.push_back(h);
+    for (unsigned i = 0; i < HIGHSCORE_SIZE; ++i)
+    {
+      Highscore h;
+      h.name = HighscoreNames[rand() % HIGHSCORE_SIZE];
+      h.score = (i + 1) * multiplier;
+      time_t now = time(NULL);
+      h.date = now - (rand() % 365 + 1) * 24 * 60 * 60;
+      h.pseudo = true;
+      it->second.push_back(h);
+    }
+    std::sort(it->second.begin(), it->second.end());
+    multiplier *= 5;
   }
-  std::sort(highscores.begin(), highscores.end());
 }
 
 void Campaign::SetTestMode()
@@ -163,12 +169,12 @@ bool Campaign::IsTestMode()
   return test;
 }
 
-std::vector<Highscore>& Campaign::GetHighscores()
+std::vector<Highscore>& Campaign::GetHighscores(DifficultyType difficulty)
 {
-  return highscores;
+  return highscores.at(difficulty);
 }
 
-void Campaign::SaveHighscores()
+HighscoreMap& Campaign::GetHighscores()
 {
-
+  return highscores;
 }

@@ -17,11 +17,10 @@ ID2D1HwndRenderTarget* ResourceLoader::fullscreenTarget;
 ID2D1Factory* ResourceLoader::factory;
 IDWriteFactory* ResourceLoader::wfactory;
 std::unordered_map<ColorBrush, ID2D1Brush*> ResourceLoader::brushes;
-//IDWriteTextFormat* ResourceLoader::formats[16];
 std::filesystem::path ResourceLoader::runpath;
 IXAudio2* ResourceLoader::pXAudio2;
 IXAudio2MasteringVoice* ResourceLoader::pMasterVoice;
-IXAudio2SourceVoice* ResourceLoader::pSourceVoice = nullptr;
+AudioState ResourceLoader::audioState = AudioState::ON;
 TextFormatMap ResourceLoader::textFormatMap = {
   {TextFormat::LEFT_8F, TextFormatData(8.f, false) },
   {TextFormat::LEFT_10F, TextFormatData(10.f, false) },
@@ -42,6 +41,16 @@ AudioMap ResourceLoader::audioMap = {
   {L"click.wav", {}},
   {L"powerup.wav", {}}
 };
+
+AudioState ResourceLoader::GetAudioState()
+{
+  return audioState;
+}
+
+void ResourceLoader::SetAudioState(AudioState state)
+{
+  audioState = state;
+}
 
 ID2D1Factory* ResourceLoader::GetFactory()
 {
@@ -384,13 +393,20 @@ HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD buffer
 
 void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
 {
+  if (audioState == AudioState::OFF)
+    return;
   AudioMap::iterator it = audioMap.find(audio);
   if (it == audioMap.end())
     return;
 
   HRESULT hr;
+  IXAudio2SourceVoice* pSourceVoice = it->second.pSourceVoice;
   if (pSourceVoice != nullptr)
+  {
     pSourceVoice->DestroyVoice();
+    delete pSourceVoice;
+    pSourceVoice = nullptr;
+  }
   if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice,
     (WAVEFORMATEX*)&it->second.wfx)))
   {
