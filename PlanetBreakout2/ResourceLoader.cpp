@@ -403,6 +403,7 @@ void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
   IXAudio2SourceVoice* pSourceVoice = it->second.pSourceVoice;
   if (pSourceVoice != nullptr)
   {
+    pSourceVoice->Stop();
     pSourceVoice->DestroyVoice();
     delete pSourceVoice;
     pSourceVoice = nullptr;
@@ -410,6 +411,7 @@ void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
   if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice,
     (WAVEFORMATEX*)&it->second.wfx)))
   {
+    pSourceVoice = nullptr;
     return;
   }
 

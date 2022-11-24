@@ -324,7 +324,7 @@ void MainMenu::initialize(Client* client)
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
     button0->SetButtonHighlightType(ButtonHighlightType::FILL,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-    button0->onClick = [this, client]() {
+    button0->onClick = [this, client, button0]() {
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
         client->SetClientFocus(true);
@@ -332,8 +332,9 @@ void MainMenu::initialize(Client* client)
         std::advance(it, campaign_page);
         GameController::GetInstance()->CreateGame(it->second);
         SwitchState(MainMenuState::MAIN);
-        campaign_page = 0;
+        //campaign_page = 0;
         //it = GameLoader::GetCampaigns().begin();
+        //currentCampaignNameSelected = it->second.name;
         //button0->text.Update(it->second.name);
       }
     };

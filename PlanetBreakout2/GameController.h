@@ -122,7 +122,7 @@ private:
   DifficultyMap difficultyMap = {
     {DifficultyType::EASY, Difficulty(5.5f, 0.02f, 2.f, L"Space Cadet")},
     {DifficultyType::MEDIUM, Difficulty(8.f, 0.05f, 3.5f, L"Lunar Captain")},
-    {DifficultyType::HARD, Difficulty(8.f, 0.1f, 4.5f, L"Galaxy Commander")},
+    {DifficultyType::HARD, Difficulty(10.f, 0.1f, 4.5f, L"Galaxy Commander")},
   };
   DifficultyType currentDifficulty = DifficultyType::EASY;
 

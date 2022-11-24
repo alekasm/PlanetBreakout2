@@ -73,33 +73,55 @@ void DynamicCollider::PreFrameUpdate()
   
   if(!collision && (collision_mask & CollisionType::BRICK))
   {
-    //Check brick collisions 
-    float right = real_x + width;
-    float bottom = real_y + height;
-    long px1 = real_x / BRICK_WIDTH;
-    long py1 = real_y / BRICK_HEIGHT;
-    long px2 = right / BRICK_WIDTH;
-    long py2 = bottom / BRICK_HEIGHT;
 
-    std::vector<POINT> index_check = {
-      POINT { px1, py1 },
-      POINT { px1, py2 },
-      POINT { px2, py1 },
-      POINT { px2, py2 }
-    };
+    //TODO: check to see if already in a brick
+
+
+    //The brick check collision is slightly more advanced than checking
+    //if the destination will hit a brick. Instead it checks all the bricks
+    //along a path. This is to prevent brick-skipping, in which the speed
+    //of the ball skips over a brick.  
+
+    float next_right = ceilf(real_x + width);
+    float next_bottom = ceilf(real_y + height);
+    uint32_t next_px1 = floorf(real_x) / BRICK_WIDTH;
+    uint32_t next_py1 = floorf(real_y) / BRICK_HEIGHT;
+    uint32_t next_px2 = next_right / BRICK_WIDTH;
+    uint32_t next_py2 = next_bottom / BRICK_HEIGHT;
+
+    float old_right = ceilf(old_x + width);
+    float old_bottom = ceilf(old_y + height);
+    uint32_t old_px1 = floorf(old_x) / BRICK_WIDTH;
+    uint32_t old_py1 = floorf(old_y) / BRICK_HEIGHT;
+    uint32_t old_px2 = old_right / BRICK_WIDTH;
+    uint32_t old_py2 = old_bottom / BRICK_HEIGHT;
+
+    int32_t x_dir = old_px1 < next_px1 ? 1 : -1;
+    int32_t y_dir = old_py1 < next_py1 ? 1 : -1;
+
+    uint32_t x_start = x_dir < 0 ? old_px2 : old_px1;
+    uint32_t x_end = x_dir > 0 ? next_px2 : next_px1;
+
+    uint32_t y_start = y_dir < 0 ? old_py2 : old_py1;
+    uint32_t y_end = y_dir > 0 ? next_py2 : next_py1;
 
     BrickMap& map = GameController::GetInstance()->GetBrickMap();
-    for (const POINT& p : index_check)
+    for (uint32_t y = y_start; y != (y_end + y_dir); y += y_dir)
     {
-      uint32_t index;
-      if (!GetBrickIndex(p.x, p.y, index))
-        continue;
-      BrickMap::iterator it = map.find(index);
-      if (it != map.end() && !it->second.empty())
+      for (uint32_t x = x_start; x != (x_end + x_dir); x += x_dir)
       {
-        CollisionBrick(it->first);
-        break;
+        uint32_t index;
+        if (!GetBrickIndex(x, y, index))
+          continue;
+        BrickMap::iterator it = map.find(index);
+        if (it != map.end() && !it->second.empty())
+        {
+          CollisionBrick(it->first);
+          return;
+        }
       }
     }
+
+
   }
 }

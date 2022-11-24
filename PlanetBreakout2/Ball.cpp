@@ -23,31 +23,59 @@ void Ball::Collision(BallCollisionType type)
 void Ball::CollisionVerticalWall()
 {
   Collision(BallCollisionType::VERTICAL);
-  ResourceLoader::PlayAudio(L"brick.wav");
 }
 void Ball::CollisionHorizontalWall()
 {
   Collision(BallCollisionType::HORIZONTAL);
-  ResourceLoader::PlayAudio(L"brick.wav");
+
 }
 void Ball::CollisionBrick(uint32_t index)
 {
   if (GameController::GetInstance()->BreakBrick(this, index))
   {
     RECT brickRect = GetBrickRect(index);
-    if (old_y > brickRect.bottom || (old_y + BALL_DIMENSION) < brickRect.top)
+
+    /*
+    bool z_left = old_x < real_x;
+    bool z_right = old_x > real_x;
+    bool z_above = old_y < real_y;
+    bool z_below = old_y > real_y;
+    */
+
+    bool from_below = old_y > brickRect.bottom && real_y < brickRect.bottom;
+    bool from_above = (old_y + BALL_DIMENSION) < brickRect.top &&
+      (real_y + BALL_DIMENSION) > brickRect.top;
+    bool from_left = (old_x + BALL_DIMENSION) < brickRect.left &&
+      (real_x + BALL_DIMENSION) > brickRect.left;
+    bool from_right = old_x > brickRect.right && real_x < brickRect.right;
+
+    bool horizontal = from_below || from_above;
+    bool vertical = from_left || from_right;
+
+    if (horizontal)
     {
       Collision(BallCollisionType::HORIZONTAL);
+      ResourceLoader::PlayAudio(L"brick.wav");
     }
-    else
+    else if (vertical)
     {
       Collision(BallCollisionType::VERTICAL);
+      ResourceLoader::PlayAudio(L"brick.wav");
     }
-    //(old_y + BALL_DIMENSION) > brickRect.left
+
+    if (horizontal || vertical)
+    {
+      if (from_left)
+        real_x = brickRect.left - BALL_DIMENSION;
+      else if (from_right)
+        real_x = brickRect.right;
+      if (from_above)
+        real_y = brickRect.top - BALL_DIMENSION;
+      else if (from_below)
+        real_y = brickRect.bottom;
+    }
   }
-  //Seems fine for now, instead of manually setting ball position
-  real_x = old_x; // real_x + cos(direction);
-  real_y = old_y; // real_y + sin(direction);
+  
 }
 void Ball::CollisionBat(float x1, float x2)
 {
