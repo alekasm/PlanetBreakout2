@@ -22,10 +22,11 @@ void DroneLaser::CollisionHorizontalWall()
   active = false;
 }
 
-void DroneLaser::CollisionBrick(uint32_t index)
+bool DroneLaser::CollisionBrick(uint32_t index)
 {
   if (GameController::GetInstance()->BreakBrick(this, index))
     active = false;
+  return true;
 }
 
 void DroneLaser::CollisionBat(float x1, float x2)

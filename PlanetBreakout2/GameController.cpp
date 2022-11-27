@@ -133,7 +133,7 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  v_powerups[0] = PowerupType::LASER_BAT;
+  //v_powerups[0] = PowerupType::LASER_BAT;
   ResourceLoader::PlayAudio(L"powerup.wav");
   for (int i : v_powerups)
   {
@@ -329,7 +329,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
-  ResourceLoader::PlayAudio(L"brick.wav");
+  //ResourceLoader::PlayAudio(L"brick.wav");
   if (erased > 0)
   {
     unsigned col = index % GRID_COLUMNS;

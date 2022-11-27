@@ -373,6 +373,7 @@ void DrawGame(Client* menu)
   ID2D1Brush* redFullBrush = ResourceLoader::GetBrush(ColorBrush::RED);
 
   target->BeginDraw();
+
   if (menu->IsFullScreen())
   {
     target->SetTransform(
@@ -650,6 +651,35 @@ void DrawGame(Client* menu)
     target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"mouse"),
       D2D1::RectF(p.x, p.y, p.x + 16, p.y + 16), 1.0f);
   }
+
+  /*
+  for (unsigned x = 0; x < GAME_WIDTH; x += BRICK_WIDTH)
+  {
+    target->DrawLine(
+      D2D1::Point2F((FLOAT)x, 0.f), D2D1::Point2F((FLOAT)x, GAME_HEIGHT),
+      brushes);
+
+    std::wstring count = std::to_wstring(x / BRICK_WIDTH);
+    target->DrawTextA(count.c_str(), count.length(),
+      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+      D2D1::RectF(x + 1.f, 0.f,
+        (x + BRICK_WIDTH), 14.f), greenBrush);
+
+  }
+
+  for (unsigned y = 0; y < GAME_HEIGHT; y += BRICK_HEIGHT)
+  {
+    target->DrawLine(
+      D2D1::Point2F(0.f, (FLOAT)y), D2D1::Point2F(GAME_WIDTH, (FLOAT)y),
+      brushes);
+
+    std::wstring count = std::to_wstring(y / BRICK_HEIGHT);
+    target->DrawTextA(count.c_str(), count.length(),
+      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+      D2D1::RectF(0.f, y + 1.f,
+        14.f, y + 16.f), greenBrush);
+  }
+  */
 
   target->EndDraw();
 }

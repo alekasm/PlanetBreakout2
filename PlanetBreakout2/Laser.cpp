@@ -12,10 +12,11 @@ void Laser::Start()
   real_y = y;
   direction = -(M_PI / 2.f);
 }
-void Laser::CollisionBrick(uint32_t index)
+bool Laser::CollisionBrick(uint32_t index)
 {
   if(GameController::GetInstance()->BreakBrick(this, index))
     active = false;
+  return true;
 }
 
 void Laser::PostFrameUpdate(float elapsed)

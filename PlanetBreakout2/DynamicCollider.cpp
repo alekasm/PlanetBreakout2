@@ -6,7 +6,7 @@
 
 void DynamicCollider::CollisionVerticalWall() {}
 void DynamicCollider::CollisionHorizontalWall() {}
-void DynamicCollider::CollisionBrick(uint32_t index) {}
+bool DynamicCollider::CollisionBrick(uint32_t index) { return false; }
 void DynamicCollider::CollisionBat(float x1, float x2) {}
 
 
@@ -73,26 +73,24 @@ void DynamicCollider::PreFrameUpdate()
   
   if(!collision && (collision_mask & CollisionType::BRICK))
   {
-
     //TODO: check to see if already in a brick
-
 
     //The brick check collision is slightly more advanced than checking
     //if the destination will hit a brick. Instead it checks all the bricks
     //along a path. This is to prevent brick-skipping, in which the speed
-    //of the ball skips over a brick.  
+    //of the ball skips over a brick.
 
-    float next_right = ceilf(real_x + width);
-    float next_bottom = ceilf(real_y + height);
-    uint32_t next_px1 = floorf(real_x) / BRICK_WIDTH;
-    uint32_t next_py1 = floorf(real_y) / BRICK_HEIGHT;
+    float next_right = (real_x + width);
+    float next_bottom = (real_y + height);
+    uint32_t next_px1 = (real_x) / BRICK_WIDTH;
+    uint32_t next_py1 = (real_y) / BRICK_HEIGHT;
     uint32_t next_px2 = next_right / BRICK_WIDTH;
     uint32_t next_py2 = next_bottom / BRICK_HEIGHT;
 
-    float old_right = ceilf(old_x + width);
-    float old_bottom = ceilf(old_y + height);
-    uint32_t old_px1 = floorf(old_x) / BRICK_WIDTH;
-    uint32_t old_py1 = floorf(old_y) / BRICK_HEIGHT;
+    float old_right = (old_x + width);
+    float old_bottom = (old_y + height);
+    uint32_t old_px1 = (old_x) / BRICK_WIDTH;
+    uint32_t old_py1 = (old_y) / BRICK_HEIGHT;
     uint32_t old_px2 = old_right / BRICK_WIDTH;
     uint32_t old_py2 = old_bottom / BRICK_HEIGHT;
 
@@ -116,11 +114,12 @@ void DynamicCollider::PreFrameUpdate()
         BrickMap::iterator it = map.find(index);
         if (it != map.end() && !it->second.empty())
         {
-          CollisionBrick(it->first);
-          return;
+          if(CollisionBrick(it->first))
+            return;
         }
       }
     }
+
 
 
   }

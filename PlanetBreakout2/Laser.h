@@ -11,7 +11,7 @@ struct Laser : DynamicCollider
     RegisterCollision(CollisionType::WALL_HOR);
   }
   void Start() override;
-  virtual void CollisionBrick(uint32_t index) override;
+  virtual bool CollisionBrick(uint32_t index) override;
   virtual void CollisionHorizontalWall() override;
   virtual void PostFrameUpdate(float elapsed) override;
 };

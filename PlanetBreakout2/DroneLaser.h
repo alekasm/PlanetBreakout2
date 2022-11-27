@@ -15,6 +15,6 @@ struct DroneLaser : DynamicCollider
   void Start() override;
   virtual void CollisionVerticalWall() override;
   virtual void CollisionHorizontalWall() override;
-  virtual void CollisionBrick(uint32_t index) override;
+  virtual bool CollisionBrick(uint32_t index) override;
   virtual void CollisionBat(float x1, float x2) override;
 };

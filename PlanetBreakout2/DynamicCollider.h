@@ -15,7 +15,7 @@ struct DynamicCollider : DynamicEntity
   void RegisterCollision(CollisionType);
   virtual void CollisionVerticalWall();
   virtual void CollisionHorizontalWall();
-  virtual void CollisionBrick(uint32_t index);
+  virtual bool CollisionBrick(uint32_t index);
   virtual void CollisionBat(float x1, float x2);
 private:
   unsigned collision_mask = 0;

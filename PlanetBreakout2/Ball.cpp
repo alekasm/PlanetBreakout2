@@ -29,53 +29,210 @@ void Ball::CollisionHorizontalWall()
   Collision(BallCollisionType::HORIZONTAL);
 
 }
-void Ball::CollisionBrick(uint32_t index)
+
+float Det(float a, float b, float c, float d)
 {
+  return a * d - b * c;
+}
+
+bool get_line_intersection(float p0_x, float p0_y, float p1_x, float p1_y,
+  float p2_x, float p2_y, float p3_x, float p3_y, float* i_x, float* i_y)
+{
+  float s1_x, s1_y, s2_x, s2_y;
+  s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+  s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+
+  float s, t;
+  s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+  t = (s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+  if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+  {
+    // Collision detected
+    if (i_x != NULL)
+      *i_x = p0_x + (t * s1_x);
+    if (i_y != NULL)
+      *i_y = p0_y + (t * s1_y);
+    return true;
+  }
+
+  return false; // No collision
+}
+
+struct Point
+{
+  float x;
+  float y;
+};
+
+struct Line
+{
+  Point a;
+  Point b;
+};
+
+
+enum HitCheck { FROM_LEFT, FROM_RIGHT, FROM_ABOVE, FROM_BOTTOM, NONE };
+
+struct Hit
+{
+  Point p;
+  HitCheck check;
+  float dist = 0.f;
+};
+
+struct HitLine
+{
+  Line line;
+  HitCheck check;
+};
+
+bool Ball::CollisionBrick(uint32_t index)
+{
+  RECT brickRect = GetBrickRect(index);
+
+  float cx1 = (old_x);
+  float cy1 = (old_y);
+  float cx2 = (real_x);// *cos(direction) * 1.f;
+  float cy2 = (real_y);// *sin(direction) * 1.f;
+
+  bool going_right = old_x < real_x;//&& real_x + width > brickRect.left;
+  bool going_left = old_x > real_x; //&& real_x < brickRect.right;
+  bool going_down = old_y < real_y; //&& real_y + height > brickRect.top;
+  bool going_up = old_y > real_y;//&& real_y < brickRect.bottom;
+
+  bool from_left = false;
+  bool from_right = false;
+  bool from_above = false;
+  bool from_below = false;
+
+
+  Point old_topleft = { cx1, cy1 };
+  Point old_topright = { cx1 + width, cy1 };
+  Point old_bottomleft = { cx1, cy1 + height };
+  Point old_bottomright = { cx1 + width, cy1 + height };
+
+
+  Point new_topleft = { cx2, cy2 };
+  Point new_topright = { cx2 + width, cy2 };
+  Point new_bottomleft = { cx2, cy2 + height };
+  Point new_bottomright = { cx2 + width, cy2 + height };
+
+
+
+  std::vector<Line> lines = {
+    { old_topleft, new_topleft },
+    { old_topleft, new_topright },
+    { old_topleft, new_bottomleft },
+    { old_topleft, new_bottomright },
+
+    { old_topright, new_topleft },
+    { old_topright, new_topright },
+    { old_topright, new_bottomleft },
+    { old_topright, new_bottomright },
+
+    { old_bottomleft, new_topleft },
+    { old_bottomleft, new_topright },
+    { old_bottomleft, new_bottomleft },
+    { old_bottomleft, new_bottomright },
+
+    { old_bottomright, new_topleft },
+    { old_bottomright, new_topright },
+    { old_bottomright, new_bottomleft },
+    { old_bottomright, new_bottomright },
+  };
+
+  Line brickLeft = {
+    {brickRect.left, brickRect.top},
+    {brickRect.left, brickRect.bottom}
+  };
+
+  Line brickRight = {
+   {brickRect.right, brickRect.top},
+   {brickRect.right, brickRect.bottom}
+  };
+
+  Line brickBottom = {
+   {brickRect.left, brickRect.bottom},
+   {brickRect.right, brickRect.bottom}
+  };
+
+  Line brickTop = {
+  {brickRect.left, brickRect.top},
+  {brickRect.right, brickRect.top}
+  };
+
+
+  std::vector<HitLine> rectLines = {
+    {brickLeft, HitCheck::FROM_LEFT},
+    {brickRight, HitCheck::FROM_RIGHT},
+  };
+
+  //The only optimization which seems reliable
+  if (going_up)
+    rectLines.push_back({ brickBottom, HitCheck::FROM_BOTTOM });
+  else
+    rectLines.push_back({ brickTop, HitCheck::FROM_ABOVE });
+
+  HitCheck check = HitCheck::NONE;
+  float distance = FLT_MAX;
+  for (const HitLine& rectLine : rectLines)
+  {
+    const Line& r = rectLine.line;
+    for (const Line& l : lines)
+    {
+      float i_x, i_y;
+      if (get_line_intersection(
+        l.a.x, l.a.y, l.b.x, l.b.y,
+        r.a.x, r.a.y, r.b.x, r.b.y,
+        &i_x, &i_y))
+      {
+        float xdist = i_x - l.a.x;
+        float ydist = i_y - l.a.y;
+        float next_dist = sqrtf((xdist * xdist) + (ydist * ydist));
+        if (next_dist < distance)
+        {
+          distance = next_dist;
+          check = rectLine.check;
+        }
+      }
+    }
+  }
+
+  if (check == HitCheck::NONE)
+    return false;
+
   if (GameController::GetInstance()->BreakBrick(this, index))
   {
-    RECT brickRect = GetBrickRect(index);
-
-    /*
-    bool z_left = old_x < real_x;
-    bool z_right = old_x > real_x;
-    bool z_above = old_y < real_y;
-    bool z_below = old_y > real_y;
-    */
-
-    bool from_below = old_y > brickRect.bottom && real_y < brickRect.bottom;
-    bool from_above = (old_y + BALL_DIMENSION) < brickRect.top &&
-      (real_y + BALL_DIMENSION) > brickRect.top;
-    bool from_left = (old_x + BALL_DIMENSION) < brickRect.left &&
-      (real_x + BALL_DIMENSION) > brickRect.left;
-    bool from_right = old_x > brickRect.right && real_x < brickRect.right;
+    ResourceLoader::PlayAudio(L"brick.wav");
+    if (check == HitCheck::FROM_ABOVE)
+      from_above = true;
+    else if (check == HitCheck::FROM_BOTTOM)
+      from_below = true;
+    else if (check == HitCheck::FROM_LEFT)
+      from_left = true;
+    else if (check == HitCheck::FROM_RIGHT)
+      from_right = true;
 
     bool horizontal = from_below || from_above;
     bool vertical = from_left || from_right;
 
     if (horizontal)
-    {
       Collision(BallCollisionType::HORIZONTAL);
-      ResourceLoader::PlayAudio(L"brick.wav");
-    }
-    else if (vertical)
-    {
+    else
       Collision(BallCollisionType::VERTICAL);
-      ResourceLoader::PlayAudio(L"brick.wav");
-    }
 
-    if (horizontal || vertical)
-    {
-      if (from_left)
-        real_x = brickRect.left - BALL_DIMENSION;
-      else if (from_right)
-        real_x = brickRect.right;
-      if (from_above)
-        real_y = brickRect.top - BALL_DIMENSION;
-      else if (from_below)
-        real_y = brickRect.bottom;
-    }
+    if (from_left)
+      real_x = brickRect.left - BALL_DIMENSION - 0.1f;
+    else if (from_right)
+      real_x = brickRect.right + 0.1f;
+    if (from_above)
+      real_y = brickRect.top - BALL_DIMENSION - 0.1f;
+    else if (from_below)
+      real_y = brickRect.bottom + 0.1f;
   }
-  
+  return true;
+
 }
 void Ball::CollisionBat(float x1, float x2)
 {
@@ -105,4 +262,4 @@ void Ball::Start()
   double max = ((3.f * M_PI) / 4.f);
   RandomDirection(min, max);
   //direction = -(3*M_PI / 4);
-} 
+}
