@@ -71,15 +71,7 @@ struct Line
   Point b;
 };
 
-
 enum HitCheck { FROM_LEFT, FROM_RIGHT, FROM_ABOVE, FROM_BOTTOM, NONE };
-
-struct Hit
-{
-  Point p;
-  HitCheck check;
-  float dist = 0.f;
-};
 
 struct HitLine
 {
@@ -91,34 +83,21 @@ bool Ball::CollisionBrick(uint32_t index)
 {
   RECT brickRect = GetBrickRect(index);
 
-  float cx1 = (old_x);
-  float cy1 = (old_y);
-  float cx2 = (real_x);// *cos(direction) * 1.f;
-  float cy2 = (real_y);// *sin(direction) * 1.f;
-
   bool going_right = old_x < real_x;//&& real_x + width > brickRect.left;
   bool going_left = old_x > real_x; //&& real_x < brickRect.right;
   bool going_down = old_y < real_y; //&& real_y + height > brickRect.top;
   bool going_up = old_y > real_y;//&& real_y < brickRect.bottom;
 
-  bool from_left = false;
-  bool from_right = false;
-  bool from_above = false;
-  bool from_below = false;
+  Point old_topleft = { old_x, old_y };
+  Point old_topright = { old_x + width, old_y };
+  Point old_bottomleft = { old_x, old_y + height };
+  Point old_bottomright = { old_x + width, old_y + height };
 
 
-  Point old_topleft = { cx1, cy1 };
-  Point old_topright = { cx1 + width, cy1 };
-  Point old_bottomleft = { cx1, cy1 + height };
-  Point old_bottomright = { cx1 + width, cy1 + height };
-
-
-  Point new_topleft = { cx2, cy2 };
-  Point new_topright = { cx2 + width, cy2 };
-  Point new_bottomleft = { cx2, cy2 + height };
-  Point new_bottomright = { cx2 + width, cy2 + height };
-
-
+  Point new_topleft = { real_x, real_y };
+  Point new_topright = { real_x + width, real_y };
+  Point new_bottomleft = { real_x, real_y + height };
+  Point new_bottomright = { real_x + width, real_y + height };
 
   std::vector<Line> lines = {
     { old_topleft, new_topleft },
@@ -205,34 +184,28 @@ bool Ball::CollisionBrick(uint32_t index)
   if (GameController::GetInstance()->BreakBrick(this, index))
   {
     ResourceLoader::PlayAudio(L"brick.wav");
-    if (check == HitCheck::FROM_ABOVE)
-      from_above = true;
-    else if (check == HitCheck::FROM_BOTTOM)
-      from_below = true;
-    else if (check == HitCheck::FROM_LEFT)
-      from_left = true;
-    else if (check == HitCheck::FROM_RIGHT)
-      from_right = true;
-
-    bool horizontal = from_below || from_above;
-    bool vertical = from_left || from_right;
-
-    if (horizontal)
+    switch (check)
+    {
+    case HitCheck::FROM_ABOVE:
       Collision(BallCollisionType::HORIZONTAL);
-    else
-      Collision(BallCollisionType::VERTICAL);
-
-    if (from_left)
-      real_x = brickRect.left - BALL_DIMENSION - 0.1f;
-    else if (from_right)
-      real_x = brickRect.right + 0.1f;
-    if (from_above)
       real_y = brickRect.top - BALL_DIMENSION - 0.1f;
-    else if (from_below)
+      break;
+    case HitCheck::FROM_BOTTOM:
+      Collision(BallCollisionType::HORIZONTAL);
       real_y = brickRect.bottom + 0.1f;
+      break;
+    case HitCheck::FROM_RIGHT:
+      Collision(BallCollisionType::VERTICAL);
+      real_x = brickRect.right + 0.1f;
+      break;
+    case HitCheck::FROM_LEFT:
+      Collision(BallCollisionType::VERTICAL);
+      real_x = brickRect.left - BALL_DIMENSION - 0.1f;
+      break;
+    }
   }
-  return true;
 
+  return true;
 }
 void Ball::CollisionBat(float x1, float x2)
 {

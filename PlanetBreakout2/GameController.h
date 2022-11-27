@@ -125,8 +125,5 @@ private:
     {DifficultyType::HARD, Difficulty(10.f, 0.1f, 4.5f, L"Galaxy Commander")},
   };
   DifficultyType currentDifficulty = DifficultyType::EASY;
-
-  POINTF menuLightOrigin;
-  POINTF menuLightEnd;
   GameController();
 };
