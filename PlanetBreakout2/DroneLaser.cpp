@@ -24,6 +24,7 @@ void DroneLaser::CollisionHorizontalWall()
 
 bool DroneLaser::CollisionBrick(uint32_t index)
 {
+  ResourceLoader::PlayAudio(L"brick.wav");
   if (GameController::GetInstance()->BreakBrick(this, index))
     active = false;
   return true;

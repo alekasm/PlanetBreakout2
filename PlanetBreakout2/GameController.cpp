@@ -133,7 +133,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  //v_powerups[0] = PowerupType::LASER_BAT;
   ResourceLoader::PlayAudio(L"powerup.wav");
   for (int i : v_powerups)
   {
@@ -315,9 +314,7 @@ void GameController::ShootLaser()
     return;
   if (!powerup_map.at(PowerupType::LASER_BAT).IsActive())
     return;
-  //int cx = bat->x + (BAT_WIDTH / 2) - (laser.width / 2);
-  int cx = bat->x + 30;
-  laser.SetPosition(cx, BAT_Y + BRICK_HEIGHT);
+  laser.SetPosition(bat->x + 30, 0);
   laser.Start();
   ResourceLoader::PlayAudio(L"laser.wav");
 }
@@ -344,8 +341,9 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
       if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
         multiplier = 12.f;
       AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
-
-      if ((rand() % random_chance) == 0)
+      //Prevent spawning on barrier bricks
+      if (!IsReservedBrick(col, row) && 
+         (rand() % random_chance) == 0)
       {
         Powerup p;
         //Since ball width < powerup width

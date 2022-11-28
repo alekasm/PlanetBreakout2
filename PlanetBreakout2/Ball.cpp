@@ -83,16 +83,15 @@ bool Ball::CollisionBrick(uint32_t index)
 {
   RECT brickRect = GetBrickRect(index);
 
-  bool going_right = old_x < real_x;//&& real_x + width > brickRect.left;
-  bool going_left = old_x > real_x; //&& real_x < brickRect.right;
-  bool going_down = old_y < real_y; //&& real_y + height > brickRect.top;
-  bool going_up = old_y > real_y;//&& real_y < brickRect.bottom;
+  bool going_right = old_x < real_x;
+  bool going_left = old_x > real_x;
+  bool going_down = old_y < real_y;
+  bool going_up = old_y > real_y;
 
   Point old_topleft = { old_x, old_y };
   Point old_topright = { old_x + width, old_y };
   Point old_bottomleft = { old_x, old_y + height };
   Point old_bottomright = { old_x + width, old_y + height };
-
 
   Point new_topleft = { real_x, real_y };
   Point new_topright = { real_x + width, real_y };
@@ -181,9 +180,9 @@ bool Ball::CollisionBrick(uint32_t index)
   if (check == HitCheck::NONE)
     return false;
 
+  ResourceLoader::PlayAudio(L"brick.wav");
   if (GameController::GetInstance()->BreakBrick(this, index))
   {
-    ResourceLoader::PlayAudio(L"brick.wav");
     switch (check)
     {
     case HitCheck::FROM_ABOVE:

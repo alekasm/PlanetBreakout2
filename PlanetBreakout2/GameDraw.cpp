@@ -316,19 +316,29 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
     std::wstring select_powerup = L"Select a PowerUp for more information";
     target->DrawText(select_powerup.c_str(), select_powerup.size(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-      D2D1::RectF(0.f, 270.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      D2D1::RectF(0.f, 320.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::WHITE));
 
     std::wstring info_text = mainMenu.GetDescription(mainMenu.GetPowerUpSelection());
     target->DrawText(info_text.c_str(), info_text.size(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-      D2D1::RectF(0.f, 420.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      D2D1::RectF(0.f, 470.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
-    std::wstring text_hotkey = L"Hotkeys\nESC = Return to Menu\nF9 = Toggle Audio\nF11 = Toggle Fullscreen";
+
+    target->DrawRectangle(D2D1::RectF(340.f, 570.f, 684.f, 670.f),
+      ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
+
+    std::wstring text_hotkey1 = L"Hotkeys";
+    target->DrawText(text_hotkey1.c_str(), text_hotkey1.size(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+      D2D1::RectF(340.f, 584.f, 684.f, 646.f),
+      ResourceLoader::GetBrush(ColorBrush::WHITE));
+
+    std::wstring text_hotkey = L"\nESC = Return to Menu\nF9 = Toggle Audio\nF11 = Toggle Fullscreen";
     target->DrawText(text_hotkey.c_str(), text_hotkey.size(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-      D2D1::RectF(0.f, 660.f, CLIENT_WIDTH, CLIENT_HEIGHT),
+      D2D1::RectF(340.f, 584.f, 684.f, 646.f),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
     std::wstring author = L"Written by Aleksander Krimsky\nwww.krimsky.net";

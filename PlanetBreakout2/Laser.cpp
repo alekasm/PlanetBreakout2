@@ -6,6 +6,7 @@
 void Laser::Start()
 {
   active = true;
+  SetPosition(real_x, BAT_Y + BRICK_HEIGHT - 2);
   height = 1;
   speed = 10.f;
   real_x = x;
@@ -14,6 +15,7 @@ void Laser::Start()
 }
 bool Laser::CollisionBrick(uint32_t index)
 {
+  ResourceLoader::PlayAudio(L"brick.wav");
   if(GameController::GetInstance()->BreakBrick(this, index))
     active = false;
   return true;
