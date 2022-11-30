@@ -133,7 +133,6 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
-  v_powerups[0] = PowerupType::PORTAL;
   ResourceLoader::PlayAudio(L"powerup.wav");
   for (int i : v_powerups)
   {
