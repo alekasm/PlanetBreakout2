@@ -326,19 +326,19 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
 
-    target->DrawRectangle(D2D1::RectF(340.f, 570.f, 684.f, 670.f),
+    target->DrawRectangle(D2D1::RectF(340.f, 570.f, 684.f, 684.f),
       ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
 
-    std::wstring text_hotkey1 = L"Hotkeys";
+    std::wstring text_hotkey1 = L"Controls";
     target->DrawText(text_hotkey1.c_str(), text_hotkey1.size(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-      D2D1::RectF(340.f, 584.f, 684.f, 646.f),
+      D2D1::RectF(340.f, 584.f, 684.f, 660.f),
       ResourceLoader::GetBrush(ColorBrush::WHITE));
 
-    std::wstring text_hotkey = L"\nESC = Return to Menu\nF9 = Toggle Audio\nF11 = Toggle Fullscreen";
+    std::wstring text_hotkey = L"\nESC = Return to Menu\nF9 = Toggle Audio\nF11 = Toggle Fullscreen\nRight Click = Pause";
     target->DrawText(text_hotkey.c_str(), text_hotkey.size(),
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-      D2D1::RectF(340.f, 584.f, 684.f, 646.f),
+      D2D1::RectF(340.f, 584.f, 684.f, 660.f),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
 
     std::wstring author = L"Written by Aleksander Krimsky\nwww.krimsky.net";

@@ -133,6 +133,7 @@ void GameController::AddPowerup()
   std::vector<int> v_powerups(POWERUP_SIZE);
   std::iota(std::begin(v_powerups), std::end(v_powerups), 0);
   std::shuffle(std::begin(v_powerups), std::end(v_powerups), rng);
+  v_powerups[0] = PowerupType::PORTAL;
   ResourceLoader::PlayAudio(L"powerup.wav");
   for (int i : v_powerups)
   {
@@ -268,7 +269,7 @@ void GameController::Respawn()
     timer = std::chrono::microseconds::zero();
     //timer_creator = std::chrono::microseconds::zero();
     Ball starter_ball(campaign.ball_sprite);
-    starter_ball.Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
+    starter_ball.Update(0, BALL_START_Y);
     starter_ball.MoveCenterX(GAME_WIDTH / 2);
     starter_ball.Start();
     balls.push_back(starter_ball);
@@ -333,7 +334,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
     unsigned row = index / GRID_COLUMNS;
     effects.push_back(new SpinSquareEffect(
       GetBrickRectF(col, row),
-      hyper_ball ?  ColorBrush::RED : ColorBrush::GREEN));
+      hyper_ball ? ColorBrush::RED : ColorBrush::GREEN));
 
     if (ball != nullptr)
     {
@@ -342,8 +343,8 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
         multiplier = 12.f;
       AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
       //Prevent spawning on barrier bricks
-      if (!IsReservedBrick(col, row) && 
-         (rand() % random_chance) == 0)
+      if (!IsReservedBrick(col, row) &&
+        (rand() % random_chance) == 0)
       {
         Powerup p;
         //Since ball width < powerup width
@@ -470,7 +471,7 @@ void GameController::GameUpdate()
   if (level_state == LevelState::HIGHSCORE)
     return;
   if (bricks.Empty())
-  {  
+  {
     level_state = LevelState::ENDING;
     return;
   }
@@ -562,10 +563,13 @@ void GameController::GameUpdate()
       {
         effects.push_back(new RingEffect(ball_it->GetRealX(),
           ball_it->GetRealY()));
-        ball_it->Reset();
-        ball_it->Update(0, (GRID_ROWS - 4) * BRICK_HEIGHT);
-        ball_it->MoveCenterX(GAME_WIDTH / 2);
-        ball_it->Start();
+        if (ball_it->GetRealY() > BALL_START_Y)
+        {
+          ball_it->Update(0, BALL_START_Y);
+          ball_it->MoveCenterX(GAME_WIDTH / 2);
+          ball_it->Start();
+        }
+        ball_it->SetSpeed(1.f);
       }
       if (spawn_drone)
       {

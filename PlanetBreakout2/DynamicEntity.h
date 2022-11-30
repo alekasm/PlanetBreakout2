@@ -21,6 +21,7 @@ struct DynamicEntity : Entity
   void SetPosition(float x, float y);
   void RandomDirection(double min, double max);
   void Reset();
+  void SetSpeed(float);
 protected:
   //bool active = true;
   float speed = 0.0f;

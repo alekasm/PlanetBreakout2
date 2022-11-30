@@ -7,6 +7,11 @@ void DynamicEntity::PreFrameUpdate() {}
 void DynamicEntity::PostFrameUpdate(float elapsed) {}
 
 
+void DynamicEntity::SetSpeed(float value)
+{
+  speed = value;
+}
+
 float DynamicEntity::GetSpeed()
 {
   return speed;

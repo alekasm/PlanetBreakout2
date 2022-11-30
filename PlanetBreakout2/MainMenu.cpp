@@ -86,7 +86,7 @@ void MainMenu::initialize(Client* client)
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
    {PowerupType::GHOST, L"Ghost: Space ghosts possess the balls, making them bounce randomly off the bat"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a plasma shield, they don't give points"},
-   {PowerupType::PORTAL, L"Time Portal: All balls travel back in time to the start position"},
+   {PowerupType::PORTAL, L"Time Warp: Balls slow down until collision, respawned if about to be lost"},
    {PowerupType::DRONE, L"Drone: Transforms balls into drones that shoot lasers, which can also kill you"},
    {PowerupType::STRIKE, L"Brick Strike: Galactic artillery strike that fires at up to 50 bricks"},
    {PowerupType::EMP, L"EMP Bomb: Clears an entire brick shield and barrier"},
