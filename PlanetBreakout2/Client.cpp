@@ -94,15 +94,11 @@ void Client::PostInitialize()
 void Client::UpdateClientWindow()
 {
   if (!fullscreen)
-  {
     GameClipRect = GameWindowRect;
-    ClientToScreen(hWnd, (LPPOINT)&GameClipRect.left);
-    ClientToScreen(hWnd, (LPPOINT)&GameClipRect.right);
-  }
   else
-  {
     GameClipRect = ClientFullscreenGameRect;
-  }
+  ClientToScreen(hWnd, (LPPOINT)&GameClipRect.left);
+  ClientToScreen(hWnd, (LPPOINT)&GameClipRect.right);
 }
 
 void Client::SetWindowed()
@@ -537,8 +533,10 @@ void Client::Initialize(HINSTANCE hInstance)
   ClientFullscreenRect.left = (desktop.right - ClientFullscreenRect.right) / 2;
   FullScreenDimension = D2D1::SizeU(CLIENT_WIDTH * fs_scale_factor, CLIENT_HEIGHT * fs_scale_factor);
 
-  ClientFullscreenGameRect.left = ClientFullscreenRect.left;
-  ClientFullscreenGameRect.top = ClientFullscreenRect.top;
+  //ClientFullscreenGameRect.left = ClientFullscreenRect.left;
+  //ClientFullscreenGameRect.top = ClientFullscreenRect.top;
+  ClientFullscreenGameRect.left = 0;
+  ClientFullscreenGameRect.top = 0;
   ClientFullscreenGameRect.bottom = ClientFullscreenGameRect.top + (GAME_HEIGHT * fs_scale_factor);
-  ClientFullscreenGameRect.right = ClientFullscreenGameRect.left + (GAME_WIDTH * fs_scale_factor);  
+  ClientFullscreenGameRect.right = ClientFullscreenGameRect.left + (GAME_WIDTH * fs_scale_factor);
 }

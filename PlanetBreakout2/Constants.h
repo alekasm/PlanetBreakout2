@@ -26,7 +26,7 @@
 #define BAT_Y (GRID_ROWS - 2) * BRICK_HEIGHT
 #define BALL_START_Y (GRID_ROWS - 4) * BRICK_HEIGHT
 #define DEFAULT_CAMPAIGN L"main"
-#define MAP_DIRECTORY L"assets\\maps\\"
+#define MAP_DIRECTORY L"assets\\levels\\"
 #define DEFAULT_BACKGROUND L"bg1"
 #define POWERUP_SPRITE L"powerup"
 #define STAR_SPRITE L"star"

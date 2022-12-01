@@ -187,7 +187,7 @@ bool ReadFile(const std::wstring& filename, std::vector<std::wstring>& tokens)
 bool GameLoader::SaveCampaign(Campaign& campaign)
 {
   std::filesystem::path fs_path(campaign.path);
-  fs_path.append(L"campaign.cfg");
+  fs_path.append(L"mission.cfg");
   std::wofstream output(fs_path.wstring());
   if (!output.is_open())
   {
@@ -293,7 +293,7 @@ bool GameLoader::LoadCampaigns()
       if (entry.is_regular_file())
       {
         std::wstring filename = entry.path().filename().wstring();
-        if (filename == L"campaign.cfg")
+        if (filename == L"mission.cfg")
         {
           ReadCampaignConfig(entry.path().wstring(), campaign);
         }
