@@ -8,14 +8,8 @@
 #include "Client.h"
 #include "LogicHelper.h"
 
-std::vector<Brick> GameLoader::assetBricks;
 CampaignMap GameLoader::campaignMap;
 HCURSOR GameLoader::cursor;
-
-std::vector<Brick>& GameLoader::GetAssetBricks()
-{
-  return assetBricks;
-}
 
 CampaignMap& GameLoader::GetCampaigns()
 {
@@ -315,17 +309,6 @@ bool GameLoader::LoadCampaigns()
   return true;
 }
 
-
-//Used only for level editing
-bool GameLoader::LoadAssets(const std::wstring& filename)
-{
-  FileInfo info;
-  info.type = FileType::ASSET;
-  bool success = LoadFile(filename, info);
-  assetBricks = info.bricks;
-  return success;
-}
-
 bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
 {
   GameLevel level;
@@ -413,16 +396,3 @@ bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
   save_out = savename;
   return true;
 }
-
-/*
-bool GameLoader::GetLevel(const std::wstring& key, GameLevel& level)
-{
-  auto it = level_map.find(key);
-  if (it != level_map.end())
-  {
-    level = it->second;
-    return true;
-  }
-  return false;
-}
-*/

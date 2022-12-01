@@ -114,7 +114,6 @@ void Button::SetIcon(const Icon& icon)
 
 void Button::Update()
 {
-  bool old = highlighted;
   highlighted = PtInRect(&win32Rect,
     GameController::GetInstance()->GetMousePos());
   //if(!old && highlighted)

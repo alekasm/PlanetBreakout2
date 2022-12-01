@@ -183,15 +183,17 @@ void LeftClickLevelEditor()
   }
 
   if (clicked) return;
-  Brick* currentBrick = levelEditor.currentBrick;
-  if (currentBrick != nullptr)
+  std::wstring currentBrick = levelEditor.currentBrick;
+  if (!currentBrick.empty())
   {
     POINT p = GameController::GetInstance()->GetMousePos();
     unsigned x = p.x / BRICK_WIDTH;
     unsigned y = p.y / BRICK_HEIGHT;
     if (IsInGameSceen(x, y))
     {
-      Brick newBrick(*currentBrick, x, y);
+      Brick newBrick(levelEditor.invincibleBrick ?
+        BrickType::INVINCIBLE_BRICK : BrickType::NORMAL_BRICK,
+        levelEditor.currentBrick, x, y);
       levelEditor.editorLevel.AddBrick(newBrick);
     }
   }

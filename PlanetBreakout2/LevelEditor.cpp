@@ -7,7 +7,7 @@ Button* CreateButton(size_t index)
 {
   unsigned buttonOnPage = index % EDITOR_BUTTONS_PER_PAGE;
   unsigned x = GAME_WIDTH + 10;
-  unsigned y = 280 + (buttonOnPage * (EDITOR_BUTTON_HEIGHT + 15));
+  unsigned y = 305 + (buttonOnPage * (EDITOR_BUTTON_HEIGHT + 15));
   if (buttonOnPage > (EDITOR_BUTTONS_PER_PAGE / 2) - 1)
   {
     x += 125;
@@ -15,7 +15,7 @@ Button* CreateButton(size_t index)
   }
   Drawable button1draw(x, y, EDITOR_BUTTON_WIDTH, EDITOR_BUTTON_HEIGHT);
   Button* button = new Button(button1draw);
-  button->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+  button->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
   button->SetButtonHighlightType(ButtonHighlightType::BORDER,
     ResourceLoader::GetBrush(ColorBrush::GREEN));
   return button;
@@ -213,8 +213,6 @@ void LevelEditor::initialize(Client* client)
     primaryButtons.push_back(button0);
   }
 
-
-
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 5, 210, 24);
     Button* button0 = new Button(button0draw);
@@ -223,7 +221,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetId(MAP_NAME);
     button0->SetText(button0Text);
     buttonMapName = button0;
-    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->onClick = [this, button0]() {
@@ -251,7 +249,7 @@ void LevelEditor::initialize(Client* client)
     button0->SetId(AUTHOR_NAME);
     button0->SetText(button0Text);
     buttonAuthorName = button0;
-    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
     button0->SetButtonHighlightType(ButtonHighlightType::BORDER,
       ResourceLoader::GetBrush(ColorBrush::GREEN));
     button0->onClick = [this, button0]() {
@@ -267,6 +265,20 @@ void LevelEditor::initialize(Client* client)
         buttonTextSelect = button0;
         buttonTextSelect->SetSelected(true);
       }
+    };
+    primaryButtons.push_back(button0);
+  }
+
+
+  {
+    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 7, 16, 16);
+    Button* button0 = new Button(button0draw);
+    button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
+    button0->SetButtonHighlightType(ButtonHighlightType::FILL,
+      ResourceLoader::GetBrush(ColorBrush::GREEN));
+    button0->onClick = [this, button0]() {
+      invincibleBrick ^= true;
+      button0->SetSelected(invincibleBrick);
     };
     primaryButtons.push_back(button0);
   }
@@ -311,38 +323,30 @@ void LevelEditor::initialize(Client* client)
     primaryButtons.push_back(button0);
   }
 
-  unsigned brickCount = GameLoader::GetAssetBricks().size();
+  unsigned brickCount = ResourceLoader::GetBrickSprites().size();
   if(brickCount > 0)
     brickPages = (brickCount - 1) / EDITOR_BUTTONS_PER_PAGE;
   for (size_t i = 0; i < brickCount; ++i)
   {
-    Brick brick = GameLoader::GetAssetBricks().at(i);
+    std::wstring brickSprite = ResourceLoader::GetBrickSprites().at(i);
     Button* button1 = CreateButton(i);
-
-    std::wstring desc = brick.subtype !=
-      BrickType::INVINCIBLE_BRICK ?
-      L"Breakable" : L"Invincible";
-
-    Text button1Text(button1->GetD2D1Rect(), desc);
-    //button1Text.AlignText(0.f, BRICK_HEIGHT + 2);
-    button1Text.AlignBottom();
-    button1->SetText(button1Text);
 
     Icon button1icon(D2D1::RectF(
       (FLOAT)button1->x,
       (FLOAT)button1->y,
       (FLOAT)button1->x + BRICK_WIDTH,
       (FLOAT)button1->y + BRICK_HEIGHT),
-      brick.GetSprite());
+      brickSprite);
     button1icon.CenterX(button1->GetD2D1Rect());
-    button1icon.AlignIcon(0.f, 1.0f);
+    button1icon.CenterY(button1->GetD2D1Rect());
+    //button1icon.AlignIcon(0.f, 1.0f);
     button1->SetIcon(button1icon);
     button1->onClick = [this](void) {
       for (size_t i = 0; i < brickButtons.size(); ++i)
       {
         if (brickButtons.at(i)->IsHighlighted())
         {
-          currentBrick = &GameLoader::GetAssetBricks().at(i);
+          currentBrick = ResourceLoader::GetBrickSprites().at(i);
           brickButtons.at(i)->SetSelected(true);
         }
         else

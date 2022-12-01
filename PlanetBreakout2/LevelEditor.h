@@ -18,10 +18,11 @@ struct LevelEditor
   std::vector<Button*> primaryButtons;
   bool showGrid = false;
   GameLevel editorLevel;
-  Brick* currentBrick = nullptr;
   Button* buttonTextSelect = nullptr;
   unsigned currentBrickPage = 0;
   unsigned brickPages = 0;
+  std::wstring currentBrick = L"";
+  bool invincibleBrick = false;
 private:
   Button* buttonMapName;
   Button* buttonAuthorName;

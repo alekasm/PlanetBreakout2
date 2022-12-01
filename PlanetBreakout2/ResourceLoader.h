@@ -86,6 +86,7 @@ struct ResourceLoader
   static std::filesystem::path GetLevelPath();
   static void SetAudioState(AudioState);
   static AudioState GetAudioState();
+  static const std::vector<std::wstring>& GetBrickSprites();
 private:
   static std::filesystem::path runpath;
   static SpriteMap sprite_map;
@@ -101,4 +102,5 @@ private:
   static IXAudio2MasteringVoice* pMasterVoice;
   static TextFormatMap textFormatMap;
   static AudioState audioState;
+  static std::vector<std::wstring> brickSprites;
 };

@@ -12,6 +12,7 @@
 
 
 SpriteMap ResourceLoader::sprite_map;
+std::vector<std::wstring> ResourceLoader::brickSprites;
 ID2D1HwndRenderTarget* ResourceLoader::target;
 ID2D1HwndRenderTarget* ResourceLoader::fullscreenTarget;
 ID2D1Factory* ResourceLoader::factory;
@@ -163,6 +164,10 @@ ID2D1HwndRenderTarget* ResourceLoader::GetHwndRenderTarget()
   return target;
 }
 
+const std::vector<std::wstring>& ResourceLoader::GetBrickSprites()
+{
+  return brickSprites;
+}
 
 ID2D1Brush* ResourceLoader::GetBrush(ColorBrush brush)
 {
@@ -274,9 +279,12 @@ void ResourceLoader::InitializeClient(HWND hWnd)
     HRESULT hr = LoadBitmapFromFile(target, pIWICFactory, sprite.wstring().c_str(), &bitmap);
     if (SUCCEEDED(hr))
     {
+      std::wstring parent = sprite.parent_path().filename();
       std::wstring name = sprite.stem().wstring();
-      printf("Added sprite: %ls\n", name.c_str());
+      wprintf(L"Added sprite: %ls\n", name.c_str());
       sprite_map[name] = bitmap;
+      if (parent.compare(L"bricks") == 0)
+        brickSprites.push_back(name);
     }
   }
   //delete pIWICFactory;

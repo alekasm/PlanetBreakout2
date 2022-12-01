@@ -78,10 +78,19 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
     target->SetTransform(D2D1::Matrix3x2F::Identity());
   }
   target->Clear();
-  std::wstring text = L"Planet Breakout 2 - Level Editor";
-  target->DrawText(text.c_str(), text.length(),
-    ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
-    D2D1::RectF(GAME_WIDTH + 1, 20, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
+  {
+    std::wstring text = L"Planet Breakout 2 - Level Editor";
+    target->DrawText(text.c_str(), text.length(),
+      ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+      D2D1::RectF(GAME_WIDTH + 1, 20, CLIENT_WIDTH - 1, 10 + 12 + 10), brushes);
+  }
+  {
+    std::wstring text = L"Invincible Brick";
+    target->DrawText(text.c_str(), text.length(),
+      ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
+      D2D1::RectF(GAME_WIDTH + 50, 21 + (14 + 22) * 7, CLIENT_WIDTH - 1, 21 + (14 + 22) * 8), brushes);
+  }
+
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
   target->DrawLine(D2D1::Point2F(1.f, 0.f), D2D1::Point2F(1.f, GAME_HEIGHT), brushes);
   GameLevel level = levelEditor.editorLevel;
@@ -103,8 +112,8 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
     }
   }
 
-  Brick* currentBrick = levelEditor.currentBrick;
-  if (currentBrick != nullptr)
+  std::wstring currentBrick = levelEditor.currentBrick;
+  if (!currentBrick.empty())
   {
     POINT p = GameController::GetInstance()->GetMousePos();
     unsigned x = p.x / BRICK_WIDTH;
@@ -117,7 +126,7 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
       }
       else
       {
-        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick->GetSprite()),
+        target->DrawBitmap(ResourceLoader::GetSpriteMap().at(currentBrick),
           GetBrickRectF(x, y), 0.5f);
       }
     }
@@ -139,7 +148,7 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
   text_page.append(L" / ");
   text_page.append(std::to_wstring(levelEditor.brickPages + 1));
   //GAME_WIDTH + 10, 720, 100, 14
-  target->DrawText(text_page.c_str(), text_page.length(), format,
+  target->DrawText(text_page.c_str(), text_page.length(), format2,
     D2D1::RectF(GAME_WIDTH + 8, CLIENT_HEIGHT - 20, CLIENT_WIDTH - 4, CLIENT_HEIGHT - 1), brushes);
 
 
