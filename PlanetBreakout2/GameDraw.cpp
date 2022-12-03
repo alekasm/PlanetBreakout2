@@ -88,7 +88,7 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
     std::wstring text = L"Invincible Brick";
     target->DrawText(text.c_str(), text.length(),
       ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
-      D2D1::RectF(GAME_WIDTH + 50, 21 + (14 + 22) * 7, CLIENT_WIDTH - 1, 21 + (14 + 22) * 8), brushes);
+      D2D1::RectF(GAME_WIDTH + 50, 23 + (14 + 22) * 7, CLIENT_WIDTH - 1, 23 + (14 + 22) * 8), brushes);
   }
 
   target->DrawLine(D2D1::Point2F(GAME_WIDTH, 0.f), D2D1::Point2F(GAME_WIDTH, GAME_HEIGHT), brushes);
@@ -241,9 +241,10 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatHuge,
     D2D1::RectF(0.f, 100.f, CLIENT_WIDTH - 1, 200.f),
-    ResourceLoader::GetBrush(ColorBrush::DARK_GREEN));
+    ResourceLoader::GetBrush(ColorBrush::MAIN_MENU_DROP_GRADIENT));
   target->DrawText(text.c_str(), text.length(), formatHuge,
-    D2D1::RectF(4.f, 104.f, CLIENT_WIDTH - 1, 200.f), greenBrush);
+    D2D1::RectF(4.f, 104.f, CLIENT_WIDTH - 1, 200.f),
+    ResourceLoader::GetBrush(ColorBrush::MAIN_MENU_GRADIENT));
 
   for (Button* button : mainMenu.GetButtons())
   {
@@ -252,7 +253,7 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
 
   if (mainMenu.GetState() == MainMenuState::CAMPAIGN_SELECT)
   {
-    ID2D1Brush* gradientBrush2 = ResourceLoader::GetBrush(ColorBrush::GRADIENT_2);
+    ID2D1Brush* gradientBrush2 = ResourceLoader::GetBrush(ColorBrush::HIGHSCORE_GRADIENT);
     CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
     std::advance(it, mainMenu.GetCampaignPage());
     Campaign& campaign = it->second;

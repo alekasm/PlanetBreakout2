@@ -158,7 +158,7 @@ void GameController::AddPowerup()
           bricks[index].push_back(brick);
         }
         if (IsPowerUpActive(PowerupType::EMP))
-          ClearBrickShield();
+          ClearBarrierBricks();
       }
       break;
       case BRICK_SHIELD:

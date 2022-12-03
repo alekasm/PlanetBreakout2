@@ -115,7 +115,7 @@ namespace
 {
   const std::wstring HighscoreNames[HIGHSCORE_SIZE] =
   {
-    L"Zoomie", L"Alek", L"Tundra", L"David", L"Juneau",
+    L"Zoomie", L"Icy", L"Tundra", L"Snowy", L"Juneau",
     L"Kimber", L"Max", L"Minnie", L"Kobi", L"Nanuq"
   };
 }

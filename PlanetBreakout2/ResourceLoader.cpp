@@ -242,20 +242,55 @@ void ResourceLoader::InitializeClient(HWND hWnd)
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_1]);
   }
 
+  //8c3c55
   {
     D2D1_GRADIENT_STOP stops[] =
     {
-        { 0.0f, D2D1::ColorF(D2D1::ColorF::Gold) },
-        { 1.0f, D2D1::ColorF(D2D1::ColorF::Aquamarine) }
+        { 0.0f, D2D1::ColorF(0x46be99) },
+        { 1.0f, D2D1::ColorF(0x579b36) }
+    };
+    
+    ID2D1GradientStopCollection* collection;
+    target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+    target->CreateLinearGradientBrush(props, collection,
+      (ID2D1LinearGradientBrush**)&brushes[ColorBrush::MAIN_MENU_GRADIENT]);
+    ID2D1LinearGradientBrush* brush = (ID2D1LinearGradientBrush*)brushes[ColorBrush::MAIN_MENU_GRADIENT];
+    brush->SetStartPoint(D2D1::Point2F(CLIENT_WIDTH / 2.f, 104.f));
+    brush->SetEndPoint(D2D1::Point2F(CLIENT_WIDTH / 2.f, 200.f));
+  }
+
+  {
+    D2D1_GRADIENT_STOP stops[] =
+    {
+        { 0.0f, D2D1::ColorF(0x006243) },
+        { 1.0f, D2D1::ColorF(0x1d5a00) }
+    };
+
+    ID2D1GradientStopCollection* collection;
+    target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+    target->CreateLinearGradientBrush(props, collection,
+      (ID2D1LinearGradientBrush**)&brushes[ColorBrush::MAIN_MENU_DROP_GRADIENT]);
+    ID2D1LinearGradientBrush* brush = (ID2D1LinearGradientBrush*)brushes[ColorBrush::MAIN_MENU_DROP_GRADIENT];
+    brush->SetStartPoint(D2D1::Point2F(CLIENT_WIDTH / 2.f, 104.f));
+    brush->SetEndPoint(D2D1::Point2F(CLIENT_WIDTH / 2.f, 200.f));
+  }
+
+  {
+    D2D1_GRADIENT_STOP stops[] =
+    {
+        { 0.0f, D2D1::ColorF(D2D1::ColorF::PaleGreen) },
+        { 1.0f, D2D1::ColorF(D2D1::ColorF::LightSeaGreen) }
     };
     ID2D1GradientStopCollection* collection;
     target->CreateGradientStopCollection(stops, _countof(stops), &collection);
     D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
 
     target->CreateLinearGradientBrush(D2D1::LinearGradientBrushProperties(
-      D2D1::Point2F(CLIENT_WIDTH / 2.f, 0.f),
+      D2D1::Point2F(CLIENT_WIDTH / 2.f, 150.f),
       D2D1::Point2F(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT)), collection,
-      (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_2]);
+      (ID2D1LinearGradientBrush**)&brushes[ColorBrush::HIGHSCORE_GRADIENT]);
   }
 
 

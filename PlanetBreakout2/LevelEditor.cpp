@@ -271,7 +271,7 @@ void LevelEditor::initialize(Client* client)
 
 
   {
-    Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 7, 16, 16);
+    Drawable button0draw(GAME_WIDTH + 22, 22 + (14 + 22) * 7, 16, 16);
     Button* button0 = new Button(button0draw);
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
     button0->SetButtonHighlightType(ButtonHighlightType::FILL,
