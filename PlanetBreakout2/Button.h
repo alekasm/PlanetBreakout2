@@ -122,8 +122,8 @@ public:
   ID2D1Brush* GetHighlightBrush();
   ID2D1Brush* GetBorderBrush();
   float GetBorderStroke();
-  void SetId(int32_t);
-  int32_t GetId();
+  void SetPriority(int32_t);
+  int32_t GetPriority();
   bool IsHighlighted();
   void SetSelected(bool);
   void SetHighlighted(bool);

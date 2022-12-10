@@ -313,7 +313,7 @@ void MainMenu::initialize(Client* client)
   {
     Drawable button0draw((CLIENT_WIDTH / 2) - 150, (CLIENT_HEIGHT / 2) - 35, 300, 30);
     Button* button0 = new Button(button0draw);
-    currentCampaignNameSelected = GameLoader::GetCampaigns().begin()->second.name;
+    currentCampaignNameSelected = GameLoader::GetCampaigns().begin()->name;
     Text button0Text(button0draw.GetD2D1Rect(), L"Start Mission");
     button0Text.FormatText(TextFormat::CENTER_24F, ColorBrush::WHITE);
     button0->SetText(button0Text);
@@ -328,9 +328,9 @@ void MainMenu::initialize(Client* client)
       if (GameLoader::GetCampaigns().size() > campaign_page)
       { //Lots of checks just in case
         client->SetClientFocus(true);
-        CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+        std::vector<Campaign>::iterator it = GameLoader::GetCampaigns().begin();
         std::advance(it, campaign_page);
-        GameController::GetInstance()->CreateGame(it->second);
+        GameController::GetInstance()->CreateGame(*it);
         SwitchState(MainMenuState::MAIN);
         //campaign_page = 0;
         //it = GameLoader::GetCampaigns().begin();
@@ -362,9 +362,9 @@ void MainMenu::initialize(Client* client)
         ++campaign_page;
       else
         campaign_page = 0;
-      CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+      std::vector<Campaign>::iterator it = GameLoader::GetCampaigns().begin();
       std::advance(it, campaign_page);
-      currentCampaignNameSelected = it->second.name;
+      currentCampaignNameSelected = it->name;
       //button0->text.Update(it->second.name);
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button1);
@@ -389,10 +389,10 @@ void MainMenu::initialize(Client* client)
         campaign_page = campaign_count - 1;
       else
         --campaign_page;
-      CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+      std::vector<Campaign>::iterator it = GameLoader::GetCampaigns().begin();
       std::advance(it, campaign_page);
       //button0->text.Update(it->second.name);
-      currentCampaignNameSelected = it->second.name;
+      currentCampaignNameSelected = it->name;
     };
     buttons[MainMenuState::CAMPAIGN_SELECT].push_back(button2);
   }

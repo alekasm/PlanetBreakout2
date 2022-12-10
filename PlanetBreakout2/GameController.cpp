@@ -44,6 +44,11 @@ GameController* GameController::GetInstance()
   return instance;
 }
 
+const Campaign& GameController::GetCampaign() const
+{
+  return *campaign;
+}
+
 void GameController::MouseUpdate(const POINT& mouse)
 {
   mousePos = mouse;
@@ -96,7 +101,7 @@ void GameController::SetHighscoreName(std::wstring name)
   highscore.score = score;
   highscore.name = name;
   highscore.difficulty = currentDifficulty;
-  campaign.AddHighscore(highscore);
+  campaign->AddHighscore(highscore);
 
   //Needs to write back to gameloader...
   level_state = LevelState::GAME_OVER;
@@ -115,11 +120,11 @@ std::wstring GameController::GetSpriteForEntity(DynamicSpriteType type)
   case DynamicSpriteType::BAT:
     if (IsPowerUpActive(PowerupType::LASER_BAT))
       return LASERBAT_SPRITE;
-    return campaign.bat_sprite;
+    return campaign->bat_sprite;
   case DynamicSpriteType::BALL:
     if (IsPowerUpActive(PowerupType::HYPER_BALL))
       return HYPERBALL_SPRITE;
-    return campaign.ball_sprite;
+    return campaign->ball_sprite;
   }
   return L"";//not reachable
 }
@@ -257,7 +262,7 @@ void GameController::Respawn()
   if (lives == 0)
   {
     level_state = LevelState::GAME_OVER;
-    if (!campaign.IsTestMode() && campaign.NewHighscore(currentDifficulty, score))
+    if (!campaign->IsTestMode() && campaign->NewHighscore(currentDifficulty, score))
     {
       level_state = LevelState::HIGHSCORE;
     }
@@ -267,7 +272,7 @@ void GameController::Respawn()
     level_state = LevelState::START;
     timer = std::chrono::microseconds::zero();
     //timer_creator = std::chrono::microseconds::zero();
-    Ball starter_ball(campaign.ball_sprite);
+    Ball starter_ball(campaign->ball_sprite);
     starter_ball.Update(0, BALL_START_Y);
     starter_ball.MoveCenterX(GAME_WIDTH / 2);
     starter_ball.Start();
@@ -341,6 +346,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
       if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
         multiplier = 12.f;
       AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
+      AddScore(1000);
       //Prevent spawning on barrier bricks
       if (!IsReservedBrick(col, row) &&
         (rand() % random_chance) == 0)
@@ -413,11 +419,11 @@ void GameController::NextLevel()
 {
   if (level_state != LevelState::END)
     return;
-  if (current_level + 1 >= campaign.levels.size())
+  if (current_level + 1 >= campaign->levels.size())
     current_level = 0;
   else
     ++current_level;
-  bricks = campaign.levels.at(current_level).GetBrickMap();
+  bricks = campaign->levels.at(current_level).GetBrickMap();
   Respawn();
   CalculateBonus();
   level_state = LevelState::START;
@@ -552,7 +558,7 @@ void GameController::GameUpdate()
       ball_it->UpdateFrame(delta.count());
       if (spawn_creator)
       {
-        Ball starter_ball(campaign.ball_sprite);
+        Ball starter_ball(campaign->ball_sprite);
         starter_ball.SetPosition(ball_it->GetRealX(), ball_it->GetRealY());
         new_balls.push_back(starter_ball);
         effects.push_back(new RingEffect(starter_ball.GetRealX(),
@@ -673,13 +679,13 @@ const std::vector<Star>& GameController::GetStars() const
 void GameController::CalculateBonus()
 {
   levelEndBonusCount = 0;
-  const BrickMap& brickmap = campaign.levels.at(current_level).GetBrickMap();
+  const BrickMap& brickmap = campaign->levels.at(current_level).GetBrickMap();
   levelEndBonusCount = brickmap.size() / 2;
 }
 
 void GameController::CreateGame(Campaign& campaign)
 {
-  this->campaign = campaign;
+  this->campaign = &campaign;
   bat = new Bat(campaign.bat_sprite);
   old_type = game_type;
   game_type = GameType::GAME_NORMAL;

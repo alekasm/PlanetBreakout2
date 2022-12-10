@@ -218,7 +218,7 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"");
     button0Text.AlignCenter();
-    button0->SetId(MAP_NAME);
+    button0->SetPriority(MAP_NAME);
     button0->SetText(button0Text);
     buttonMapName = button0;
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
@@ -246,7 +246,7 @@ void LevelEditor::initialize(Client* client)
     Button* button0 = new Button(button0draw);
     Text button0Text(button0draw.GetD2D1Rect(), L"");
     button0Text.AlignCenter();
-    button0->SetId(AUTHOR_NAME);
+    button0->SetPriority(AUTHOR_NAME);
     button0->SetText(button0Text);
     buttonAuthorName = button0;
     button0->SetBorder(ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);

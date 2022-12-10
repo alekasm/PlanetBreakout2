@@ -41,9 +41,9 @@ void DrawButton(ID2D1HwndRenderTarget* target, Button* button)
     std::wstring text = button->text.GetString();
     if (text.empty())
     {
-      if (button->GetId() == LevelEditorButton::AUTHOR_NAME)
+      if (button->GetPriority() == LevelEditorButton::AUTHOR_NAME)
         text = L"Author Name";
-      else if (button->GetId() == LevelEditorButton::MAP_NAME)
+      else if (button->GetPriority() == LevelEditorButton::MAP_NAME)
         text = L"Map Name";
     }
     target->DrawText(
@@ -254,9 +254,9 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
   if (mainMenu.GetState() == MainMenuState::CAMPAIGN_SELECT)
   {
     ID2D1Brush* gradientBrush2 = ResourceLoader::GetBrush(ColorBrush::HIGHSCORE_GRADIENT);
-    CampaignMap::iterator it = GameLoader::GetCampaigns().begin();
+    std::vector<Campaign>::iterator it = GameLoader::GetCampaigns().begin();
     std::advance(it, mainMenu.GetCampaignPage());
-    Campaign& campaign = it->second;
+    Campaign& campaign = *it;
     unsigned i = 1;
     std::wstring name_string;
     std::wstring score_string;
@@ -423,8 +423,8 @@ void DrawGame(Client* menu)
     D2D1::RectF(GAME_WIDTH + 2, 2 + 15, CLIENT_WIDTH - 1, 2 + 15 + 24), ResourceLoader::GetBrush(ColorBrush::GRAY));
 
   size_t current_level = GameController::GetInstance()->GetCurrentLevel();
-  const GameLevel& level = GameController::GetInstance()->campaign.levels.at(current_level);
-  std::wstring campaign_name = GameController::GetInstance()->campaign.name;
+  const GameLevel& level = GameController::GetInstance()->GetCampaign().levels.at(current_level);
+  std::wstring campaign_name = GameController::GetInstance()->GetCampaign().name;
   wchar_t buffer_score[64];
   swprintf(buffer_score, sizeof(buffer_score), L"%016d",
     GameController::GetInstance()->GetScore());

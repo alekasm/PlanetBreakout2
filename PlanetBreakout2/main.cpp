@@ -19,11 +19,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
   UNREFERENCED_PARAMETER(lpCmdLine);
   CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
+#ifdef DEV_MODE
   AllocConsole();
   FILE* p_file;
   freopen_s(&p_file, "CONIN$", "r", stdin); 
   freopen_s(&p_file, "CONOUT$", "w", stdout);
   freopen_s(&p_file, "CONOUT$", "w", stderr);
+#endif
 
   ResourceLoader::Initialize();
   Client* client = new Client();

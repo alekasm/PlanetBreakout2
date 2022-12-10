@@ -128,6 +128,16 @@ void Campaign::AddHighscore(Highscore& highscore)
   vscore.erase(vscore.begin() + HIGHSCORE_SIZE, vscore.end());
 }
 
+void Campaign::SetPriority(int priority)
+{
+  this->priority = priority;
+}
+
+const int Campaign::GetPriority() const
+{
+  return priority;
+}
+
 bool Campaign::NewHighscore(DifficultyType difficulty, uint16_t score)
 {
   for (const Highscore& h : highscores.at(difficulty))
@@ -169,12 +179,12 @@ bool Campaign::IsTestMode()
   return test;
 }
 
-std::vector<Highscore>& Campaign::GetHighscores(DifficultyType difficulty)
+const std::vector<Highscore>& Campaign::GetHighscores(DifficultyType difficulty) const
 {
   return highscores.at(difficulty);
 }
 
-HighscoreMap& Campaign::GetHighscores()
+const HighscoreMap& Campaign::GetHighscores() const
 {
   return highscores;
 }

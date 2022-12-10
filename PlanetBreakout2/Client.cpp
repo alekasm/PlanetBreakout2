@@ -25,22 +25,15 @@ namespace
   MainMenu mainMenu;
   bool initialized = false;
   HCURSOR cursor;
-  POINT window_center;
   POINT mouse_pos;
-
 
   HWND containerhWnd;
   bool fullscreen = false;
   float fs_scale_factor = 1.f;
   float fs_scale_factor_rel = 1.f;
-
-  //RECT FullscreenWindowRect;
-  
+ 
   const RECT GameWindowRect = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
   float mouse_scale = 1.f;
-
-  //float fs_scale_factor = 1.f;
-  //float fs_scale_factor_rel = 1.f;
 
   D2D1_SIZE_U FullScreenDimension;
 
@@ -88,7 +81,9 @@ void Client::PostInitialize()
   levelEditor.initialize(this);
   initialized = true;
   UpdateClientWindow();
-  window_center = POINT();
+#ifndef DEV_MODE
+  ToggleFullScreen();
+#endif
 }
 
 void Client::UpdateClientWindow()
@@ -332,7 +327,7 @@ void Client::ProcessWM_KEYDOWN(WPARAM wParam)
           GameController::GetInstance()->SetHighscoreName(
             GameController::GetInstance()->GetHighscoreText().GetString());
           GameController::GetInstance()->GetHighscoreText().Clear();
-          GameLoader::SaveCampaign(GameController::GetInstance()->campaign);
+          GameLoader::SaveCampaign(GameController::GetInstance()->GetCampaign());
           SetClientFocus(false);
         }
       }

@@ -1,5 +1,6 @@
 #pragma once
 #define VERSION 1
+//#define DEV_MODE
 #define CLIENT_WIDTH 1024
 #define CLIENT_HEIGHT 768
 #define TILE_WIDTH 32

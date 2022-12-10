@@ -18,12 +18,12 @@ void Button::SetButtonFill(ID2D1Brush* brush)
   fillBrush = brush;
 }
 
-void Button::SetId(int32_t id)
+void Button::SetPriority(int32_t id)
 {
   this->id = id;
 }
 
-int32_t Button::GetId()
+int32_t Button::GetPriority()
 {
   return id;
 }

@@ -62,6 +62,12 @@ struct Highscore
   }
 };
 
+struct CampaignLevel
+{
+  std::wstring name;
+  int id;
+};
+
 typedef std::unordered_map<DifficultyType, std::vector<Highscore>> HighscoreMap;
 struct Campaign
 {
@@ -70,13 +76,22 @@ struct Campaign
   std::wstring ball_sprite = L"ball";
   std::wstring name = L"None";
   std::vector<GameLevel> levels;
+  std::vector<CampaignLevel> clevels;
   std::wstring path;
   void AddHighscore(Highscore&);
   bool NewHighscore(DifficultyType, uint16_t score);
-  std::vector<Highscore>& GetHighscores(DifficultyType);
+  const std::vector<Highscore>& GetHighscores(DifficultyType) const;
   void SetTestMode();
   bool IsTestMode();
-  HighscoreMap& GetHighscores();
+  const HighscoreMap& GetHighscores() const;
+  void SetPriority(int);
+  const int GetPriority() const;
+  bool operator<(const Campaign& other) const {
+    return priority < other.GetPriority();
+  }
+  bool operator==(const Campaign& other) const {
+    return name.compare(other.name.c_str()) == 0;
+  }
 private:
   HighscoreMap highscores{
     {DifficultyType::EASY, {}},
@@ -84,4 +99,6 @@ private:
     {DifficultyType::HARD, {}}
   };
   bool test = false;
+  uint32_t priority = 0xFFFFFFFF;
+ 
 };

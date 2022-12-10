@@ -40,7 +40,6 @@ struct GameController
   static GameController* GetInstance(); 
   uint16_t GetScore();
   void AddScore(uint16_t);
-  Campaign campaign;
   void CreateGame(Campaign&);
   void EndGame();
   void MouseUpdate(const POINT&);
@@ -75,7 +74,9 @@ struct GameController
   const Difficulty& GetDifficulty();
   const DifficultyType GetDifficultyType() const;
   const DifficultyMap& GetDifficultyMap() const;
+  const Campaign& GetCampaign() const;
 private:
+  Campaign* campaign;
   POINT mousePos;
   Bat* bat = nullptr;
   void ClearBarrierBricks();

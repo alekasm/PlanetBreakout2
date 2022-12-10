@@ -3,17 +3,21 @@
 #include <fstream>
 #include <conio.h>
 #include <filesystem>
+#include <algorithm>
 #include "Constants.h"
 #include "ResourceLoader.h"
 #include "Client.h"
 #include "LogicHelper.h"
 
-CampaignMap GameLoader::campaignMap;
+//CampaignMap GameLoader::campaignMap;
+//CampaignSet GameLoader::campaignSet;
+std::vector<Campaign> GameLoader::campaignVec;
 HCURSOR GameLoader::cursor;
 
-CampaignMap& GameLoader::GetCampaigns()
+
+std::vector<Campaign>& GameLoader::GetCampaigns()
 {
-  return campaignMap;
+  return campaignVec;
 }
 
 //Used for parsing bricks from map files and for asset maps
@@ -148,7 +152,7 @@ bool Tokenize(std::wstring& line, Token& token)
   token.key = line.substr(0, it);
   line.erase(0, it + 1);
 
-  while((it = line.find(',')) != std::wstring::npos)
+  while ((it = line.find(',')) != std::wstring::npos)
   {
     token.values.push_back(line.substr(0, it));
     line.erase(0, it + 1);
@@ -178,7 +182,7 @@ bool ReadFile(const std::wstring& filename, std::vector<std::wstring>& tokens)
   return true;
 }
 
-bool GameLoader::SaveCampaign(Campaign& campaign)
+bool GameLoader::SaveCampaign(const Campaign& campaign)
 {
   std::filesystem::path fs_path(campaign.path);
   fs_path.append(L"mission.cfg");
@@ -192,6 +196,13 @@ bool GameLoader::SaveCampaign(Campaign& campaign)
   output << L"name:" << campaign.name << L"\n";
   output << L"bat:" << campaign.bat_sprite << L"\n";
   output << L"ball:" << campaign.ball_sprite << L"\n";
+  output << L"priority:" << campaign.GetPriority() << L"\n";
+  for (const CampaignLevel& clevel : campaign.clevels)
+  {
+    output << L"level:";
+    output << clevel.name << L",";
+    output << std::to_wstring(clevel.id) << L"\n";
+  }
   HighscoreMap::const_iterator h_it;
   for (h_it = campaign.GetHighscores().begin();
     h_it != campaign.GetHighscores().end(); ++h_it)
@@ -208,13 +219,16 @@ bool GameLoader::SaveCampaign(Campaign& campaign)
     }
   }
   output.close();
+  /*
   CampaignMap::iterator it = campaignMap.find(campaign.name);
   if (it != campaignMap.end())
   {
     it->second = campaign;
   }
+  */
   return true;
 }
+
 
 bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
 {
@@ -236,6 +250,13 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
       campaign.bat_sprite = first_value;
     else if (t.key == L"name")
       campaign.name = first_value;
+    else if (t.key == L"priority")
+      campaign.SetPriority(std::stoi(first_value.c_str()));
+    else if (t.key == L"level")
+    {
+      if (t.values.size() != 2) continue;
+      campaign.clevels.push_back({ first_value, std::stoi(t.values.at(1).c_str()) });
+    }
     else if (t.key == L"highscore")
     {
       if (t.values.size() != 5) continue;
@@ -247,16 +268,17 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
       highscore.date = std::wcstoll(t.values.at(3).c_str(), &end1, 10);
       wchar_t* end2;
       uint64_t checksum = std::wcstoull(t.values.at(4).c_str(), &end2, 10);
-      if(highscore.IsValid(checksum))
+      if (highscore.IsValid(checksum))
         campaign.AddHighscore(highscore);
     }
   }
   return true;
 }
 
+
 bool GameLoader::LoadCampaigns()
 {
-  campaignMap.clear();
+  campaignVec.clear();
   std::vector<std::filesystem::path> campaign_paths;
   for (const std::filesystem::directory_entry& entry :
     std::filesystem::directory_iterator(ResourceLoader::GetLevelPath()))
@@ -281,6 +303,7 @@ bool GameLoader::LoadCampaigns()
       printf("Error setting campaign name: %s\n", e.what());
       continue;
     }
+    std::unordered_map<std::wstring, GameLevel> levels;
     for (const std::filesystem::directory_entry& entry :
       std::filesystem::directory_iterator(campaign_path))
     {
@@ -299,13 +322,46 @@ bool GameLoader::LoadCampaigns()
             wprintf(L"Failed to load level: %s\n", filename.c_str());
             return false;
           }
-          campaign.levels.push_back(level);
+          levels[level.map_name] = level;
         }
       }
     }
-    wprintf(L"Loaded %s with %d levels\n", campaign.name.c_str(), campaign.levels.size());
-    campaignMap[campaign.name] = campaign;
-  }  
+
+    std::sort(campaign.clevels.begin(), campaign.clevels.end(), [](
+      const CampaignLevel& a, const CampaignLevel& b) {
+        return a.id < b.id;
+      });
+    for (const CampaignLevel& clevel : campaign.clevels)
+    {
+      std::unordered_map<std::wstring, GameLevel>::iterator level_it;
+      level_it = levels.find(clevel.name);
+      if (level_it != levels.end())
+      {
+        campaign.levels.push_back(level_it->second);
+        levels.erase(level_it);
+      }
+      else
+      {
+        wprintf(L"Did not find specified map for campaign: %s\n", clevel.name.c_str());
+      }
+    }
+    //If theres maps loaded, but not specified in the order list
+    std::unordered_map<std::wstring, GameLevel>::iterator level_it;
+    level_it = levels.begin();
+    for (; level_it != levels.end(); ++level_it)
+      campaign.levels.push_back(level_it->second);
+
+    if (!campaign.levels.empty())
+    {
+      wprintf(L"Loaded %s with %d levels\n", campaign.name.c_str(), campaign.levels.size());
+      campaignVec.push_back(campaign);
+    }
+  }
+
+  if (campaignVec.empty())
+    return false;
+  std::sort(campaignVec.begin(), campaignVec.end());
+
   return true;
 }
 
@@ -361,7 +417,7 @@ bool GameLoader::SaveMap(GameLevel& level, std::wstring& save_out)
         break;
       }
     } while (true);
-  } 
+  }
   else
   {
     map_path.append(level.map_name);
