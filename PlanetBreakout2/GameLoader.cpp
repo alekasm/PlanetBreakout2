@@ -9,11 +9,9 @@
 #include "Client.h"
 #include "LogicHelper.h"
 
-//CampaignMap GameLoader::campaignMap;
-//CampaignSet GameLoader::campaignSet;
+
 std::vector<Campaign> GameLoader::campaignVec;
 HCURSOR GameLoader::cursor;
-
 
 std::vector<Campaign>& GameLoader::GetCampaigns()
 {
@@ -201,7 +199,7 @@ bool GameLoader::SaveCampaign(const Campaign& campaign)
   {
     output << L"level:";
     output << clevel.name << L",";
-    output << std::to_wstring(clevel.id) << L"\n";
+    output << std::to_wstring(clevel.priority) << L"\n";
   }
   HighscoreMap::const_iterator h_it;
   for (h_it = campaign.GetHighscores().begin();
@@ -245,9 +243,19 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
     if (t.values.empty()) continue;
     std::wstring first_value = t.values.at(0);
     if (t.key == L"ball")
-      campaign.ball_sprite = first_value;
+    {
+      if (ResourceLoader::ContainsSprite(first_value))
+      {
+        campaign.ball_sprite = first_value;
+      }
+    }
     else if (t.key == L"bat")
-      campaign.bat_sprite = first_value;
+    {
+      if (ResourceLoader::ContainsSprite(first_value))
+      {
+        campaign.bat_sprite = first_value;
+      }
+    }
     else if (t.key == L"name")
       campaign.name = first_value;
     else if (t.key == L"priority")
@@ -329,7 +337,7 @@ bool GameLoader::LoadCampaigns()
 
     std::sort(campaign.clevels.begin(), campaign.clevels.end(), [](
       const CampaignLevel& a, const CampaignLevel& b) {
-        return a.id < b.id;
+        return a.priority < b.priority;
       });
     for (const CampaignLevel& clevel : campaign.clevels)
     {
@@ -373,19 +381,22 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
   if (!LoadFile(filename, info))
     return false;
 
-  try {
+  try
+  {
     std::wstring key = std::filesystem::path(filename).filename().wstring();
     level.map_name = key;
-    //level_map[key] = level;
     level.author = info.author;
     for (Brick& brick : info.bricks)
     {
+      if (!ResourceLoader::ContainsSprite(brick.GetSprite()))
+      {
+        return false;
+      }
       uint32_t index;
       if (GetBrickIndex(brick.col, brick.row, index))
       {
         level.GetBrickMap().Add(index, brick);
       }
-      //level.brickMap[index].push_back(brick);
     }
     out = level;
     return true;

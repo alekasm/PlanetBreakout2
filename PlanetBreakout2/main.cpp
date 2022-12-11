@@ -31,11 +31,33 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
   Client* client = new Client();
   client->Initialize(hInstance);
   ResourceLoader::InitializeClient(client->GetHWND());
+
   if (ResourceLoader::LoadAudioFiles() != S_OK)
-  {
     printf("Error loading audio files\n");
+
+  if (ResourceLoader::LoadImageFiles() != S_OK)
+    printf("Error loading image files\n");
+
+  if (ResourceLoader::CreateBrushes() != S_OK)
+    printf("Error creating brushes\n");
+
+  if(!ResourceLoader::IntegrityCheck())
+  {
+    MessageBox(NULL, "Failed to find required assets. Ensure "
+      "the game is installed properly.", "Planet Breakout 2",
+      MB_OK | MB_ICONWARNING);
+    return 1;
   }
-  GameLoader::LoadCampaigns();
+
+  if (!GameLoader::LoadCampaigns())
+  {
+    MessageBox(NULL, "Failed to load missions. Ensure the game "
+      "is installed properly. If using a custom mission, check "
+      "missing brick assets for levels.", "Planet Breakout 2",
+      MB_OK | MB_ICONWARNING);
+    return 1;
+  }
+
   client->PostInitialize();
 
   MSG msg;

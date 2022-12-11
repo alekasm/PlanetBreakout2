@@ -65,7 +65,7 @@ struct Highscore
 struct CampaignLevel
 {
   std::wstring name;
-  int id;
+  int priority;
 };
 
 typedef std::unordered_map<DifficultyType, std::vector<Highscore>> HighscoreMap;

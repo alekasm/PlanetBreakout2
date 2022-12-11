@@ -62,6 +62,7 @@ struct TextFormatData {
 
 typedef std::unordered_map<TextFormat, TextFormatData> TextFormatMap;
 typedef std::unordered_map<std::wstring, ID2D1Bitmap*> SpriteMap;
+typedef std::unordered_map<ColorBrush, ID2D1Brush*> BrushMap;
 
 struct AudioData {
   WAVEFORMATEXTENSIBLE wfx = { 0 };
@@ -73,6 +74,9 @@ struct ResourceLoader
 {
   ResourceLoader() = delete;
   static HRESULT LoadAudioFiles();
+  static HRESULT LoadImageFiles();
+  static HRESULT CreateBrushes();
+  static bool IntegrityCheck();
   static void PlayAudio(std::wstring, bool loop = false);
   static void Initialize();
   static void InitializeClient(HWND);
@@ -96,13 +100,12 @@ private:
   static ID2D1HwndRenderTarget* fullscreenTarget;
   static ID2D1Factory* factory;
   static IDWriteFactory* wfactory;
-  //static IDWriteTextFormat* formats[];
-  //static ID2D1Brush* brushes[];
-  static std::unordered_map<ColorBrush, ID2D1Brush*> brushes;
+  static BrushMap brushes;
   static AudioMap audioMap;
   static IXAudio2* pXAudio2;
   static IXAudio2MasteringVoice* pMasterVoice;
   static TextFormatMap textFormatMap;
   static AudioState audioState;
   static std::vector<std::wstring> brickSprites;
+  static IWICImagingFactory* pIWICFactory;
 };

@@ -346,7 +346,6 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
       if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
         multiplier = 12.f;
       AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
-      AddScore(1000);
       //Prevent spawning on barrier bricks
       if (!IsReservedBrick(col, row) &&
         (rand() % random_chance) == 0)

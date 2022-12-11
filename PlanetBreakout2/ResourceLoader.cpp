@@ -11,17 +11,18 @@
 #include "Constants.h"
 
 
-SpriteMap ResourceLoader::sprite_map;
 std::vector<std::wstring> ResourceLoader::brickSprites;
 ID2D1HwndRenderTarget* ResourceLoader::target;
 ID2D1HwndRenderTarget* ResourceLoader::fullscreenTarget;
 ID2D1Factory* ResourceLoader::factory;
 IDWriteFactory* ResourceLoader::wfactory;
-std::unordered_map<ColorBrush, ID2D1Brush*> ResourceLoader::brushes;
+BrushMap ResourceLoader::brushes;
 std::filesystem::path ResourceLoader::runpath;
 IXAudio2* ResourceLoader::pXAudio2;
 IXAudio2MasteringVoice* ResourceLoader::pMasterVoice;
 AudioState ResourceLoader::audioState = AudioState::ON;
+IWICImagingFactory* ResourceLoader::pIWICFactory = 0;
+
 TextFormatMap ResourceLoader::textFormatMap = {
   {TextFormat::LEFT_8F, TextFormatData(8.f, false) },
   {TextFormat::LEFT_10F, TextFormatData(10.f, false) },
@@ -41,6 +42,33 @@ AudioMap ResourceLoader::audioMap = {
   {L"laser.wav", {}},
   {L"click.wav", {}},
   {L"powerup.wav", {}}
+};
+
+SpriteMap ResourceLoader::sprite_map = {
+  {L"audiooff", {}},
+  {L"audioon", {}},
+  {L"ball", {}},
+  {L"barrier", {}},
+  {L"barrier_icon", {}},
+  {L"bat", {}},
+  {L"creator", {}},
+  {L"drone", {}},
+  {L"emp", {}},
+  {L"ghost", {}},
+  {L"heart", {}},
+  {L"hyperball", {}},
+  {L"laser", {}},
+  {L"laser2", {}},
+  {L"laserbat", {}},
+  {L"mouse", {}},
+  {L"nopoint", {}},
+  {L"points", {}},
+  {L"portal", {}},
+  {L"powerup", {}},
+  {L"shield", {}},
+  {L"sidebar", {}},
+  {L"star", {}},
+  {L"strike", {}},
 };
 
 AudioState ResourceLoader::GetAudioState()
@@ -186,8 +214,8 @@ const TextFormatData& ResourceLoader::GetTextFormatData(TextFormat format)
 
 void ResourceLoader::InitializeClient(HWND hWnd)
 {
-  DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&wfactory));
-
+  DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+    __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&wfactory));
 
   TextFormatMap::iterator it = textFormatMap.begin();
   for (; it != textFormatMap.end(); ++it)
@@ -195,7 +223,7 @@ void ResourceLoader::InitializeClient(HWND hWnd)
     wfactory->CreateTextFormat(L"Arial", NULL, DWRITE_FONT_WEIGHT_BOLD,
       DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
       it->second.size, L"en-us", &it->second.format);
-    if(it->second.centerAlignment)
+    if (it->second.centerAlignment)
       it->second.format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
   }
 
@@ -208,8 +236,39 @@ void ResourceLoader::InitializeClient(HWND hWnd)
       D2D1_PRESENT_OPTIONS_IMMEDIATELY),
     &target);
 
+  CoCreateInstance(CLSID_WICImagingFactory, NULL,
+    CLSCTX_INPROC_SERVER, IID_IWICImagingFactory,
+    reinterpret_cast<void**>(&pIWICFactory));
 
-  //target->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+  if (pIWICFactory == 0)
+  {
+    printf("Failed to create the IWICImagingFactory\n");
+    return;
+  }
+}
+
+HRESULT ResourceLoader::LoadImageFiles()
+{
+  std::vector<std::filesystem::path> sprites;
+  FindFiles(L"assets/sprites", sprites);
+  for (std::filesystem::path& sprite : sprites)
+  {
+    ID2D1Bitmap* bitmap;
+    HRESULT hr = LoadBitmapFromFile(target, pIWICFactory, sprite.wstring().c_str(), &bitmap);
+    if (FAILED(hr))
+      return hr;
+    std::wstring parent = sprite.parent_path().filename();
+    std::wstring name = sprite.stem().wstring();
+    wprintf(L"Added sprite: %ls\n", name.c_str());
+    sprite_map[name] = bitmap;
+    if (parent.compare(L"bricks") == 0)
+      brickSprites.push_back(name);
+  }
+  return S_OK;
+}
+
+HRESULT ResourceLoader::CreateBrushes()
+{
   target->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::GRAY, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GRAY]);
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::GREEN, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::GREEN]);
@@ -242,14 +301,13 @@ void ResourceLoader::InitializeClient(HWND hWnd)
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_1]);
   }
 
-  //8c3c55
   {
     D2D1_GRADIENT_STOP stops[] =
     {
         { 0.0f, D2D1::ColorF(0x46be99) },
         { 1.0f, D2D1::ColorF(0x579b36) }
     };
-    
+
     ID2D1GradientStopCollection* collection;
     target->CreateGradientStopCollection(stops, _countof(stops), &collection);
     D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
@@ -292,37 +350,7 @@ void ResourceLoader::InitializeClient(HWND hWnd)
       D2D1::Point2F(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT)), collection,
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::HIGHSCORE_GRADIENT]);
   }
-
-
-  IWICImagingFactory* pIWICFactory = 0;
-  CoCreateInstance(CLSID_WICImagingFactory, NULL,
-    CLSCTX_INPROC_SERVER, IID_IWICImagingFactory,
-    reinterpret_cast<void**>(&pIWICFactory));
-
-  if (pIWICFactory == 0)
-  {
-    printf("Failed to create the IWICImagingFactory\n");
-    return;
-  }
-
-  std::vector<std::filesystem::path> sprites;
-  FindFiles(L"assets/sprites", sprites);
-
-  for (std::filesystem::path& sprite : sprites)
-  {
-    ID2D1Bitmap* bitmap;
-    HRESULT hr = LoadBitmapFromFile(target, pIWICFactory, sprite.wstring().c_str(), &bitmap);
-    if (SUCCEEDED(hr))
-    {
-      std::wstring parent = sprite.parent_path().filename();
-      std::wstring name = sprite.stem().wstring();
-      wprintf(L"Added sprite: %ls\n", name.c_str());
-      sprite_map[name] = bitmap;
-      if (parent.compare(L"bricks") == 0)
-        brickSprites.push_back(name);
-    }
-  }
-  //delete pIWICFactory;
+  return S_OK;
 }
 
 bool ResourceLoader::GetFile(std::wstring& filename)
@@ -466,8 +494,26 @@ void ResourceLoader::PlayAudio(std::wstring audio, bool loop)
   pSourceVoice->Start(0);
 }
 
+bool ResourceLoader::IntegrityCheck()
+{
+  AudioMap::iterator ait = audioMap.begin();
+  for (; ait != audioMap.end(); ++ait)
+  {
+    if (ait->second.buffer.pAudioData == nullptr)
+      return false;
+  }
+
+  SpriteMap::iterator sit = sprite_map.begin();
+  for (; sit != sprite_map.end(); ++sit)
+  {
+    if (sit->second == nullptr)
+      return false;
+  }
+  return true;
+}
+
 HRESULT ResourceLoader::LoadAudioFiles()
-{ 
+{
   HRESULT hr;
   pXAudio2 = nullptr;
   if (FAILED(hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))
@@ -490,13 +536,12 @@ HRESULT ResourceLoader::LoadAudioFiles()
       OPEN_EXISTING,
       0,
       NULL);
-    
+
     if (INVALID_HANDLE_VALUE == hFile)
     {
       wprintf(L"Failed to load audio file: %s\n", filename.c_str());
       return HRESULT_FROM_WIN32(GetLastError());
     }
-
 
     if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
       return HRESULT_FROM_WIN32(GetLastError());

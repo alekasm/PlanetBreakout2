@@ -84,6 +84,8 @@ void Client::PostInitialize()
 #ifndef DEV_MODE
   ToggleFullScreen();
 #endif
+  ShowWindow(containerhWnd, SW_SHOW);
+  ShowWindow(hWnd, SW_SHOW);
 }
 
 void Client::UpdateClientWindow()
@@ -337,8 +339,8 @@ void Client::ProcessWM_KEYDOWN(WPARAM wParam)
 
 LRESULT CALLBACK ContainerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+  //if (!initialized) return 0;
   Client* pWnd = (Client*)GetWindowLongPtr(hWnd, GWL_USERDATA);
-
   switch (message)
   {
   case WM_NCCREATE:
@@ -370,8 +372,8 @@ LRESULT CALLBACK ContainerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 
 LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+  //if (!initialized) return 0;
   Client* pWnd = (Client*)GetWindowLongPtr(hWnd, GWL_USERDATA);
-
   switch (message)
   {
   case WM_NCCREATE:
@@ -470,7 +472,7 @@ LRESULT CALLBACK ClientWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 void Client::Initialize(HINSTANCE hInstance)
 {
   cursor = LoadCursor(NULL, IDC_ARROW);
-  grfStyle = WS_VISIBLE | WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+  grfStyle = WS_CLIPCHILDREN | WS_BORDER | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   grfExStyle = WS_EX_STATICEDGE;
   WindowRect = { 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
   AdjustWindowRectEx(&WindowRect, grfStyle, FALSE, grfExStyle);
@@ -504,7 +506,7 @@ void Client::Initialize(HINSTANCE hInstance)
 
   hWnd = CreateWindow(
     MainClass2.lpszClassName,
-    "", WS_VISIBLE | WS_CHILD,
+    "",  WS_CHILD,
     0, 0,
     CLIENT_WIDTH,
     CLIENT_HEIGHT,
