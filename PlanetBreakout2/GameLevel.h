@@ -45,10 +45,12 @@ struct Highscore
   {
     return score > other.score;
   }
-  const uint64_t CalculateChecksum() const
+  const uint64_t CalculateChecksum(const std::wstring& mission) const
   {
     uint64_t count = 0;
     for (wchar_t w : name)
+      count += w;
+    for (wchar_t w : mission)
       count += w;
     count += score;
     count += date;
@@ -56,9 +58,9 @@ struct Highscore
     return UINT64_MAX - count;
   }
 
-  const bool IsValid(uint64_t checksum) const
+  const bool IsValid(const std::wstring& mission, uint64_t checksum) const
   {
-    return checksum == CalculateChecksum();
+    return checksum == CalculateChecksum(mission);
   }
 };
 

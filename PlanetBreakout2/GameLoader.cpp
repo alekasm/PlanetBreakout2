@@ -191,7 +191,7 @@ bool GameLoader::SaveCampaign(const Campaign& campaign)
       fs_path.wstring().c_str());
     return false;
   }
-  output << L"name:" << campaign.name << L"\n";
+  //output << L"name:" << campaign.name << L"\n";
   output << L"bat:" << campaign.bat_sprite << L"\n";
   output << L"ball:" << campaign.ball_sprite << L"\n";
   output << L"priority:" << campaign.GetPriority() << L"\n";
@@ -213,17 +213,10 @@ bool GameLoader::SaveCampaign(const Campaign& campaign)
       output << std::to_wstring(h.score) << L",";
       output << std::to_wstring(h.difficulty) << L",";
       output << std::to_wstring(h.date) << L",";
-      output << std::to_wstring(h.CalculateChecksum()) << L"\n";
+      output << std::to_wstring(h.CalculateChecksum(campaign.name)) << L"\n";
     }
   }
   output.close();
-  /*
-  CampaignMap::iterator it = campaignMap.find(campaign.name);
-  if (it != campaignMap.end())
-  {
-    it->second = campaign;
-  }
-  */
   return true;
 }
 
@@ -256,8 +249,6 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
         campaign.bat_sprite = first_value;
       }
     }
-    else if (t.key == L"name")
-      campaign.name = first_value;
     else if (t.key == L"priority")
       campaign.SetPriority(std::stoi(first_value.c_str()));
     else if (t.key == L"level")
@@ -276,7 +267,7 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
       highscore.date = std::wcstoll(t.values.at(3).c_str(), &end1, 10);
       wchar_t* end2;
       uint64_t checksum = std::wcstoull(t.values.at(4).c_str(), &end2, 10);
-      if (highscore.IsValid(checksum))
+      if (highscore.IsValid(campaign.name, checksum))
         campaign.AddHighscore(highscore);
     }
   }

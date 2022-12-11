@@ -262,11 +262,12 @@ HRESULT ResourceLoader::LoadImageFiles()
     HRESULT hr = LoadBitmapFromFile(target, pIWICFactory, sprite.wstring().c_str(), &bitmap);
     if (FAILED(hr))
       return hr;
-    std::wstring parent = sprite.parent_path().filename();
+    //std::wstring parent = sprite.parent_path().filename();
     std::wstring name = sprite.stem().wstring();
     wprintf(L"Added sprite: %ls\n", name.c_str());
     sprite_map[name] = bitmap;
-    if (parent.compare(L"bricks") == 0)
+    //Parent used to be used, but won't work on recursive files
+    if (sprite.wstring().find(L"bricks") != std::wstring::npos)
       brickSprites.push_back(name);
   }
   return S_OK;
