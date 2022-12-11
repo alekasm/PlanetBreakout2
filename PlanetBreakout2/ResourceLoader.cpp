@@ -20,7 +20,7 @@ BrushMap ResourceLoader::brushes;
 std::filesystem::path ResourceLoader::runpath;
 IXAudio2* ResourceLoader::pXAudio2;
 IXAudio2MasteringVoice* ResourceLoader::pMasterVoice;
-AudioState ResourceLoader::audioState = AudioState::ON;
+AudioState ResourceLoader::audioState = AudioState::OFF;
 IWICImagingFactory* ResourceLoader::pIWICFactory = 0;
 
 TextFormatMap ResourceLoader::textFormatMap = {
@@ -96,9 +96,12 @@ bool ResourceLoader::ContainsSprite(const std::wstring& key)
   return sprite_map.find(key) != sprite_map.end();
 }
 
-void ResourceLoader::FindFiles(std::wstring directory,
+bool ResourceLoader::FindFiles(std::wstring directory,
   std::vector<std::filesystem::path>& vector)
 {
+  std::filesystem::path findpath(directory);
+  if (!std::filesystem::exists(findpath))
+    return false;
   for (const std::filesystem::directory_entry& entry :
     std::filesystem::recursive_directory_iterator(directory))
   {
@@ -107,6 +110,7 @@ void ResourceLoader::FindFiles(std::wstring directory,
       vector.push_back(entry);
     }
   }
+  return true;
 }
 
 template <class T> void SafeRelease(T** ppT)
@@ -250,7 +254,8 @@ void ResourceLoader::InitializeClient(HWND hWnd)
 HRESULT ResourceLoader::LoadImageFiles()
 {
   std::vector<std::filesystem::path> sprites;
-  FindFiles(L"assets/sprites", sprites);
+  if (!FindFiles(L"assets/sprites", sprites))
+    return S_FALSE;
   for (std::filesystem::path& sprite : sprites)
   {
     ID2D1Bitmap* bitmap;

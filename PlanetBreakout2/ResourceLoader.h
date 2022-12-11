@@ -80,7 +80,7 @@ struct ResourceLoader
   static void PlayAudio(std::wstring, bool loop = false);
   static void Initialize();
   static void InitializeClient(HWND);
-  static void FindFiles(std::wstring directory, std::vector<std::filesystem::path>& out);
+  static bool FindFiles(std::wstring directory, std::vector<std::filesystem::path>& out);
   static const SpriteMap& GetSpriteMap();
   static bool ContainsSprite(const std::wstring&);
   static bool GetFile(std::wstring& filename);

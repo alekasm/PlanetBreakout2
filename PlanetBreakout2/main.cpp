@@ -58,6 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     return 1;
   }
 
+  ResourceLoader::SetAudioState(AudioState::ON);
   client->PostInitialize();
 
   MSG msg;
