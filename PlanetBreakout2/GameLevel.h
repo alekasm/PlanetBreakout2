@@ -67,7 +67,7 @@ struct Highscore
 struct CampaignLevel
 {
   std::wstring name;
-  int priority;
+  uint32_t priority = 0xFFFFFFFF;
 };
 
 typedef std::unordered_map<DifficultyType, std::vector<Highscore>> HighscoreMap;
@@ -86,8 +86,8 @@ struct Campaign
   void SetTestMode();
   bool IsTestMode();
   const HighscoreMap& GetHighscores() const;
-  void SetPriority(int);
-  const int GetPriority() const;
+  void SetPriority(uint32_t);
+  const uint32_t GetPriority() const;
   bool operator<(const Campaign& other) const {
     return priority < other.GetPriority();
   }

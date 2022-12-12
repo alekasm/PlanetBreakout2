@@ -128,12 +128,12 @@ void Campaign::AddHighscore(Highscore& highscore)
   vscore.erase(vscore.begin() + HIGHSCORE_SIZE, vscore.end());
 }
 
-void Campaign::SetPriority(int priority)
+void Campaign::SetPriority(uint32_t priority)
 {
   this->priority = priority;
 }
 
-const int Campaign::GetPriority() const
+const uint32_t Campaign::GetPriority() const
 {
   return priority;
 }

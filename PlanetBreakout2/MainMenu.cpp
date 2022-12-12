@@ -231,10 +231,8 @@ void MainMenu::initialize(Client* client)
     float row = (index / 6);
     float col = (index % 6);
 
-    //(width / 2) - (row + padding / 2) = 343.f
     float x = (343.f + (col * 48.f)) + (col * 12.f);
     float y = (350.f + (row * 48.f)) + (row * 12.f);
-
 
     Drawable button0draw(x, y, 48, 48);
     Button* button0 = new Button(button0draw);

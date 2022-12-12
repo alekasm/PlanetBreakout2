@@ -246,11 +246,11 @@ bool ReadCampaignConfig(std::wstring filename, Campaign& campaign)
       }
     }
     else if (t.key == L"priority")
-      campaign.SetPriority(std::stoi(first_value.c_str()));
+      campaign.SetPriority(std::stoul(first_value.c_str()));
     else if (t.key == L"level")
     {
       if (t.values.size() != 2) continue;
-      campaign.clevels.push_back({ first_value, std::stoi(t.values.at(1).c_str()) });
+      campaign.clevels.push_back({ first_value, std::stoul(t.values.at(1).c_str()) });
     }
     else if (t.key == L"highscore")
     {
