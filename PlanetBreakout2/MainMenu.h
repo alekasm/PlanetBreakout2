@@ -28,14 +28,14 @@ private:
   size_t campaign_page = 0;
   size_t difficulty_page = 0;
   ID2D1LinearGradientBrush* planetBrush = nullptr;
-  Button* fullscreenButton;
-  Button* audioButton;
+  Button* fullscreenButton = nullptr;
+  Button* audioButton = nullptr;
   std::unordered_map<PowerupType, std::wstring> powerupDescriptions;
   PowerupType currentPowerupSelected;
   std::wstring currentDifficultySelected;
   std::wstring currentCampaignNameSelected;
   std::vector<Button*> powerupButtons;
   const std::wstring versionString =
-    L"Version " + std::to_wstring(VERSION);
+    L"Version " + std::to_wstring(GAME_VERSION);
 
 };

@@ -76,7 +76,7 @@ struct GameController
   const DifficultyMap& GetDifficultyMap() const;
   const Campaign& GetCampaign() const;
 private:
-  Campaign* campaign;
+  Campaign* campaign = nullptr;
   POINT mousePos;
   Bat* bat = nullptr;
   void ClearBarrierBricks();

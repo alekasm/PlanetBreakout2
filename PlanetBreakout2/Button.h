@@ -7,9 +7,9 @@
 
 struct Text : PrimitiveText
 {
-  IDWriteTextFormat* textFormat;
-  ID2D1Brush* textBrush;
-  D2D1_RECT_F textRect;
+  IDWriteTextFormat* textFormat = nullptr;
+  ID2D1Brush* textBrush = nullptr;
+  D2D1_RECT_F textRect{};
   TextFormat type;
 
   Text(const D2D1_RECT_F& drawable, const std::wstring& text) :

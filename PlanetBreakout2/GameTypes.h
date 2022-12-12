@@ -56,13 +56,4 @@ struct Brick : Entity
     Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
     SetSprite(sprite);
   }
-  /*
-  Brick(const Brick& other, uint32_t x, uint32_t y) :
-    Entity(EntityType::SPRITE, BRICK_WIDTH, BRICK_HEIGHT),
-    subtype(other.subtype), col(x), row(y)
-  {
-    Update(x * BRICK_WIDTH, y * BRICK_HEIGHT);
-    SetSprite(other.GetSprite());
-  }
-  */
 };

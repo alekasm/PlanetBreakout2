@@ -235,20 +235,18 @@ void ResourceLoader::InitializeClient(HWND hWnd)
   factory->CreateHwndRenderTarget(
     D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_HARDWARE),
     D2D1::HwndRenderTargetProperties(hWnd,
-      //D2D1::SizeU(1440, 1080),
       D2D1::SizeU(CLIENT_WIDTH, CLIENT_HEIGHT),
       D2D1_PRESENT_OPTIONS_IMMEDIATELY),
     &target);
 
-  CoCreateInstance(CLSID_WICImagingFactory, NULL,
+  if (S_OK != CoCreateInstance(CLSID_WICImagingFactory, NULL,
     CLSCTX_INPROC_SERVER, IID_IWICImagingFactory,
-    reinterpret_cast<void**>(&pIWICFactory));
-
-  if (pIWICFactory == 0)
+    reinterpret_cast<void**>(&pIWICFactory)))
   {
     printf("Failed to create the IWICImagingFactory\n");
     return;
   }
+
 }
 
 HRESULT ResourceLoader::LoadImageFiles()
@@ -300,10 +298,11 @@ HRESULT ResourceLoader::CreateBrushes()
         { 0.0f, D2D1::ColorF(D2D1::ColorF::Cyan) },
         { 1.0f, D2D1::ColorF(D2D1::ColorF::DarkBlue) }
     };
-    ID2D1GradientStopCollection* collection;
+    ID2D1GradientStopCollection* collection = nullptr;
     target->CreateGradientStopCollection(stops, _countof(stops), &collection);
-    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
-    target->CreateLinearGradientBrush(props, collection,
+    if (collection == nullptr)
+      return S_FALSE;
+    target->CreateLinearGradientBrush({}, collection,
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::GRADIENT_1]);
   }
 
@@ -313,11 +312,11 @@ HRESULT ResourceLoader::CreateBrushes()
         { 0.0f, D2D1::ColorF(0x46be99) },
         { 1.0f, D2D1::ColorF(0x579b36) }
     };
-
-    ID2D1GradientStopCollection* collection;
+    ID2D1GradientStopCollection* collection = nullptr;
     target->CreateGradientStopCollection(stops, _countof(stops), &collection);
-    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
-    target->CreateLinearGradientBrush(props, collection,
+    if (collection == nullptr)
+      return S_FALSE;
+    target->CreateLinearGradientBrush({}, collection,
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::MAIN_MENU_GRADIENT]);
     ID2D1LinearGradientBrush* brush = (ID2D1LinearGradientBrush*)brushes[ColorBrush::MAIN_MENU_GRADIENT];
     brush->SetStartPoint(D2D1::Point2F(CLIENT_WIDTH / 2.f, 104.f));
@@ -331,10 +330,11 @@ HRESULT ResourceLoader::CreateBrushes()
         { 1.0f, D2D1::ColorF(0x1d5a00) }
     };
 
-    ID2D1GradientStopCollection* collection;
+    ID2D1GradientStopCollection* collection = nullptr;
     target->CreateGradientStopCollection(stops, _countof(stops), &collection);
-    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
-    target->CreateLinearGradientBrush(props, collection,
+    if (collection == nullptr)
+      return S_FALSE;
+    target->CreateLinearGradientBrush({}, collection,
       (ID2D1LinearGradientBrush**)&brushes[ColorBrush::MAIN_MENU_DROP_GRADIENT]);
     ID2D1LinearGradientBrush* brush = (ID2D1LinearGradientBrush*)brushes[ColorBrush::MAIN_MENU_DROP_GRADIENT];
     brush->SetStartPoint(D2D1::Point2F(CLIENT_WIDTH / 2.f, 104.f));
@@ -347,10 +347,11 @@ HRESULT ResourceLoader::CreateBrushes()
         { 0.0f, D2D1::ColorF(D2D1::ColorF::PaleGreen) },
         { 1.0f, D2D1::ColorF(D2D1::ColorF::LightSeaGreen) }
     };
-    ID2D1GradientStopCollection* collection;
-    target->CreateGradientStopCollection(stops, _countof(stops), &collection);
-    D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
 
+    ID2D1GradientStopCollection* collection = nullptr;
+    target->CreateGradientStopCollection(stops, _countof(stops), &collection);
+    if (collection == nullptr)
+      return S_FALSE;
     target->CreateLinearGradientBrush(D2D1::LinearGradientBrushProperties(
       D2D1::Point2F(CLIENT_WIDTH / 2.f, 150.f),
       D2D1::Point2F(CLIENT_WIDTH / 2.f, CLIENT_HEIGHT)), collection,

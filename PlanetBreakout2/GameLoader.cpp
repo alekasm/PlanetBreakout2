@@ -20,14 +20,14 @@ std::vector<Campaign>& GameLoader::GetCampaigns()
 
 //Used for parsing bricks from map files and for asset maps
 //type,sprite,x,y
-bool ParseBrick(std::wstring& line, bool hasPosition, std::vector<Brick>& out)
+bool ParseBrick(std::wstring& line, std::vector<Brick>& out)
 {
   const std::wstring original(line);
   BrickType subtype;
   uint32_t x = 0;
   uint32_t y = 0;
   std::wstring sprite;
-  const unsigned fields = hasPosition ? 4 : 2;
+  const unsigned fields = 4;
   for (unsigned i = 0; i < fields; ++i)
   {
     std::wstring token = line;
@@ -87,11 +87,8 @@ bool ParseBrick(std::wstring& line, bool hasPosition, std::vector<Brick>& out)
   return true;
 }
 
-enum class FileType { MAP, ASSET };
-
 struct FileInfo
 {
-  FileType type;
   std::vector<Brick> bricks;
   std::wstring author;
 };
@@ -104,7 +101,6 @@ static bool LoadFile(const std::wstring& filename, FileInfo& info)
     printf("Invalid File: %ls\n", filename.c_str());
     return false;
   }
-  const bool parseBrick = info.type == FileType::MAP;
   std::wstring line;
   while (std::getline(file_stream, line))
   {
@@ -120,7 +116,7 @@ static bool LoadFile(const std::wstring& filename, FileInfo& info)
 
     if (token == L"brick")
     {
-      if (!ParseBrick(line, parseBrick, info.bricks))
+      if (!ParseBrick(line, info.bricks))
       {
         file_stream.close();
         return false;
@@ -368,7 +364,6 @@ bool GameLoader::LoadMap(const std::wstring& filename, GameLevel& out)
 {
   GameLevel level;
   FileInfo info;
-  info.type = FileType::MAP;
   if (!LoadFile(filename, info))
     return false;
 

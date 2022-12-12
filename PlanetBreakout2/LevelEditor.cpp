@@ -69,10 +69,12 @@ void LevelEditor::initialize(Client* client)
         { 0.0f, D2D1::ColorF(0x525557) },
         { 1.0f, D2D1::ColorF(0x323436) }
   };
-  ID2D1GradientStopCollection* collection;
+  ID2D1GradientStopCollection* collection = nullptr;
   ResourceLoader::GetHwndRenderTarget()->CreateGradientStopCollection(
     stops, _countof(stops), &collection);
   D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
+  if (collection == nullptr)
+    return;
 
   {
     Drawable button0draw(GAME_WIDTH + 20, 20 + (14 + 22) * 3, 100, 24);
@@ -199,15 +201,15 @@ void LevelEditor::initialize(Client* client)
       props, collection, &fillBrush);
     button0->SetButtonFill(fillBrush);
     button0->onClick = [this, button0, client]() {
-      Campaign campaign;
-      campaign.SetTestMode();
+      Campaign* campaign = new Campaign();
+      campaign->SetTestMode();
       GameLevel level = editorLevel;
       if (level.author.empty())
         level.author = L"Unknown";
       if (level.map_name.empty())
         level.map_name = L"Unknown";
-      campaign.levels.push_back(level);
-      GameController::GetInstance()->CreateGame(campaign);
+      campaign->levels.push_back(level);
+      GameController::GetInstance()->CreateGame(*campaign);
       client->SetClientFocus(true);
     };
     primaryButtons.push_back(button0);

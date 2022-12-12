@@ -684,6 +684,13 @@ void GameController::CalculateBonus()
 
 void GameController::CreateGame(Campaign& campaign)
 {
+  //Test campaigns are created in the LevelEditor on the stack,
+  //they aren't persistent.
+  if (this->campaign != nullptr && this->campaign->IsTestMode())
+  {
+    delete this->campaign;
+    this->campaign = nullptr;
+  }
   this->campaign = &campaign;
   bat = new Bat(campaign.bat_sprite);
   old_type = game_type;

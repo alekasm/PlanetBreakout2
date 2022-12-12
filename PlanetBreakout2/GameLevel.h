@@ -38,7 +38,7 @@ struct Highscore
 {
   std::wstring name;
   uint16_t score = 0;
-  time_t date;
+  time_t date = 0;
   DifficultyType difficulty;
   bool pseudo = false;
   bool operator<(const Highscore& other) const

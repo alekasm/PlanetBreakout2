@@ -97,9 +97,11 @@ void MainMenu::initialize(Client* client)
         { 0.0f, D2D1::ColorF(0x140394) },
         { 1.0f, D2D1::ColorF(0xF07012E) }
   };
-  ID2D1GradientStopCollection* collection;
+  ID2D1GradientStopCollection* collection = nullptr;
   ResourceLoader::GetHwndRenderTarget()->CreateGradientStopCollection(
     stops, _countof(stops), &collection);
+  if (collection == nullptr)
+    return;
   D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES props = {};
 
   {

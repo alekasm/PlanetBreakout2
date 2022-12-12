@@ -1,5 +1,5 @@
 #pragma once
-#define VERSION 1
+#define GAME_VERSION 1
 //#define DEV_MODE
 #define CLIENT_WIDTH 1024
 #define CLIENT_HEIGHT 768
@@ -28,7 +28,6 @@
 #define BALL_START_Y (GRID_ROWS - 4) * BRICK_HEIGHT
 #define DEFAULT_CAMPAIGN L"main"
 #define MAP_DIRECTORY L"assets\\levels\\"
-#define DEFAULT_BACKGROUND L"bg1"
 #define POWERUP_SPRITE L"powerup"
 #define STAR_SPRITE L"star"
 #define HYPERBALL_SPRITE L"hyperball"

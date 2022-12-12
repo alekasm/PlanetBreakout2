@@ -103,12 +103,15 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
     if (levelEditor.showGrid)
     {
       std::wstring count = std::to_wstring(map_it->second.size());
+      if (brick.subtype == BrickType::INVINCIBLE_BRICK)
+        count = L"inf";
       target->DrawTextA(count.c_str(), count.length(),
         ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
         map_it->second.at(0).GetD2D1Rect(), blackBrush);
       target->DrawTextA(count.c_str(), count.length(),
         ResourceLoader::GetTextFormat(TextFormat::LEFT_12F),
         AdjustRect(map_it->second.at(0).GetD2D1Rect(), 1.f, 1.f), greenBrush);
+
     }
   }
 
@@ -426,7 +429,7 @@ void DrawGame(Client* menu)
   const GameLevel& level = GameController::GetInstance()->GetCampaign().levels.at(current_level);
   std::wstring campaign_name = GameController::GetInstance()->GetCampaign().name;
   wchar_t buffer_score[64];
-  swprintf(buffer_score, sizeof(buffer_score), L"%016d",
+  swprintf(buffer_score, sizeof(buffer_score) / sizeof(wchar_t), L"%016d",
     GameController::GetInstance()->GetScore());
 
   PrintGameInfo(target, L"Campaign", campaign_name, 60.f);
