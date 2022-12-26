@@ -81,11 +81,12 @@ void Client::PostInitialize()
   levelEditor.initialize(this);
   initialized = true;
   UpdateClientWindow();
+  //If ShowWindow is after ToggleFullScreen, icon doesn't appear
+  ShowWindow(containerhWnd, SW_SHOW);
+  ShowWindow(hWnd, SW_SHOW);
 #ifndef DEV_MODE
   ToggleFullScreen();
 #endif
-  ShowWindow(containerhWnd, SW_SHOW);
-  ShowWindow(hWnd, SW_SHOW);
 }
 
 void Client::UpdateClientWindow()

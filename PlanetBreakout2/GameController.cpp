@@ -122,7 +122,7 @@ std::wstring GameController::GetSpriteForEntity(DynamicSpriteType type)
       return LASERBAT_SPRITE;
     return campaign->bat_sprite;
   case DynamicSpriteType::BALL:
-    if (IsPowerUpActive(PowerupType::HYPER_BALL))
+    if (IsPowerUpActive(PowerupType::HYPER_ENERGY))
       return HYPERBALL_SPRITE;
     return campaign->ball_sprite;
   }
@@ -185,7 +185,7 @@ void GameController::AddPowerup()
             ClearBrickShield();
         }
         break;
-      case STRIKE:
+      case BRICK_STRIKE:
       {
         uint32_t max_index = GRID_COLUMNS * (GRID_ROWS - 6);
         std::set<uint32_t> strike;
@@ -327,7 +327,7 @@ void GameController::ShootLaser()
 //Returns true if the specified ball should bounce
 bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
 {
-  bool hyper_ball = powerup_map.at(PowerupType::HYPER_BALL).IsActive();
+  bool hyper_ball = powerup_map.at(PowerupType::HYPER_ENERGY).IsActive();
   size_t erased = GetBrickMap().Erase(index,
     hyper_ball ? PB2_BRICKMAP_ERASE_ALL :
     PB2_BRICKMAP_ERASE_TOP);
@@ -343,7 +343,7 @@ bool GameController::BreakBrick(DynamicCollider* ball, uint32_t index)
     if (ball != nullptr)
     {
       float multiplier = 10.f;
-      if (powerup_map.at(PowerupType::BONUS_POINTS).IsActive())
+      if (powerup_map.at(PowerupType::RARE_GEMS).IsActive())
         multiplier = 12.f;
       AddScore((uint16_t)(ball->GetSpeed() * multiplier * erased));
       //Prevent spawning on barrier bricks
@@ -532,7 +532,7 @@ void GameController::GameUpdate()
     case PowerupType::CREATOR_BALL:
       spawn_creator = it->second.ShouldTrigger(now);
       break;
-    case PowerupType::PORTAL:
+    case PowerupType::TIME_WARP:
       spawn_portal = it->second.ShouldTrigger(now);
       break;
     case PowerupType::DRONE:

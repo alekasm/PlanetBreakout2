@@ -78,17 +78,17 @@ void MainMenu::SwitchState(MainMenuState newState)
 void MainMenu::initialize(Client* client)
 {
   powerupDescriptions = {
-   {PowerupType::HYPER_BALL, L"Hyper Energy: Balls and lasers destroy everything in their path"},
+   {PowerupType::HYPER_ENERGY, L"Hyper Energy: Balls and lasers destroy everything in their path"},
    {PowerupType::CREATOR_BALL, L"Creator Ball: Each ball will create another ball every few seconds"},
    {PowerupType::LASER_BAT, L"Laser Bat: Left-Click to shoot lasers"},
-   {PowerupType::BONUS_POINTS, L"Rare Gems: Increases the point multiplier"},
+   {PowerupType::RARE_GEMS, L"Rare Gems: Increases the point multiplier"},
    {PowerupType::BARRIER, L"Barrier: Creates an energy barrier under your bat for protection"},
    {PowerupType::EXTRA_LIFE, L"Extra Life: You will not lose a life if all the balls are lost"},
    {PowerupType::GHOST, L"Ghost: Space ghosts possess the balls, making them bounce randomly off the bat"},
    {PowerupType::BRICK_SHIELD, L"Brick Shield: All bricks gain a plasma shield, they don't give points"},
-   {PowerupType::PORTAL, L"Time Warp: Balls slow down until collision, respawned if about to be lost"},
+   {PowerupType::TIME_WARP, L"Time Warp: Balls slow down until collision, respawned if about to be lost"},
    {PowerupType::DRONE, L"Drone: Transforms balls into drones that shoot lasers, which can also kill you"},
-   {PowerupType::STRIKE, L"Brick Strike: Galactic artillery strike that fires at up to 50 bricks"},
+   {PowerupType::BRICK_STRIKE, L"Brick Strike: Galactic artillery strike that fires at up to 50 bricks"},
    {PowerupType::EMP, L"EMP Bomb: Clears an entire brick shield and barrier"},
   };
 

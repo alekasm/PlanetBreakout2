@@ -182,6 +182,26 @@ void DrawEditor(Client* menu, LevelEditor& levelEditor)
   target->EndDraw();
 }
 
+
+void DrawGradient(ID2D1HwndRenderTarget* target, IDWriteTextFormat* format, std::wstring value, const D2D1_RECT_F& rect)
+{
+  ID2D1LinearGradientBrush* gradientBrush = (ID2D1LinearGradientBrush*)ResourceLoader::GetBrush(ColorBrush::GRADIENT_1);
+  gradientBrush->SetStartPoint(D2D1::Point2F(rect.right - rect.left / 2.f, rect.top));
+  gradientBrush->SetEndPoint(D2D1::Point2F(rect.right - rect.left / 2.f, rect.bottom));
+  target->DrawText(value.c_str(), value.length(), format, rect, gradientBrush);
+}
+
+void DrawDropShadow(ID2D1HwndRenderTarget* target, IDWriteTextFormat* format, ID2D1Brush* brush,
+  std::wstring value, const D2D1_RECT_F& rect)
+{
+
+  target->DrawText(value.c_str(), value.length(), format,
+    D2D1::RectF(rect.left + 1.f, rect.top + 2.f, rect.right + 1.f, rect.bottom + 2.f),
+    ResourceLoader::GetBrush(ColorBrush::BLACK));
+
+  target->DrawText(value.c_str(), value.length(), format, rect,
+    brush);
+}
 void PrintGameInfo(ID2D1HwndRenderTarget* target, std::wstring header, std::wstring value, float y)
 {
   IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
@@ -386,7 +406,8 @@ void DrawGame(Client* menu)
   IDWriteTextFormat* formatMedium = ResourceLoader::GetTextFormat(TextFormat::CENTER_18F);
   IDWriteTextFormat* formatMedium2 = ResourceLoader::GetTextFormat(TextFormat::CENTER_14F);
   IDWriteTextFormat* formatSmallCenter = ResourceLoader::GetTextFormat(TextFormat::CENTER_10F);
-  ID2D1Brush* brushes = ResourceLoader::GetBrush(ColorBrush::GRAY);
+  IDWriteTextFormat* formatCenter36f = ResourceLoader::GetTextFormat(TextFormat::CENTER_36F);
+  ID2D1Brush* grayBrush = ResourceLoader::GetBrush(ColorBrush::GRAY);
   ID2D1Brush* greenBrush = ResourceLoader::GetBrush(ColorBrush::GREEN);
   ID2D1Brush* darkGrayBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GRAY);
   ID2D1Brush* darkGreenBrush = ResourceLoader::GetBrush(ColorBrush::DARK_GREEN);
@@ -421,9 +442,9 @@ void DrawGame(Client* menu)
 
   std::wstring text = L"Planet Breakout 2";
   target->DrawText(text.c_str(), text.length(), formatBig,
-    D2D1::RectF(GAME_WIDTH + 1, 15, CLIENT_WIDTH - 1, 15 + 24 + 10), blackBrush);
+    D2D1::RectF(GAME_WIDTH + 1, 13, CLIENT_WIDTH - 1, 13 + 24 + 10), blackBrush);
   target->DrawText(text.c_str(), text.length(), formatBig,
-    D2D1::RectF(GAME_WIDTH + 2, 2 + 15, CLIENT_WIDTH - 1, 2 + 15 + 24), ResourceLoader::GetBrush(ColorBrush::GRAY));
+    D2D1::RectF(GAME_WIDTH + 2, 1 + 13, CLIENT_WIDTH - 1, 1 + 13 + 24), ResourceLoader::GetBrush(ColorBrush::GRAY));
 
   size_t current_level = GameController::GetInstance()->GetCurrentLevel();
   const GameLevel& level = GameController::GetInstance()->GetCampaign().levels.at(current_level);
@@ -431,18 +452,105 @@ void DrawGame(Client* menu)
   wchar_t buffer_score[64];
   swprintf(buffer_score, sizeof(buffer_score) / sizeof(wchar_t), L"%016d",
     GameController::GetInstance()->GetScore());
+  std::wstring wscore(buffer_score);
 
-  PrintGameInfo(target, L"Campaign", campaign_name, 60.f);
-  PrintGameInfo(target, L"Current Level", level.map_name, 120.f);
-  PrintGameInfo(target, L"Level Author", level.author, 180.f);
-  PrintGameInfo(target, L"Score", std::wstring(buffer_score), 300.f);
-  PrintGameInfo(target, L"Lives", L"", 360.f);
-  PrintGameInfo(target, L"PowerUps", L"", 530.f);
+  
+  std::wstring w_mission = L"Mission";
+  target->DrawText(w_mission.c_str(), w_mission.length(),
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 58,
+      59,
+      GAME_WIDTH + 1 + 58 + 140,
+      59 + 14), ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));
+  
+  
+  /*
+  DrawDropShadow(target,
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+    grayBrush,
+    L"Mission", D2D1::RectF(
+    GAME_WIDTH + 1 + 58,
+    59,
+    GAME_WIDTH + 1 + 58 + 140,
+    59 + 14));
+  */
+
+  target->DrawText(campaign_name.c_str(), campaign_name.length(), formatMedium,
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 13,
+      9 + 73,
+      GAME_WIDTH + 1 + 13 + 230,
+      9 + 73 + 37), greenBrush);
+
+  
+  std::wstring w_level = L"Level";
+  target->DrawText(w_level.c_str(), w_level.length(),
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 58,
+      116,
+      GAME_WIDTH + 1 + 58 + 140,
+      116 + 14), ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));
+
+  target->DrawText(level.map_name.c_str(), level.map_name.length(),
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_TRIM_18F),
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 13,
+      6 + 130,
+      GAME_WIDTH + 1 + 13 + 230,
+      6 + 130 + 37), greenBrush);
+
+  
+  std::wstring w_author = L"Author";
+  target->DrawText(w_author.c_str(), w_author.length(),
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_12F),
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 58,
+      173,
+      GAME_WIDTH + 1 + 58 + 140,
+      173 + 14), ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));
+  
+  target->DrawText(level.author.c_str(), level.author.length(),
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_TRIM_18F),
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 13,
+      9 + 187,
+      GAME_WIDTH + 1 + 13 + 230,
+      9 + 187 + 37), greenBrush);
+
+  
+  std::wstring w_score = L"Score";
+  target->DrawText(w_score.c_str(), w_score.length(), formatMedium,
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 13,
+      243,
+      GAME_WIDTH + 1 + 13 + 230,
+      243 + 22), ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));
+  
+  DrawGradient(target,
+    ResourceLoader::GetTextFormat(TextFormat::CENTER_TRIM_18F),
+    wscore, D2D1::RectF(
+    GAME_WIDTH + 1 + 13,
+    9 + 271,
+    GAME_WIDTH + 1 + 13 + 230,
+    9 + 271 + 37));
+
+  
+  std::wstring w_lives = L"Lives";
+  target->DrawText(w_lives.c_str(), w_lives.length(), formatMedium,
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 13,
+      328,
+      GAME_WIDTH + 1 + 13 + 230,
+      328 + 22),
+    ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));  
+
   for (uint32_t i = 0; i < GameController::GetInstance()->GetLives(); ++i)
   {
     if (i > MAX_LIVES) break; //Should not be possible
     float row = (i / 3) == 0 ? 0.0 : (BAT_HEIGHT * 2.f);
-    float y = 360.f + 36.f + row;
+    float y = 356.f + 16.f + row;
     float col = (i % 3);
     float x = 16.f + (col * 16.f) + (col * BAT_WIDTH);
     target->DrawBitmap(
@@ -450,17 +558,29 @@ void DrawGame(Client* menu)
       D2D1::RectF(GAME_WIDTH + x, y, GAME_WIDTH + x + BAT_WIDTH, y + BAT_HEIGHT), 1.0f);
   }
 
+  
+  std::wstring w_powerups = L"PowerUps";
+  target->DrawText(w_powerups.c_str(), w_powerups.length(), formatMedium,
+    D2D1::RectF(
+      GAME_WIDTH + 1 + 13,
+      455,
+      GAME_WIDTH + 1 + 13 + 230,
+      455 + 22),
+    ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));
+  
+
   const GamePowerUpMap& pwr_map = GameController::GetInstance()->GetGamePowerUpMap();
   GamePowerUpMap::const_iterator pwr_it = pwr_map.begin();
   size_t index = 0;
   for (; pwr_it != pwr_map.end(); ++pwr_it)
   {
-    float row = (index / 4);
-    float y = 566.f + (row * 45.f);
-    float col = (index % 4);
-    float x = 34.f + (col * 20.f) + (col * POWERUP_DIMENSION);
-
-
+    int row = (index % 6);
+    float y = 491.f + (row * 38);
+    //float y = 566.f + (row * 45.f);
+    int col = (index / 6);
+    float x = col == 0 ? 15.f : 131.f;
+    float xinfo = col == 0 ? 51.f : 167.f;
+    
     if (pwr_it->second.IsActive())
     {
       target->DrawRectangle(
@@ -468,6 +588,30 @@ void DrawGame(Client* menu)
           GAME_WIDTH + x + POWERUP_DIMENSION - 2,
           y + POWERUP_DIMENSION - 2),
         pwr_it->second.IsActive() ? greenBrush : darkGrayBrush, 2.0f);
+
+      target->DrawTextA(
+        PowerupNames[pwr_it->first].c_str(),
+        PowerupNames[pwr_it->first].size(),
+        ResourceLoader::GetTextFormat(CENTER_10F),
+        D2D1::RectF(
+          GAME_WIDTH + xinfo,
+          10 + y,
+          GAME_WIDTH + xinfo + 72,
+          10 + y + 30),
+        greenBrush);
+    }
+    else
+    {
+     target->DrawTextA(
+       PowerupNames[pwr_it->first].c_str(),
+       PowerupNames[pwr_it->first].size(),
+       ResourceLoader::GetTextFormat(CENTER_10F),
+       D2D1::RectF(
+          GAME_WIDTH + xinfo,
+          10 + y,
+          GAME_WIDTH + xinfo + 72,
+          10 + y + 30),
+       ResourceLoader::GetBrush(ColorBrush::GRAY));
     }
 
     if (!pwr_it->second.GetIcon().empty())
@@ -478,7 +622,6 @@ void DrawGame(Client* menu)
           GAME_WIDTH + x + POWERUP_ICON + 8.f,
           y + POWERUP_ICON + 8.f), 1.0f);
 
-      //TODO Fix
       if (pwr_it->second.HasTime() && pwr_it->second.IsActive())
       {
         float height_percentage = pwr_it->second.GetPercentRemaining();
@@ -541,7 +684,7 @@ void DrawGame(Client* menu)
 
   bool creator_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::CREATOR_BALL);
   bool ghost = GameController::GetInstance()->IsPowerUpActive(PowerupType::GHOST);
-  bool hyper_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::HYPER_BALL);
+  bool hyper_ball = GameController::GetInstance()->IsPowerUpActive(PowerupType::HYPER_ENERGY);
   float radius = hyper_ball ? 2.f : 1.f;
   ID2D1Brush* ellipse_brush = greenBrush;
   if (ghost)

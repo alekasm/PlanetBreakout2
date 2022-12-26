@@ -29,6 +29,8 @@ enum ColorBrush {
   BLUE = 0x4287f5,
   PURPLE = 0xFF00FF,
 
+  DARK_RED = 0x340000,
+
   GREEN_HALF,
   RED_HALF,
   BLACK_HALF,
@@ -46,16 +48,18 @@ enum AudioState {ON, OFF};
 enum TextFormat {
   LEFT_8F, LEFT_10F, LEFT_12F,
   LEFT_16F, LEFT_24F,
-  CENTER_10F, CENTER_12F, CENTER_14F,
-  CENTER_18F, CENTER_24F, CENTER_72F,
+  CENTER_8F, CENTER_10F, CENTER_12F,
+  CENTER_14F, CENTER_18F, CENTER_TRIM_18F,
+  CENTER_24F, CENTER_36F, CENTER_72F
 };
 
 struct TextFormatData {
   IDWriteTextFormat* format = nullptr;
   float size;
   bool centerAlignment;
-  TextFormatData(float size, bool centerAlignment) :
-    size(size), centerAlignment(centerAlignment)
+  bool trimming;
+  TextFormatData(float size, bool centerAlignment, bool trimming = false) :
+    size(size), centerAlignment(centerAlignment), trimming(trimming)
   {
   }
 };

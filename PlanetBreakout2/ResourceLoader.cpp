@@ -29,11 +29,14 @@ TextFormatMap ResourceLoader::textFormatMap = {
   {TextFormat::LEFT_12F, TextFormatData(12.f, false) },
   {TextFormat::LEFT_16F, TextFormatData(16.f, false) },
   {TextFormat::LEFT_24F, TextFormatData(24.f, false) },
+  {TextFormat::CENTER_8F, TextFormatData(8.f, true) },
   {TextFormat::CENTER_10F, TextFormatData(10.f, true) },
   {TextFormat::CENTER_12F, TextFormatData(12.f, true) },
   {TextFormat::CENTER_14F, TextFormatData(14.f, true) },
   {TextFormat::CENTER_18F, TextFormatData(18.f, true) },
+  {TextFormat::CENTER_TRIM_18F, TextFormatData(18.f, true, true) },
   {TextFormat::CENTER_24F, TextFormatData(24.f, true) },
+  {TextFormat::CENTER_36F, TextFormatData(36.f, true) },
   {TextFormat::CENTER_72F, TextFormatData(72.f, true) }
 };
 AudioMap ResourceLoader::audioMap = {
@@ -229,6 +232,14 @@ void ResourceLoader::InitializeClient(HWND hWnd)
       it->second.size, L"en-us", &it->second.format);
     if (it->second.centerAlignment)
       it->second.format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    it->second.format->SetWordWrapping(DWRITE_WORD_WRAPPING_CHARACTER);
+    if (it->second.trimming)
+    {
+      struct DWRITE_TRIMMING trimming {
+        DWRITE_TRIMMING_GRANULARITY_CHARACTER
+      };
+      it->second.format->SetTrimming(&trimming, NULL);
+    }
   }
 
   D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &factory);
@@ -282,6 +293,7 @@ HRESULT ResourceLoader::CreateBrushes()
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::ORANGE, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::ORANGE]);
 
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::RED, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::RED]);
+  target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::DARK_RED, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::DARK_RED]);
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::RED, 0.5f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::RED_HALF]);
 
   target->CreateSolidColorBrush(D2D1::ColorF(ColorBrush::BLACK, 1.0f), (ID2D1SolidColorBrush**)&brushes[ColorBrush::BLACK]);

@@ -106,17 +106,17 @@ private:
   GameType old_type = GameType::MAIN_MENU;
   std::default_random_engine rng{ std::random_device{}() };
   GamePowerUpMap powerup_map = {
-    {PowerupType::HYPER_BALL, GamePowerUp(L"hyperball")},
+    {PowerupType::HYPER_ENERGY, GamePowerUp(L"hyperball")},
     {PowerupType::CREATOR_BALL, GamePowerUp(L"creator", 5000)},
     {PowerupType::LASER_BAT, GamePowerUp(L"laser")},
-    {PowerupType::BONUS_POINTS, GamePowerUp(L"points")},
+    {PowerupType::RARE_GEMS, GamePowerUp(L"points")},
     {PowerupType::BARRIER, GamePowerUp(L"barrier_icon")},
     {PowerupType::EXTRA_LIFE, GamePowerUp(L"heart")},
     {PowerupType::GHOST, GamePowerUp(L"ghost")},
     {PowerupType::BRICK_SHIELD, GamePowerUp(L"shield")},
-    {PowerupType::PORTAL, GamePowerUp(L"portal", 10000)},
+    {PowerupType::TIME_WARP, GamePowerUp(L"portal", 10000)},
     {PowerupType::DRONE, GamePowerUp(L"drone", 3000)},
-    {PowerupType::STRIKE, GamePowerUp(L"strike")},
+    {PowerupType::BRICK_STRIKE, GamePowerUp(L"strike")},
     {PowerupType::EMP, GamePowerUp(L"emp")},
   };
 

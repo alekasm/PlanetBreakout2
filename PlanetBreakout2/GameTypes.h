@@ -13,10 +13,19 @@ enum DifficultyType { EASY = 0, MEDIUM = 1, HARD = 2 };
 
 #define POWERUP_SIZE 12
 enum PowerupType {
-  LASER_BAT, BONUS_POINTS, CREATOR_BALL,
-  HYPER_BALL, BARRIER, EXTRA_LIFE, BRICK_SHIELD, GHOST,
-  PORTAL, DRONE, STRIKE, EMP
+  LASER_BAT, RARE_GEMS, CREATOR_BALL,
+  HYPER_ENERGY, BARRIER, EXTRA_LIFE,
+  BRICK_SHIELD, GHOST, TIME_WARP,
+  DRONE, BRICK_STRIKE, EMP
 };
+
+const std::wstring PowerupNames[POWERUP_SIZE] = {
+  L"Laser Bat", L"Rare Gems", L"Creator Ball",
+  L"Hyper Energy", L"Barrier", L"Extra Life",
+  L"Brick Shield", L"Ghost", L"Time Warp",
+  L"Drone", L"Brick Strike", L"EMP"
+};
+
 
 struct Entity : Drawable
 {
