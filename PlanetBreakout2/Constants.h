@@ -1,15 +1,10 @@
 #pragma once
-#define GAME_VERSION 1
+#define GAME_VERSION 2
 //#define DEV_MODE
 #define CLIENT_WIDTH 1024
 #define CLIENT_HEIGHT 768
-#define TILE_WIDTH 32
-#define TILE_HEIGHT 32
 #define GAME_WIDTH 768
 #define GAME_HEIGHT 768
-#define EDITOR_WIDTH 400
-#define EDITOR_HEIGHT 400
-#define MENU_COUNT 1
 #define BRICK_WIDTH 48
 #define BRICK_HEIGHT 16
 #define BAT_WIDTH 64

@@ -87,6 +87,7 @@ void Client::PostInitialize()
 #ifndef DEV_MODE
   ToggleFullScreen();
 #endif
+  mainMenu.RefreshFullscreenButton(this);
 }
 
 void Client::UpdateClientWindow()

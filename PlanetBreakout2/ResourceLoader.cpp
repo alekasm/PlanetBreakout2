@@ -29,6 +29,7 @@ TextFormatMap ResourceLoader::textFormatMap = {
   {TextFormat::LEFT_12F, TextFormatData(12.f, false) },
   {TextFormat::LEFT_16F, TextFormatData(16.f, false) },
   {TextFormat::LEFT_24F, TextFormatData(24.f, false) },
+  {TextFormat::LEFT_TRIM_24F, TextFormatData(24.f, false, true) },
   {TextFormat::CENTER_8F, TextFormatData(8.f, true) },
   {TextFormat::CENTER_10F, TextFormatData(10.f, true) },
   {TextFormat::CENTER_12F, TextFormatData(12.f, true) },
@@ -72,6 +73,8 @@ SpriteMap ResourceLoader::sprite_map = {
   {L"sidebar", {}},
   {L"star", {}},
   {L"strike", {}},
+  {L"win", {}},
+  {L"start", {}},
 };
 
 AudioState ResourceLoader::GetAudioState()
@@ -236,7 +239,7 @@ void ResourceLoader::InitializeClient(HWND hWnd)
     if (it->second.trimming)
     {
       struct DWRITE_TRIMMING trimming {
-        DWRITE_TRIMMING_GRANULARITY_CHARACTER
+        DWRITE_TRIMMING_GRANULARITY_CHARACTER,
       };
       it->second.format->SetTrimming(&trimming, NULL);
     }

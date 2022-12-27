@@ -281,9 +281,6 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
     std::advance(it, mainMenu.GetCampaignPage());
     Campaign& campaign = *it;
     unsigned i = 1;
-    std::wstring name_string;
-    std::wstring score_string;
-    std::wstring date_string;
     const DifficultyType difficulty = GameController::GetInstance()->GetDifficultyType();
     for (const Highscore& h : campaign.GetHighscores(difficulty))
     {
@@ -291,20 +288,33 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       wchar_t buffer_name[64];
       std::swprintf(buffer_name,
         sizeof(buffer_name) / sizeof(wchar_t),
-        L"%d. %s\n", i, h.name.c_str());
-      name_string.append(buffer_name);
+        L"%d. %s", i, h.name.c_str());
 
       std::swprintf(buffer_score,
         sizeof(buffer_score) / sizeof(wchar_t),
-        L"%016d\n", h.score);
-      score_string.append(buffer_score);
+        L"%016d", h.score);
 
       tm local;
       localtime_s(&local, &h.date);
       char buffer[256];
-      strftime(buffer, sizeof(buffer), "%d %B %Y\n", &local);
+      strftime(buffer, sizeof(buffer), "%d %B %Y", &local);
       std::string a(buffer);
-      date_string.append(std::wstring(a.begin(), a.end()));
+
+      std::wstring name_string2(buffer_name);
+      std::wstring score_string2(buffer_score);
+      std::wstring date_string2(a.begin(), a.end());
+
+      float y = (CLIENT_HEIGHT / 2.f) + 30.f + (i * 28.f);
+      target->DrawText(name_string2.c_str(), name_string2.length(),
+        ResourceLoader::GetTextFormat(TextFormat::LEFT_TRIM_24F),
+        D2D1::RectF(32.f, y, (CLIENT_WIDTH / 3.f) + 48.f, y + 32.f), gradientBrush2);
+
+      target->DrawText(score_string2.c_str(), score_string2.length(),
+        ResourceLoader::GetTextFormat(TextFormat::CENTER_24F),
+        D2D1::RectF(0.f, y, CLIENT_WIDTH, y + 32.f), gradientBrush2);
+
+      target->DrawText(date_string2.c_str(), date_string2.length(), formatBig,
+        D2D1::RectF(CLIENT_WIDTH - 256.f, y, CLIENT_WIDTH - 32.f, y + 32.f), gradientBrush2);
       ++i;
     }
 
@@ -332,17 +342,6 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       (CLIENT_WIDTH / 2) + 140,
       (CLIENT_HEIGHT / 2) - 80),
       ResourceLoader::GetBrush(ColorBrush::GRAY), 1.f);
-
-    float y = (CLIENT_HEIGHT / 2.f) + 30.f;
-    target->DrawText(name_string.c_str(), name_string.length(), formatBig,
-      D2D1::RectF(32.f, y, CLIENT_WIDTH - 32.f, y + 32.f), gradientBrush2);
-
-    target->DrawText(score_string.c_str(), score_string.length(),
-      ResourceLoader::GetTextFormat(TextFormat::CENTER_24F),
-      D2D1::RectF(0.f, y, CLIENT_WIDTH, y + 32.f), gradientBrush2);
-
-    target->DrawText(date_string.c_str(), date_string.length(), formatBig,
-      D2D1::RectF(CLIENT_WIDTH - 256.f, y, CLIENT_WIDTH - 32.f, y + 32.f), gradientBrush2);
   }
   else if (mainMenu.GetState() == MainMenuState::INFO)
   {
@@ -357,7 +356,6 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
       D2D1::RectF(0.f, 470.f, CLIENT_WIDTH, CLIENT_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::GREEN));
-
 
     target->DrawRectangle(D2D1::RectF(340.f, 570.f, 684.f, 684.f),
       ResourceLoader::GetBrush(ColorBrush::GRAY), 2.f);
@@ -767,10 +765,24 @@ void DrawGame(Client* menu)
   }
   else if (GameController::GetInstance()->GetLevelState() == LevelState::START)
   {
-    std::wstring text = L"Left-Click to Launch!";
-    target->DrawText(text.c_str(), text.length(), format,
-      D2D1::RectF(4.f, 4.f, GAME_WIDTH - 4.f, 16.f),
-      ResourceLoader::GetBrush(ColorBrush::GREEN));
+    if (GameController::GetInstance()->GetScore() == 0)
+    {
+      std::wstring text = L"Left-Click to Launch!";
+      float x = 246.f;
+      float y = (CLIENT_HEIGHT / 2.f) - 25.f;
+      target->FillRectangle(D2D1::RectF(x, y, x + 276.f, y + 49.f),
+        ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+      target->FillRectangle(D2D1::RectF(x, y, x + 276.f, y + 49.f),
+        ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+      target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"start"),
+        D2D1::RectF(x, y, x + 276.f, y + 49.f), 1.0f);
+
+      target->DrawText(text.c_str(), text.length(),
+        ResourceLoader::GetTextFormat(TextFormat::CENTER_14F),
+        D2D1::RectF(x + 8.f, y + 8.f + 9.f, x + 268.f + 8.f, y + 40.f),
+        ResourceLoader::GetBrush(ColorBrush::WHITE));
+    }
   }
   else if (GameController::GetInstance()->GetLevelState() == LevelState::END)
   {
@@ -792,17 +804,24 @@ void DrawGame(Client* menu)
     target->FillRectangle(D2D1::RectF(0.f, 0.f, GAME_WIDTH, GAME_HEIGHT),
       ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
 
+    target->FillRectangle(D2D1::RectF(164.f, 314.f, 602.f, 455.f),
+      ResourceLoader::GetBrush(ColorBrush::BLACK_HALF));
+
+    target->DrawBitmap(ResourceLoader::GetSpriteMap().at(L"win"),
+      D2D1::RectF(164.f, 314.f, 602.f, 455.f), 1.0f);
+
     std::wstring text = L"New Highscore!";
-    target->DrawText(text.c_str(), text.length(), formatBig,
-      D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 64.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 32.f),
-      ResourceLoader::GetBrush(ColorBrush::WHITE));
+    target->DrawText(text.c_str(), text.length(), formatMedium,
+      D2D1::RectF(172.f, 322.f, 593.f, 342.f),
+      ResourceLoader::GetBrush(ColorBrush::DARK_GRAY));
 
     std::wstring name = GameController::GetInstance()->GetHighscoreText().GetString();
     target->DrawText(name.c_str(), name.length(), formatBig,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
+      //D2D1::RectF(64.f, (GAME_HEIGHT / 2) - 12.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 14.f),
       ResourceLoader::GetBrush(ColorBrush::ORANGE));
 
-    std::wstring text2 = L"Press Enter to Accept!";
+    std::wstring text2 = L"Type your name and press Enter to accept!";
     target->DrawText(text2.c_str(), text2.length(), formatMedium2,
       D2D1::RectF(64.f, (GAME_HEIGHT / 2) + 26.f, GAME_WIDTH - 64.f, (GAME_HEIGHT / 2) + 46.f),
       ResourceLoader::GetBrush(ColorBrush::WHITE));
