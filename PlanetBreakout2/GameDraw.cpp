@@ -304,7 +304,7 @@ void DrawMainMenu(Client* menu, MainMenu& mainMenu)
       std::wstring score_string2(buffer_score);
       std::wstring date_string2(a.begin(), a.end());
 
-      float y = (CLIENT_HEIGHT / 2.f) + 30.f + (i * 28.f);
+      float y = (CLIENT_HEIGHT / 2.f) + 5.f + (i * 28.f);
       target->DrawText(name_string2.c_str(), name_string2.length(),
         ResourceLoader::GetTextFormat(TextFormat::LEFT_TRIM_24F),
         D2D1::RectF(32.f, y, (CLIENT_WIDTH / 3.f) + 48.f, y + 32.f), gradientBrush2);
